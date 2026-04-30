@@ -6,7 +6,7 @@
 import axios from "axios";
 
 const request = axios.create({
-  baseURL: "http://localhost:8080", // 你的 Go 后端
+  baseURL: "/api", // 你的 Go 后端
 });
 
 request.interceptors.request.use(config => {

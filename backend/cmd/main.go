@@ -10,7 +10,7 @@ func main() {
 	r := gin.Default()
 
 	// Public routes
-	r.POST("/login", auth.LoginHandler)
+	r.POST("/api/login", auth.LoginHandler)
 
 	// Protected routes
 	authGroup := r.Group("/api")
