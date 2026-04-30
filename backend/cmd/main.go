@@ -1,10 +1,9 @@
 package main
 
 import (
-	"backend/internal/config"
-	"backend/internal/middleware"
-	"backend/internal/modules/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/ximing/mini-erp/internal/middleware"
+	"github.com/ximing/mini-erp/internal/modules/auth"
 )
 
 func main() {

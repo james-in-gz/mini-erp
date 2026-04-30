@@ -3,8 +3,8 @@ package auth
 import (
 	"net/http"
 
-	"backend/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/ximing/mini-erp/pkg/utils"
 )
 
 type LoginRequest struct {
