@@ -1,2 +1,2 @@
 # mini-erp
-A erp system contains CRM OMS and IMS
+An erp system contains CRM OMS and IMS
