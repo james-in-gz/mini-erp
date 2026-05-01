@@ -22,5 +22,10 @@ func CreateCustomerNote(input CreateCustomerNoteInput) error {
 		NextFollowUpAt: input.NextFollowUpAt,
 	}
 
+	// 更新客户的下一次跟进时间
+	if input.NextFollowUpAt != nil {
+		repository.UpdateCustomerNextFollowUp(input.CustomerID, *input.NextFollowUpAt)
+	}
+
 	return repository.CreateCustomerNote(&note)
 }
