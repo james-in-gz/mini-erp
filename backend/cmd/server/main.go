@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/ximing/mini-erp/internal/middleware"
-	"github.com/ximing/mini-erp/internal/modules/auth"
+	"github.com/ximing/mini-erp/internal/handler/auth"
 	"backend/internal/database"
 )
 
