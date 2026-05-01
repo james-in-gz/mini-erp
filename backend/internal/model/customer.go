@@ -12,6 +12,8 @@ type Customer struct {
 	Level     string `gorm:"size:50"`
 	Status    string `gorm:"size:50;index"`
 
+	NextFollowUpAt *time.Time `gorm:"index"`
+	
 	OwnerID   uint   `gorm:"index"`
 
 	CreatedAt time.Time
