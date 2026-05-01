@@ -45,3 +45,44 @@ func CreateCustomer(c *gin.Context) {
 		"message": "customer created",
 	})
 }
+
+func ListCustomers(c *gin.Context) {
+	var query ListCustomersQuery
+
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid query"})
+		return
+	}
+
+	// 默认分页
+	if query.Page <= 0 {
+		query.Page = 1
+	}
+	if query.PageSize <= 0 || query.PageSize > 50 {
+		query.PageSize = 10
+	}
+
+	// 🔥 从 JWT 获取当前用户
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID := userIDVal.(uint)
+
+	result, err := service.ListCustomers(service.ListCustomersInput{
+		Page:     query.Page,
+		PageSize: query.PageSize,
+		Status:   query.Status,
+		Keyword:  query.Keyword,
+		OwnerID:  userID,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch customers"})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
