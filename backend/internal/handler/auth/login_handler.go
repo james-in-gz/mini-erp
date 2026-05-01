@@ -30,3 +30,11 @@ func LoginHandler(c *gin.Context) {
 		Token: token,
 	})
 }
+
+func MeHandler(c *gin.Context) {
+	userID, _ := c.Get("userID")
+
+	c.JSON(http.StatusOK, gin.H{
+		"user_id": userID,
+	})
+}
