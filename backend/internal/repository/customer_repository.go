@@ -64,3 +64,19 @@ func UpdateCustomerNextFollowUp(customerID uint, t time.Time) error {
 		Where("id = ?", customerID).
 		Update("next_follow_up_at", t).Error
 }
+
+func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
+	var customers []model.Customer
+
+	now := time.Now()
+
+	err := database.DB.
+		Where("owner_id = ?", ownerID).
+		Where("next_follow_up_at IS NOT NULL").
+		Where("next_follow_up_at <= ?", now).
+		Where("status IN ?", []string{"interested", "negotiating"}).
+		Order("next_follow_up_at ASC").
+		Find(&customers).Error
+
+	return customers, err
+}
