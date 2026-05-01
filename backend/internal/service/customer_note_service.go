@@ -29,3 +29,7 @@ func CreateCustomerNote(input CreateCustomerNoteInput) error {
 
 	return repository.CreateCustomerNote(&note)
 }
+
+func ListCustomerNotes(customerID uint) ([]model.CustomerNote, error) {
+	return repository.ListCustomerNotes(customerID)
+}
