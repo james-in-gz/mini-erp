@@ -20,6 +20,7 @@ func main() {
 	authGroup := r.Group("/api")
 	authGroup.Use(middleware.JWTAuth())
 	{
+		authGroup.POST("/users",middleware.AdminOnly(),user.CreateUser)
 		authGroup.GET("/me", auth.MeHandler)
 	}
 
