@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ximing/mini-erp/internal/middleware"
 	"github.com/ximing/mini-erp/internal/handler/auth"
+	"backend/internal/handler/customer"
 	"backend/internal/database"
 )
 
@@ -22,6 +23,7 @@ func main() {
 	{
 		authGroup.POST("/users",middleware.AdminOnly(),user.CreateUser)
 		authGroup.GET("/me", auth.MeHandler)
+		authGroup.POST("/customers", customer.CreateCustomer)
 	}
 
 	r.Run(":8080")
