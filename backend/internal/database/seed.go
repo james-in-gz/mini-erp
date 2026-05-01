@@ -28,6 +28,7 @@ func createAdmin() {
 		Username:     "admin",
 		PasswordHash: hash,
 		Status:       "active",
+		Role: "admin",
 	}
 
 	if err := DB.Create(&admin).Error; err != nil {
