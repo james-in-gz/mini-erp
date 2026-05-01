@@ -26,3 +26,14 @@ func (Order) TableName() string {
 	return "orders"
 }
 
+
+type OrderItem struct {
+	ID           uint    `gorm:"primaryKey"`
+	OrderID      uint    `gorm:"index"`
+
+	ProductID    uint
+	ProductName  string  `gorm:"size:255"`
+	Price        float64
+	Quantity     int
+	TotalPrice   float64
+}
