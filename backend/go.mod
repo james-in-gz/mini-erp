@@ -1,4 +1,4 @@
-module github.com/ximing/mini-erp
+module backend
 
 go 1.26.2
 
