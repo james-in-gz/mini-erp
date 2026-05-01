@@ -24,6 +24,7 @@ func main() {
 		authGroup.POST("/users",middleware.AdminOnly(),user.CreateUser)
 		authGroup.GET("/me", auth.MeHandler)
 		authGroup.POST("/customers", customer.CreateCustomer)
+		authGroup.GET("/customers", customer.ListCustomers)
 	}
 
 	r.Run(":8080")
