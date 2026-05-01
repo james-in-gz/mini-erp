@@ -10,3 +10,7 @@ func GetUserByUsername(username string) (*model.User, error) {
 	err := database.DB.Where("username = ?", username).First(&user).Error
 	return &user, err
 }
+
+func CreateUser(user *model.User) error {
+	return database.DB.Create(user).Error
+}
