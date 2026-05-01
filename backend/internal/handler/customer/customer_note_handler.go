@@ -47,3 +47,15 @@ func CreateCustomerNote(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "note added"})
 }
+
+func ListCustomerNotes(c *gin.Context) {
+	customerID := parseUint(c.Param("id"))
+
+	notes, err := service.ListCustomerNotes(customerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"})
+		return
+	}
+
+	c.JSON(http.StatusOK, notes)
+}
