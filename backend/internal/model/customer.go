@@ -19,3 +19,25 @@ type Customer struct {
 
 	Tags      []Tag `gorm:"many2many:customer_tags"`
 }
+
+type Tag struct {
+	ID    uint   `gorm:"primaryKey"`
+	Name  string `gorm:"uniqueIndex"`
+	Color string
+}
+
+type CustomerTag struct {
+	CustomerID uint `gorm:"primaryKey"`
+	TagID      uint `gorm:"primaryKey"`
+}
+
+type CustomerNote struct {
+	ID              uint      `gorm:"primaryKey"`
+	CustomerID      uint      `gorm:"index"`
+	UserID          uint
+	Content         string    `gorm:"type:text"`
+	NextFollowUpAt  *time.Time
+
+	CreatedAt       time.Time
+}
+
