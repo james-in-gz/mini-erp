@@ -36,6 +36,8 @@ type CustomerNote struct {
 	CustomerID      uint      `gorm:"index"`
 	UserID          uint
 	Content         string    `gorm:"type:text"`
+	Type       string     `gorm:"size:50"` // call / visit / message
+	
 	NextFollowUpAt  *time.Time
 
 	CreatedAt       time.Time
