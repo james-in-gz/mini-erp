@@ -2,45 +2,31 @@ package auth
 
 import (
 	"net/http"
-	"github.com/ximing/mini-erp/internal/repository"
-	"github.com/gin-gonic/gin"
-	"github.com/ximing/mini-erp/pkg/utils"
-)
 
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+	"backend/internal/service"
+	"github.com/gin-gonic/gin"
+)
 
 func LoginHandler(c *gin.Context) {
 	var req LoginRequest
-	_ = c.ShouldBindJSON(&req)
 
-	// 1️⃣ 查数据库
-	user, err := repository.GetUserByUsername(req.Username)
+	// 🔥 use binding with validation
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request params",
+		})
+		return
+	}
+
+	token, err := service.Login(req.Username, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	// 2️⃣ 校验密码
-	if !utils.CheckPassword(req.Password, user.PasswordHash) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "wrong password"})
-		return
-	}
-
-	// 3️⃣ 生成 JWT
-	token, _ := utils.GenerateToken(user.ID)
-
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-	})
-}
-
-func MeHandler(c *gin.Context) {
-	userID, _ := c.Get("userID")
-
-	c.JSON(http.StatusOK, gin.H{
-		"user_id": userID,
+	c.JSON(http.StatusOK, LoginResponse{
+		Token: token,
 	})
 }
