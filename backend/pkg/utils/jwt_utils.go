@@ -10,6 +10,7 @@ var jwtKey = []byte("your_secret_key")
 
 type Claims struct {
 	UserID uint
+	Role   string
 	jwt.RegisteredClaims
 }
 
