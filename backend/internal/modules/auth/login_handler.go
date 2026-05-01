@@ -2,7 +2,7 @@ package auth
 
 import (
 	"net/http"
-
+	"github.com/ximing/mini-erp/internal/repository"
 	"github.com/gin-gonic/gin"
 	"github.com/ximing/mini-erp/pkg/utils"
 )
@@ -16,13 +16,21 @@ func LoginHandler(c *gin.Context) {
 	var req LoginRequest
 	_ = c.ShouldBindJSON(&req)
 
-	// TODO: Replace with DB check
-	if req.Username != "admin" || req.Password != "123456" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+	// 1️⃣ 查数据库
+	user, err := repository.GetUserByUsername(req.Username)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 		return
 	}
 
-	token, _ := utils.GenerateToken(1)
+	// 2️⃣ 校验密码
+	if !utils.CheckPassword(req.Password, user.PasswordHash) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "wrong password"})
+		return
+	}
+
+	// 3️⃣ 生成 JWT
+	token, _ := utils.GenerateToken(user.ID)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
