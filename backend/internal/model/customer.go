@@ -5,7 +5,7 @@ import "time"
 type Customer struct {
 	ID        uint   `gorm:"primaryKey"`
 	Name      string `gorm:"size:255"`
-	Phone     string `gorm:"size:50;index"`
+	Phone     string `gorm:"size:50;uniqueIndex"`
 	Email     string `gorm:"size:100"`
 
 	Source    string `gorm:"size:100"`
