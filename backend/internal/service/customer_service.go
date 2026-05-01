@@ -38,3 +38,34 @@ func CreateCustomer(input CreateCustomerInput) error {
 
 	return repository.CreateCustomer(&customer)
 }
+
+type ListCustomersInput struct {
+	Page     int
+	PageSize int
+	Status   string
+	Keyword  string
+	OwnerID  uint
+}
+
+type ListCustomersOutput struct {
+	Total int64           `json:"total"`
+	List  []model.Customer `json:"list"`
+}
+
+func ListCustomers(input ListCustomersInput) (*ListCustomersOutput, error) {
+	customers, total, err := repository.ListCustomers(
+		input.Page,
+		input.PageSize,
+		input.OwnerID,
+		input.Status,
+		input.Keyword,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListCustomersOutput{
+		Total: total,
+		List:  customers,
+	}, nil
+}
