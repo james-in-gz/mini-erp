@@ -19,3 +19,15 @@ type Subscription struct {
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 }
+
+type DeliveryTask struct {
+	ID              uint      `gorm:"primaryKey"`
+	SubscriptionID  uint      `gorm:"index"`
+
+	ScheduledDate   time.Time
+	Status          string    `gorm:"size:50;index"`
+
+	ShipmentID      *uint
+
+	CreatedAt       time.Time
+}
