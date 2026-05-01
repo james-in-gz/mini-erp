@@ -10,11 +10,6 @@ import (
 func main() {
 	
 	database.InitDB()
-
-	// 只在开发环境自动建表
-	if os.Getenv("ENV") == "dev" {
-		database.AutoMigrate()
-	}
 	
 	r := gin.Default()
 
