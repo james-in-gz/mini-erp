@@ -58,3 +58,9 @@ func ListCustomers(page, pageSize int, ownerID uint, status, keyword string) ([]
 
 	return customers, total, nil
 }
+
+func UpdateCustomerNextFollowUp(customerID uint, t time.Time) error {
+	return database.DB.Model(&model.Customer{}).
+		Where("id = ?", customerID).
+		Update("next_follow_up_at", t).Error
+}
