@@ -6,3 +6,10 @@ type CreateCustomerRequest struct {
 	Email  string `json:"email"`
 	Source string `json:"source"`
 }
+
+type ListCustomersQuery struct {
+	Page     int    `form:"page"`
+	PageSize int    `form:"page_size"`
+	Status   string `form:"status"`
+	Keyword  string `form:"keyword"`
+}
