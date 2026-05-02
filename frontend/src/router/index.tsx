@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
-import Home from "../pages/Home";
+import HomePage from "../pages/Home";
 import Orders from "../pages/Orders";
 import CustomerDetailPage from "../pages/customer/CustomerDetailPage";
 import CustomerListPage from "@/pages/customer/CustomerListPage";
@@ -16,7 +16,7 @@ export default function Router() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={
         <PrivateRoute>
-          <Home />
+          <HomePage />
         </PrivateRoute>
       } />
       <Route path="/orders" element={
