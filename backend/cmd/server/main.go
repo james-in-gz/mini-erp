@@ -28,6 +28,7 @@ func main() {
 		authGroup.POST("/customers/:id/notes", customer.CreateCustomerNote)
 		authGroup.GET("/customers/:id/notes", customer.ListCustomerNotes)
 		authGroup.GET("/customers/follow-ups/today", customer.ListTodayFollowUps)
+		authGroup.GET("/customers/:id", customer.GetCustomerDetail)
 	}
 
 	r.Run(":8080")
