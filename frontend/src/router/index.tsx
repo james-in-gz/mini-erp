@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Home from "../pages/Home";
 import Orders from "../pages/Orders";
+import CustomerDetailPage from "../pages/customer/CustomerDetailPage";
 import { getToken } from "../utils/auth";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,11 @@ export default function Router() {
       <Route path="/orders" element={
         <PrivateRoute>
           <Orders />
+        </PrivateRoute>
+      } />
+      <Route path="/customers/:id" element={
+        <PrivateRoute>
+          <CustomerDetailPage />
         </PrivateRoute>
       } />
     </Routes>
