@@ -95,7 +95,7 @@ func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, er
 	}
 
 	// 2️⃣ 获取 notes
-	notes, _ := repository.ListCustomerNotes(customerID)
+	notes, _ := repository.ListCustomerNotes(customerID,20,0)
 
 	// 3️⃣ 最新 note
 	latestNote, _ := repository.GetLatestCustomerNote(customerID)
