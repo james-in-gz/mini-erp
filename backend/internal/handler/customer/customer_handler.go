@@ -86,3 +86,25 @@ func ListCustomers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
+
+func ListTodayFollowUps(c *gin.Context) {
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID := userIDVal.(uint)
+
+	customers, err := service.ListTodayFollowUps(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch follow-ups",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"list": customers,
+	})
+}
