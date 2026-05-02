@@ -69,3 +69,7 @@ func ListCustomers(input ListCustomersInput) (*ListCustomersOutput, error) {
 		List:  customers,
 	}, nil
 }
+
+func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
+	return repository.ListTodayFollowUps(ownerID)
+}
