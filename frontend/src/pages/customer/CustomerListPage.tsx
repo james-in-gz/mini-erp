@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
+  Button,
   Container,
   Typography,
   Table,
@@ -47,9 +49,18 @@ export default function CustomerListPage() {
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Customers
-      </Typography>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+      >
+        <Typography variant="h5">Customers</Typography>
+
+        <Button
+          variant="contained"
+          onClick={() => navigate("/customers/create")}
+        >
+          + New Customer
+        </Button>
+      </Box>
 
       <TableContainer component={Paper}>
         <Table>

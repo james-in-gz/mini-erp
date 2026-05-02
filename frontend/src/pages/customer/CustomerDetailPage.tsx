@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, CircularProgress } from "@mui/material";
+import { CircularProgress, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import CustomerInfo from "@/components/customer/CustomerInfo";
@@ -34,18 +34,18 @@ export default function CustomerDetailPage() {
   if (loading || !data) return <CircularProgress />;
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+      <Box>
         <CustomerInfo customer={data.customer} />
-      </Grid>
+      </Box>
 
-      <Grid item xs={12} md={6}>
+      <Box>
         <FollowUpPanel data={data} onSubmit={handleAddNote} />
-      </Grid>
+      </Box>
 
-      <Grid item xs={12}>
+      <Box sx={{ gridColumn: { xs: '1 / -1', md: '1 / -1' } }}>
         <NotesTimeline notes={data.notes} />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }

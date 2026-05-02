@@ -1,11 +1,12 @@
 package service
 
 import (
-	"errors"
-	"gorm.io/gorm"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"errors"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type CreateCustomerInput struct {
@@ -17,17 +18,19 @@ type CreateCustomerInput struct {
 }
 
 func CreateCustomer(input CreateCustomerInput) error {
-	existing, err := repository.GetCustomerByPhone(input.Phone)
+	_, err := repository.GetCustomerByPhone(input.Phone)
 
-	if err == nil && existing != nil {
+	if err == nil {
+		// found
 		return errors.New("customer already exists")
 	}
 
-	// 如果是其他错误（不是未找到）
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		// real DB error
 		return err
 	}
 
+	// not found → safe to create
 	customer := model.Customer{
 		Name:    input.Name,
 		Phone:   input.Phone,
@@ -49,7 +52,7 @@ type ListCustomersInput struct {
 }
 
 type ListCustomersOutput struct {
-	Total int64           `json:"total"`
+	Total int64            `json:"total"`
 	List  []model.Customer `json:"list"`
 }
 
@@ -76,11 +79,11 @@ func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
 }
 
 type CustomerDetailOutput struct {
-	Customer         *model.Customer      `json:"customer"`
-	Notes            []model.CustomerNote `json:"notes"`
-	LatestNote       *model.CustomerNote  `json:"latest_note"`
-	NextFollowUpAt   *time.Time           `json:"next_follow_up_at"`
-	IsOverdue        bool                 `json:"is_overdue"`
+	Customer       *model.Customer      `json:"customer"`
+	Notes          []model.CustomerNote `json:"notes"`
+	LatestNote     *model.CustomerNote  `json:"latest_note"`
+	NextFollowUpAt *time.Time           `json:"next_follow_up_at"`
+	IsOverdue      bool                 `json:"is_overdue"`
 }
 
 func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, error) {
@@ -96,7 +99,7 @@ func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, er
 	}
 
 	// 2️⃣ 获取 notes
-	notes, _ := repository.ListCustomerNotesWithPagination(customerID,20,0)
+	notes, _ := repository.ListCustomerNotesWithPagination(customerID, 20, 0)
 
 	// 3️⃣ 最新 note
 	latestNote, _ := repository.GetLatestCustomerNote(customerID)

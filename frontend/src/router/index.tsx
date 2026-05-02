@@ -4,6 +4,7 @@ import HomePage from "../pages/HomePage";
 import Orders from "../pages/OrderPage";
 import CustomerDetailPage from "../pages/customer/CustomerDetailPage";
 import CustomerListPage from "@/pages/customer/CustomerListPage";
+import CreateCustomerPage from "@/pages/customer/CreateCustomerPage";
 import { getToken } from "../utils/auth";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -31,10 +32,15 @@ export default function Router() {
         </PrivateRoute>
       } />
       <Route path="/customers" element={
-      <PrivateRoute>
+        <PrivateRoute>
           <CustomerListPage />
         </PrivateRoute>
       } />
+
+      <Route path="/customers/create" element={
+        <PrivateRoute>
+          <CreateCustomerPage />
+        </PrivateRoute>} />
     </Routes>
   );
 }

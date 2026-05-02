@@ -1,5 +1,5 @@
 import request from "./request";
-import { CustomerDetail } from "@/types/customer";
+import { Customer, CustomerDetail } from "@/types/customer";
 
 export const getCustomerDetail = async (id: number) => {
   const res = await request.get<CustomerDetail>(`/customers/${id}`);
@@ -23,4 +23,12 @@ export const getCustomers = async (page = 1, pageSize = 10) => {
     `/customers?page=${page}&page_size=${pageSize}`
   );
   return res.data;
+};
+
+export const createCustomer = async (data: {
+  name: string;
+  phone: string;
+  source?: string;
+}) => {
+  return request.post("/customers", data);
 };

@@ -15,7 +15,7 @@ export default function CustomerInfo({ customer }: Props) {
           {customer.phone}
         </Typography>
 
-        <Stack direction="row" spacing={1} mt={1}>
+        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
           <Chip label={customer.status} color="primary" />
           <Chip label={customer.source || "unknown"} />
         </Stack>
