@@ -31,5 +31,5 @@ func CreateCustomerNote(input CreateCustomerNoteInput) error {
 }
 
 func ListCustomerNotes(customerID uint) ([]model.CustomerNote, error) {
-	return repository.ListCustomerNotes(customerID)
+	return repository.ListCustomerNotes(customerID,0,0)
 }
