@@ -108,3 +108,24 @@ func ListTodayFollowUps(c *gin.Context) {
 		"list": customers,
 	})
 }
+
+func GetCustomerDetail(c *gin.Context) {
+	idStr := c.Param("id")
+	customerID := parseUint(idStr)
+
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID := userIDVal.(uint)
+
+	result, err := service.GetCustomerDetail(customerID, userID)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
