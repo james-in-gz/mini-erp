@@ -73,3 +73,44 @@ func ListCustomers(input ListCustomersInput) (*ListCustomersOutput, error) {
 func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
 	return repository.ListTodayFollowUps(ownerID)
 }
+
+type CustomerDetailOutput struct {
+	Customer         *model.Customer      `json:"customer"`
+	Notes            []model.CustomerNote `json:"notes"`
+	LatestNote       *model.CustomerNote  `json:"latest_note"`
+	NextFollowUpAt   *time.Time           `json:"next_follow_up_at"`
+	IsOverdue        bool                 `json:"is_overdue"`
+}
+
+func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, error) {
+	// 1️⃣ 获取客户
+	customer, err := repository.GetCustomerByID(customerID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 🔥 私域限制（必须做）
+	if customer.OwnerID != ownerID {
+		return nil, errors.New("no permission")
+	}
+
+	// 2️⃣ 获取 notes
+	notes, _ := repository.ListCustomerNotes(customerID)
+
+	// 3️⃣ 最新 note
+	latestNote, _ := repository.GetLatestCustomerNote(customerID)
+
+	// 4️⃣ 是否 overdue
+	isOverdue := false
+	if customer.NextFollowUpAt != nil {
+		isOverdue = customer.NextFollowUpAt.Before(time.Now())
+	}
+
+	return &CustomerDetailOutput{
+		Customer:       customer,
+		Notes:          notes,
+		LatestNote:     latestNote,
+		NextFollowUpAt: customer.NextFollowUpAt,
+		IsOverdue:      isOverdue,
+	}, nil
+}
