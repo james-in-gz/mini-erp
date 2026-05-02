@@ -25,7 +25,7 @@ func Login(username, password string) (string, error) {
 	}
 
 	// 4️⃣ 生成 token
-	token, err := utils.GenerateToken(user.ID)
+	token, err := utils.GenerateToken(user.ID, user.Role)
 	if err != nil {
 		return "", err
 	}

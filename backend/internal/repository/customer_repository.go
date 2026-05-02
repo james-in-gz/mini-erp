@@ -3,6 +3,7 @@ package repository
 import (
 	"backend/internal/database"
 	"backend/internal/model"
+	"time"
 )
 
 func CreateCustomer(customer *model.Customer) error {

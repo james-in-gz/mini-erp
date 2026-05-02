@@ -1,4 +1,4 @@
-package handler
+package user
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"required"`

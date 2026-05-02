@@ -5,8 +5,6 @@ import "backend/internal/model"
 func AutoMigrate() {
 	DB.AutoMigrate(
 		&model.User{},
-		&model.Role{},
-		&model.UserRole{},
 
 		&model.Customer{},
 		&model.Tag{},

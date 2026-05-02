@@ -3,6 +3,7 @@ package service
 import (
 	"backend/internal/model"
 	"backend/internal/repository"
+	"time"
 )
 
 type CreateCustomerNoteInput struct {
@@ -31,5 +32,5 @@ func CreateCustomerNote(input CreateCustomerNoteInput) error {
 }
 
 func ListCustomerNotes(customerID uint) ([]model.CustomerNote, error) {
-	return repository.ListCustomerNotes(customerID,0,0)
+	return repository.ListCustomerNotesWithPagination(customerID,0,0)
 }

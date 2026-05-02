@@ -7,6 +7,7 @@ import CustomerListPage from "@/pages/customer/CustomerListPage";
 import { getToken } from "../utils/auth";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
+  console.log("当前token：", getToken());
   return getToken() ? children : <Navigate to="/login" />;
 }
 

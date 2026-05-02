@@ -20,7 +20,7 @@ func ListCustomerNotes(customerID uint) ([]model.CustomerNote, error) {
 	return notes, err
 }
 
-func ListCustomerNotes(customerID uint, limit, offset int) ([]model.CustomerNote, error) {
+func ListCustomerNotesWithPagination(customerID uint, limit, offset int) ([]model.CustomerNote, error) {
     var notes []model.CustomerNote
 
     db := database.DB.

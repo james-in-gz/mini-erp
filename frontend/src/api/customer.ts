@@ -2,7 +2,7 @@ import request from "./request";
 import { CustomerDetail } from "@/types/customer";
 
 export const getCustomerDetail = async (id: number) => {
-  const res = await request.get<CustomerDetail>(`/api/customers/${id}`);
+  const res = await request.get<CustomerDetail>(`/customers/${id}`);
   return res.data;
 };
 
@@ -10,5 +10,17 @@ export const addCustomerNote = async (
   id: number,
   data: { content: string; next_follow_up_at?: string }
 ) => {
-  return request.post(`/api/customers/${id}/notes`, data);
+  return request.post(`/customers/${id}/notes`, data);
+};
+
+export interface CustomerListResponse {
+  total: number;
+  list: Customer[];
+}
+
+export const getCustomers = async (page = 1, pageSize = 10) => {
+  const res = await request.get<CustomerListResponse>(
+    `/customers?page=${page}&page_size=${pageSize}`
+  );
+  return res.data;
 };

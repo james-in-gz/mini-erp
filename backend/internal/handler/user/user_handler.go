@@ -1,9 +1,10 @@
-package handler
+package user
 
 import (
 	"net/http"
 
 	"backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 

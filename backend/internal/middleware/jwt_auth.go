@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ximing/mini-erp/pkg/utils"
+	"backend/pkg/utils"
 )
 
 func JWTAuth() gin.HandlerFunc {

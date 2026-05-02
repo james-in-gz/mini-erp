@@ -2,10 +2,19 @@ package customer
 
 import (
 	"net/http"
+	"strconv"
 
 	"backend/internal/service"
 	"github.com/gin-gonic/gin"
 )
+
+func parseUint(s string) uint {
+	u, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return 0 // or handle error appropriately
+	}
+	return uint(u)
+}
 
 func CreateCustomer(c *gin.Context) {
 	var req CreateCustomerRequest

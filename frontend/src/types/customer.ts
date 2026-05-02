@@ -1,4 +1,4 @@
-export interface Customer {
+export class Customer {
   id: number;
   name: string;
   phone: string;
@@ -7,17 +7,18 @@ export interface Customer {
   next_follow_up_at?: string | null;
 }
 
-export interface CustomerNote {
+export class CustomerNote {
   id: number;
   content: string;
   created_at: string;
   type?: string;
 }
 
-export interface CustomerDetail {
+export class CustomerDetail {
   customer: Customer;
   notes: CustomerNote[];
   latest_note?: CustomerNote;
   next_follow_up_at?: string | null;
   is_overdue: boolean;
 }
+

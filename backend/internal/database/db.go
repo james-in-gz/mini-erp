@@ -5,7 +5,8 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/driver/mysql"
+	// "gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
@@ -14,7 +15,7 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	dsn := "root:password@tcp(127.0.0.1:3306)/oms_crm?charset=utf8mb4&parseTime=True&loc=Local"
+	// dsn := "root:password@tcp(127.0.0.1:3306)/oms_crm?charset=utf8mb4&parseTime=True&loc=Local"
 
 	// 日志模式（开发环境详细，生产简洁）
 	var logMode logger.LogLevel
@@ -24,7 +25,7 @@ func InitDB() {
 		logMode = logger.Warn
 	}
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: false, // 强制复数表名
 		},
