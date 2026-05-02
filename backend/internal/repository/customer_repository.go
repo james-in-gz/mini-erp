@@ -9,6 +9,17 @@ func CreateCustomer(customer *model.Customer) error {
 	return database.DB.Create(customer).Error
 }
 
+func GetCustomerByID(id uint) (*model.Customer, error) {
+	var customer model.Customer
+
+	err := database.DB.First(&customer, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &customer, nil
+}
+
 func GetCustomerByPhone(phone string) (*model.Customer, error) {
 	var customer model.Customer
 
