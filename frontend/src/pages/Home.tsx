@@ -1,8 +1,31 @@
-export default function Home() {
+import { Container, Typography, Button, Stack } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+export default function HomePage() {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <h1>欢迎来到迷你ERP系统</h1>
-      <p>这是一个简单的企业资源计划系统，包含订单管理和用户认证功能。</p>
-    </div>
+    <Container sx={{ mt: 6 }}>
+      <Typography variant="h4" gutterBottom>
+        CRM Dashboard
+      </Typography>
+
+      <Stack spacing={2} sx={{ mt: 4 }}>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/customers")}
+        >
+          Customer List
+        </Button>
+
+        {/* Temporary shortcut (for testing) */}
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/customers/1")}
+        >
+          Go to Customer #1
+        </Button>
+      </Stack>
+    </Container>
   );
 }
