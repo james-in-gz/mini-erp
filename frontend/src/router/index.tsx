@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/LoginPage";
 import HomePage from "../pages/HomePage";
-import Orders from "../pages/OrdersPage";
+import Orders from "../pages/OrderPage";
 import CustomerDetailPage from "../pages/customer/CustomerDetailPage";
 import CustomerListPage from "@/pages/customer/CustomerListPage";
 import { getToken } from "../utils/auth";
