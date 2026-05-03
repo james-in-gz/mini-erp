@@ -9,13 +9,13 @@ type CreateCustomerRequest struct {
 
 type ListCustomersQuery struct {
 	Page     int    `form:"page"`
-	PageSize int    `form:"page_size"`
+	PageSize int    `form:"pageSize"`
 	Status   string `form:"status"`
 	Keyword  string `form:"keyword"`
 }
 
 type CreateCustomerNoteRequest struct {
-	Content        string  `json:"content" binding:"required"`
-	Type           string  `json:"type"` // call / visit / message
-	NextFollowUpAt *string `json:"next_follow_up_at"` // ISO string
+	Content        string  `json:"content,omitempty" binding:"required"`
+	Type           string  `json:"type,omitempty"`           // call / visit / message
+	NextFollowUpAt *string `json:"nextFollowUpAt,omitempty"` // ISO string
 }

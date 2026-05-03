@@ -8,7 +8,7 @@ export const getCustomerDetail = async (id: number) => {
 
 export const addCustomerNote = async (
   id: number,
-  data: { content: string; next_follow_up_at?: string }
+  data: { content: string; nextFollowUpAt : string | null }
 ) => {
   return request.post(`/customers/${id}/notes`, data);
 };
@@ -31,4 +31,8 @@ export const createCustomer = async (data: {
   source?: string;
 }) => {
   return request.post("/customers", data);
+};
+
+export const getTodayFollowUps = async () => {
+  return request.get("/customers/follow-ups/today");
 };

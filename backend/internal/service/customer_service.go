@@ -81,9 +81,9 @@ func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
 type CustomerDetailOutput struct {
 	Customer       *model.Customer      `json:"customer"`
 	Notes          []model.CustomerNote `json:"notes"`
-	LatestNote     *model.CustomerNote  `json:"latest_note"`
-	NextFollowUpAt *time.Time           `json:"next_follow_up_at"`
-	IsOverdue      bool                 `json:"is_overdue"`
+	LatestNote     *model.CustomerNote  `json:"latestNote"`
+	NextFollowUpAt *time.Time           `json:"nextFollowUpAt"`
+	IsOverdue      bool                 `json:"isOverdue"`
 }
 
 func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, error) {

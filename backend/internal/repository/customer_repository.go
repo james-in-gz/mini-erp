@@ -92,3 +92,33 @@ func ListTodayFollowUps(ownerID uint) ([]model.Customer, error) {
 
 	return customers, err
 }
+
+func CountTodayFollowUps(start, end time.Time) (int64, error) {
+	var count int64
+
+	err := database.DB.Model(&model.Customer{}).
+		Where("next_follow_up_at BETWEEN ? AND ?", start, end).
+		Count(&count).Error
+
+	return count, err
+}
+
+func CountOverdue(now time.Time) (int64, error) {
+	var count int64
+
+	err := database.DB.Model(&model.Customer{}).
+		Where("next_follow_up_at < ?", now).
+		Count(&count).Error
+
+	return count, err
+}
+
+func CountDone(end time.Time) (int64, error) {
+	var count int64
+
+	err := database.DB.Model(&model.Customer{}).
+		Where("next_follow_up_at > ?", end).
+		Count(&count).Error
+
+	return count, err
+}

@@ -25,9 +25,9 @@ export default function CustomerDetailPage() {
     fetchData();
   }, [id]);
 
-  const handleAddNote = async (content: string) => {
+  const handleAddNote = async (content: string, nextFollowUpAt: string | null ) => {
     if (!id) return;
-    await addCustomerNote(Number(id), { content });
+    await addCustomerNote(Number(id), { content: content ,nextFollowUpAt: nextFollowUpAt});
     fetchData(); // refresh
   };
 

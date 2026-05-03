@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/internal/database"
+	"backend/internal/handler"
 	"backend/internal/handler/auth"
 	"backend/internal/handler/customer"
 	"backend/internal/handler/user"
@@ -31,6 +32,7 @@ func main() {
 		authGroup.GET("/customers/:id/notes", customer.ListCustomerNotes)
 		authGroup.GET("/customers/follow-ups/today", customer.ListTodayFollowUps)
 		authGroup.GET("/customers/:id", customer.GetCustomerDetail)
+		authGroup.GET("/dashboard", handler.GetDashboard)
 	}
 
 	r.Run(":8080")

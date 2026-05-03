@@ -4,21 +4,21 @@ export interface Customer {
   phone: string;
   status: string;
   source?: string;
-  next_follow_up_at?: string | null;
+  nextFollowUpAt?: string | null;
 }
 
 export interface CustomerNote {
   id: number;
   content: string;
-  created_at: string;
+  createdAt: string;
   type?: string;
 }
 
 export interface CustomerDetail {
   customer: Customer;
   notes: CustomerNote[];
-  latest_note?: CustomerNote;
-  next_follow_up_at?: string | null;
-  is_overdue: boolean;
+  latestNote?: CustomerNote;
+  nextFollowUpAt?: string | null;
+  isOverdue: boolean;
 }
 
