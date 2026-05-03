@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+        "label": "Go: Add Tags (camelCase)",
+        "type": "shell",
+        "command": "$(go env GOPATH)/bin/gomodifytags",
+        "args": [
+            "-file",
+            "${file}",
+            "-all",
+            "-add-tags",
+            "json,form",
+            "-transform",
+            "camelcase",
+            "-w"
+        ],
+        "problemMatcher": []
+    }
+]
+}
