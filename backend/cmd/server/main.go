@@ -27,11 +27,13 @@ func main() {
 		authGroup.POST("/users", middleware.AdminOnly(), user.CreateUser)
 		authGroup.GET("/me", auth.MeHandler)
 		authGroup.POST("/customers", customer.CreateCustomer)
+		authGroup.PUT("/customers/:id/status", customer.UpdateCustomerStatus)
 		authGroup.GET("/customers", customer.ListCustomers)
 		authGroup.POST("/customers/:id/notes", customer.CreateCustomerNote)
 		authGroup.GET("/customers/:id/notes", customer.ListCustomerNotes)
-		authGroup.GET("/customers/follow-ups/today", customer.ListTodayFollowUps)
+		authGroup.GET("/customers/follow-ups", customer.GetFollowUps)
 		authGroup.GET("/customers/:id", customer.GetCustomerDetail)
+		authGroup.PUT("/customers/:id", customer.UpdateCustomerBaseInfo)
 		authGroup.GET("/dashboard", handler.GetDashboard)
 	}
 

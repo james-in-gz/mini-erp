@@ -3,18 +3,21 @@ package model
 import "time"
 
 type Customer struct {
-	ID    uint   `gorm:"primaryKey" json:"id" form:"id"`
-	Name  string `gorm:"size:255" json:"name" form:"name"`
-	Phone string `gorm:"size:50;uniqueIndex" json:"phone" form:"phone"`
-	Email string `gorm:"size:100" json:"email" form:"email"`
+	ID     uint   `gorm:"primaryKey" json:"id" form:"id"`
+	Name   string `gorm:"size:255" json:"name" form:"name"`
+	Phone  string `gorm:"size:50;uniqueIndex" json:"phone" form:"phone"`
+	Email  string `gorm:"size:100" json:"email" form:"email"`
+	Wechat string `gorm:"size:50" json:"wechat" form:"wechat"`
 
-	Source string `gorm:"size:100" json:"source" form:"source"`
-	Level  string `gorm:"size:50" json:"level" form:"level"`
-	Status string `gorm:"size:50;index" json:"status" form:"status"`
+	Entry string `gorm:"size:100" json:"entry" form:"entry"` // 门店1，属于哪个业务微信号入口
+
+	Source string `gorm:"size:100" json:"source" form:"source"`      //客户来源：朋友圈、线下门店、活动拉新、广告、公众号等
+	Level  string `gorm:"size:50" json:"level" form:"level"`         //vip normal potential
+	Status string `gorm:"size:50;index" json:"status" form:"status"` // new contacted in_progress won lost
 
 	NextFollowUpAt *time.Time `gorm:"index" json:"nextFollowUpAt" form:"nextFollowUpAt"`
 
-	OwnerID uint `gorm:"index" json:"ownerID" form:"ownerID"`
+	OwnerID uint `gorm:"index" json:"ownerID" form:"ownerID"` // 客户归属的员工ID
 
 	CreatedAt time.Time `json:"createdAt" form:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt"`

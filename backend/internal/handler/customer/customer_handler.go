@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"backend/internal/dto"
 	"backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -137,4 +139,58 @@ func GetCustomerDetail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+func GetFollowUps(c *gin.Context) {
+	userID := c.GetUint("userID") // 你登录中间件里设置的
+
+	data, err := service.GetFollowUps(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, data)
+}
+
+func UpdateCustomerStatus(c *gin.Context) {
+	id := c.Param("id")
+
+	var req struct {
+		Status string `json:"status"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
+
+	err := service.UpdateCustomerStatus(id, req.Status)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "ok"})
+}
+
+func UpdateCustomerBaseInfo(c *gin.Context) {
+	id := c.Param("id")
+
+	var req dto.UpdateCustomerRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
+
+	err := service.UpdateCustomerBaseInfo(id, req)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "ok"})
 }

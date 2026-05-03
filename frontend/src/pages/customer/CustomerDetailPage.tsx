@@ -36,7 +36,7 @@ export default function CustomerDetailPage() {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
       <Box>
-        <CustomerInfo customer={data.customer} />
+        <CustomerInfo customer={data.customer} onUpdated={fetchData}/>
       </Box>
 
       <Box>

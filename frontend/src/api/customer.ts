@@ -8,7 +8,7 @@ export const getCustomerDetail = async (id: number) => {
 
 export const addCustomerNote = async (
   id: number,
-  data: { content: string; nextFollowUpAt : string | null }
+  data: { content: string; nextFollowUpAt: string | null }
 ) => {
   return request.post(`/customers/${id}/notes`, data);
 };
@@ -33,6 +33,18 @@ export const createCustomer = async (data: {
   return request.post("/customers", data);
 };
 
-export const getTodayFollowUps = async () => {
-  return request.get("/customers/follow-ups/today");
+export async function updateCustomerBaseInfo(id: number, data: any) {
+  return request.put(`/customers/${id}`, data);
+}
+
+export async function updateCustomerStatus(
+  id: number,
+  data: { status: string }
+) {
+  return request.put(`/customers/${id}/status`, data);
+}
+
+export const getFollowUps = async () => {
+  const res = await request.get("/customers/follow-ups");
+  return res.data;
 };

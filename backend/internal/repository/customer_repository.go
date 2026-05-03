@@ -2,12 +2,19 @@ package repository
 
 import (
 	"backend/internal/database"
+	"backend/internal/dto"
 	"backend/internal/model"
 	"time"
 )
 
 func CreateCustomer(customer *model.Customer) error {
 	return database.DB.Create(customer).Error
+}
+
+func UpdateCustomerStatus(id string, status string) error {
+	return database.DB.Model(&model.Customer{}).
+		Where("id = ?", id).
+		Update("status", status).Error
 }
 
 func GetCustomerByID(id uint) (*model.Customer, error) {
@@ -121,4 +128,31 @@ func CountDone(end time.Time) (int64, error) {
 		Count(&count).Error
 
 	return count, err
+}
+
+func ListCustomersWithFollowUp(ownerID uint) ([]model.Customer, error) {
+	var customers []model.Customer
+
+	err := database.DB.
+		Where("owner_id = ?", ownerID).
+		Where("next_follow_up_at IS NOT NULL").
+		Where("status IN ?", []string{"interested", "negotiating"}).
+		Order("next_follow_up_at ASC").
+		Find(&customers).Error
+
+	return customers, err
+}
+
+func UpdateCustomerBaseInfo(id string, req dto.UpdateCustomerRequest) error {
+
+	return database.DB.Model(&model.Customer{}).
+		Where("id = ?", id).
+		Updates(map[string]interface{}{
+			"name":   req.Name,
+			"phone":  req.Phone,
+			"wechat": req.Wechat,
+			"source": req.Source,
+			"entry":  req.Entry,
+			"status": req.Status,
+		}).Error
 }

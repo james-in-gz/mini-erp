@@ -1,6 +1,7 @@
 package service
 
 import (
+	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/repository"
 	"errors"
@@ -117,4 +118,60 @@ func GetCustomerDetail(customerID uint, ownerID uint) (*CustomerDetailOutput, er
 		NextFollowUpAt: customer.NextFollowUpAt,
 		IsOverdue:      isOverdue,
 	}, nil
+}
+
+type FollowUpGroup struct {
+	Overdue  []model.Customer `json:"overdue"`
+	Today    []model.Customer `json:"today"`
+	Upcoming []model.Customer `json:"upcoming"`
+}
+
+func GetFollowUps(ownerID uint) (FollowUpGroup, error) {
+	customers, err := repository.ListCustomersWithFollowUp(ownerID)
+	if err != nil {
+		return FollowUpGroup{}, err
+	}
+
+	loc, _ := time.LoadLocation("Asia/Shanghai") // 统一业务时区
+	now := time.Now().In(loc)
+
+	todayStart := time.Date(
+		now.Year(), now.Month(), now.Day(),
+		0, 0, 0, 0,
+		loc,
+	)
+	todayEnd := todayStart.Add(24 * time.Hour)
+
+	var result = FollowUpGroup{
+		Overdue:  []model.Customer{},
+		Today:    []model.Customer{},
+		Upcoming: []model.Customer{},
+	}
+
+	for _, c := range customers {
+		if c.NextFollowUpAt == nil {
+			continue
+		}
+
+		next := c.NextFollowUpAt.In(loc)
+
+		// ⭐ 推荐逻辑（更符合 CRM）
+		if next.Before(todayStart) {
+			result.Overdue = append(result.Overdue, c)
+		} else if next.Before(todayEnd) {
+			result.Today = append(result.Today, c)
+		} else {
+			result.Upcoming = append(result.Upcoming, c)
+		}
+	}
+
+	return result, nil
+}
+
+func UpdateCustomerStatus(id string, status string) error {
+	return repository.UpdateCustomerStatus(id, status)
+}
+
+func UpdateCustomerBaseInfo(id string, req dto.UpdateCustomerRequest) error {
+	return repository.UpdateCustomerBaseInfo(id, req)
 }
