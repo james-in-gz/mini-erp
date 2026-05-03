@@ -1,92 +1,85 @@
 import { useEffect, useState } from "react";
 import {
-  Paper,
-  Typography,
   Box,
+  Card,
+  CardContent,
+  Typography,
+  Stack,
+  CircularProgress,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 
-import { useNavigate } from "react-router-dom";
-import getDashboard from "@/api/dashboard";
+import  getDashboard  from "@/api/dashboard";
+
+type Dashboard = {
+  today: {
+    overdue: number;
+    today: number;
+    upcoming: number;
+  };
+  pipeline: { status: string; count: number }[];
+  sources: { source: string; count: number }[];
+  owners: { name: string; count: number }[];
+};
 
 export default function DashboardPage() {
-  const [data, setData] = useState({
-    today: 0,
-    done: 0,
-    overdue: 0,
-  });
-
-  const navigate = useNavigate();
+  const [data, setData] = useState<Dashboard | null>(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await getDashboard();
+      setData(res);
+    };
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    const res = await getDashboard();
-    setData(res.data);
-  };
-
-  const Card = ({
-    title,
-    value,
-    color,
-    onClick,
-  }: any) => (
-    <Paper
-      onClick={onClick}
-      sx={{
-        p: 3,
-        cursor: "pointer",
-        borderLeft: `6px solid ${color}`,
-      }}
-    >
-      <Typography variant="subtitle2">{title}</Typography>
-      <Typography variant="h4">{value}</Typography>
-    </Paper>
-  );
+  if (!data) return <CircularProgress />;
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Dashboard
-      </Typography>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography color="error">Overdue</Typography>
+              <Typography variant="h5">{data.today.overdue}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-      <Box
-        sx={{
-          display: "grid",
-          gap: 2,
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(3, minmax(0, 1fr))",
-          },
-        }}
-      >
-        <Box>
-          <Card
-            title="Today Follow-ups"
-            value={data.today}
-            color="#1976d2"
-            onClick={() => navigate("/follow-ups")}
-          />
-        </Box>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography color="warning.main">Today</Typography>
+              <Typography variant="h5">{data.today.today}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Box>
-          <Card
-            title="Completed"
-            value={data.done}
-            color="#2e7d32"
-          />
-        </Box>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography>Upcoming</Typography>
+              <Typography variant="h5">{data.today.upcoming}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-        <Box>
-          <Card
-            title="Overdue"
-            value={data.overdue}
-            color="#d32f2f"
-            onClick={() => navigate("/follow-ups")}
-          />
-        </Box>
-      </Box>
+      {/* Pipeline */}
+      <Card sx={{ mt: 3 }}>
+        <CardContent>
+          <Typography variant="h6">Pipeline</Typography>
+          <Stack sx={{ direction: "row", spacing: 2, mt: 2 }}>
+            {data.pipeline.map((p) => (
+              <Box key={p.status}>
+                <Typography>{p.status}</Typography>
+                <Typography variant="h6">{p.count}</Typography>
+              </Box>
+            ))}
+          </Stack>
+        </CardContent>
+      </Card>
     </Box>
   );
 }

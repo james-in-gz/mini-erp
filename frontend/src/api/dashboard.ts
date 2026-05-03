@@ -1,7 +1,7 @@
 import request from "./request";
 
-const getDashboard = () => {
-  return request.get("/dashboard");
+export const getDashboard = async () => {
+  return (await request.get("/dashboard")).data;
 };
 
 export default getDashboard;

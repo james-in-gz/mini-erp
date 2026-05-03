@@ -7,7 +7,8 @@ import (
 )
 
 func GetDashboard(c *gin.Context) {
-	data, err := service.GetDashboard()
+	userID := c.GetUint("userID")
+	data, err := service.GetDashboard(userID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

@@ -45,6 +45,14 @@ export default function MainLayout() {
         />
       </ListItemButton>
 
+      <ListItemButton onClick={() => handleNavigate("/pipeline")}>
+        <PeopleIcon />
+        <ListItemText
+          primary="Pipeline"
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
+
       <ListItemButton onClick={() => handleNavigate("/customers")}>
         <PeopleIcon />
         <ListItemText

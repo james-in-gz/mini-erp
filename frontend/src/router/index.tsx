@@ -8,6 +8,8 @@ import CreateCustomerPage from "@/pages/customer/CreateCustomerPage";
 import FollowUpPage from "@/pages/customer/FollowUpPage";
 import { getToken } from "../utils/auth";
 import MainLayout from "@/layout/MainLayout";
+import DashboardPage from "@/pages/DashboardPage";
+import PipelinePage from "@/pages/customer/PipelinePage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = getToken();
@@ -29,10 +31,10 @@ export default function Router() {
         }
       >
         {/* 默认首页 */}
-        <Route path="/" element={<FollowUpPage />} />
+        <Route path="/" element={<DashboardPage />} />
 
         <Route path="/orders" element={<Orders />} />
-
+        <Route path="/pipeline" element={<PipelinePage />} />
         <Route path="/customers" element={<CustomerListPage />} />
         <Route path="/customers/create" element={<CreateCustomerPage />} />
         <Route path="/customers/:id" element={<CustomerDetailPage />} />

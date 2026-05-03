@@ -1,40 +1,46 @@
 package service
 
 import (
+	"backend/internal/dto"
 	"backend/internal/repository"
-	"time"
 )
 
-type DashboardData struct {
-	Today   int64 `json:"today"`
-	Done    int64 `json:"done"`
-	Overdue int64 `json:"overdue"`
-}
+func GetDashboard(ownerID uint) (dto.DashboardResponse, error) {
+	var res dto.DashboardResponse
 
-func GetDashboard() (*DashboardData, error) {
-	now := time.Now()
+	// 1️⃣ Follow-up（你已有）
+	fu, _ := GetFollowUps(ownerID)
+	res.Today.Overdue = len(fu.Overdue)
+	res.Today.Today = len(fu.Today)
+	res.Today.Upcoming = len(fu.Upcoming)
 
-	start := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	end := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
-
-	today, err := repository.CountTodayFollowUps(start, end)
-	if err != nil {
-		return nil, err
+	// 2️⃣ Pipeline
+	pipeline, _ := repository.GetPipelineStats()
+	for _, p := range pipeline {
+		res.Pipeline = append(res.Pipeline, dto.PipelineItem{
+			Status: p.Status,
+			Count:  p.Count,
+		})
 	}
 
-	overdue, err := repository.CountOverdue(now)
-	if err != nil {
-		return nil, err
+	// 3️⃣ Source
+	sources, _ := repository.GetSourceStats()
+	for _, s := range sources {
+		res.Sources = append(res.Sources, dto.SourceStat{
+			Source: s.Source,
+			Count:  s.Count,
+		})
 	}
 
-	done, err := repository.CountDone(end)
-	if err != nil {
-		return nil, err
+	// 4️⃣ Owner
+	owners, _ := repository.GetOwnerStats()
+	for _, o := range owners {
+		res.Owners = append(res.Owners, dto.OwnerStat{
+			Name:    o.Name,
+			Count:   o.Count,
+			Revenue: o.Revenue,
+		})
 	}
 
-	return &DashboardData{
-		Today:   today,
-		Done:    done,
-		Overdue: overdue,
-	}, nil
+	return res, nil
 }
