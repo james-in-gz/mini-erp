@@ -7,6 +7,7 @@ import (
 	"backend/internal/handler/customer"
 	"backend/internal/handler/user"
 	"backend/internal/middleware"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +15,11 @@ import (
 func main() {
 
 	database.InitDB()
+
+	if os.Getenv("ENV") == "init" {
+		database.AutoMigrate()
+		database.Seed()
+	}
 
 	r := gin.Default()
 
