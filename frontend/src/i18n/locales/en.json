@@ -1,0 +1,77 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "loading": "Loading",
+    "save-success": "Saved successfully",
+    "save-failed": "Failed to save",
+    "delete": "Delete",
+    "search": "Search",
+    "add": "Add",
+    "create": "Create",
+    "update": "Update",
+    "submit": "Submit"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "pipeline": "Pipeline",
+    "customers": "Customers",
+    "followups": "Follow-ups",
+    "logout": "Logout"
+  },
+  "status": {
+    "new": "New",
+    "interested": "Interested",
+    "negotiating": "Negotiating",
+    "won": "Won",
+    "lost": "Lost",
+    "overdue": "Overdue",
+    "today": "Today",
+    "upcoming": "Upcoming"
+  },
+  "customer": {
+    "name": "Name",
+    "phone": "Phone",
+    "wechat": "WeChat",
+    "source": "Source",
+    "entry": "Entry",
+    "status": "Status",
+    "list": "Customers",
+    "createNew": "Create Customer",
+    "detail": "Customer Detail"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "overdue": "Overdue",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "pipeline": "Pipeline",
+    "sources": "Sources",
+    "owners": "Owners"
+  },
+  "followup": {
+    "title": "Follow-up",
+    "nextFollowupTime": "Next Follow-up Time",
+    "notScheduled": "Not scheduled",
+    "overdue": "⚠ Overdue",
+    "addNote": "Add Note",
+    "notes": "Notes",
+    "timeline": "Timeline"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Login",
+    "loginFailed": "Login failed"
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "dragToMove": "Drag to move"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English"
+  }
+}

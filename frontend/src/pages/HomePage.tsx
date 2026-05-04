@@ -1,13 +1,15 @@
 import { Container, Typography, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
     <Container sx={{ mt: 6 }}>
       <Typography variant="h4" gutterBottom>
-        CRM Dashboard
+        {t("dashboard.title")}
       </Typography>
 
       <Stack spacing={2} sx={{ mt: 4 }}>
@@ -15,7 +17,7 @@ export default function HomePage() {
           variant="contained"
           onClick={() => navigate("/customers")}
         >
-          Customer List
+          {t("menu.customers")}
         </Button>
 
         {/* Temporary shortcut (for testing) */}

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { getFollowUps } from "@/api/customer";
 import { Customer } from "@/types/customer";
@@ -23,6 +24,7 @@ interface FollowUpGroup {
 }
 
 export default function FollowUpPage() {
+  const { t } = useTranslation();
   const [data, setData] = useState<FollowUpGroup>({
     overdue: [],
     today: [],
@@ -58,7 +60,7 @@ export default function FollowUpPage() {
 
   const renderList = (list: Customer[], isOverdue = false) => {
     if (list.length === 0) {
-      return <Typography sx={{ mt: 2 }}>No data</Typography>;
+      return <Typography sx={{ mt: 2 }}>{t("common.loading")}</Typography>;
     }
 
     return list.map((c) => (
@@ -84,8 +86,8 @@ export default function FollowUpPage() {
             Next:{" "}
             {c.nextFollowUpAt
               ? dayjs(c.nextFollowUpAt).format("YYYY-MM-DD HH:mm")
-              : "Not set"}
-            {isOverdue && " (Overdue)"}
+              : t("followup.notScheduled")}
+            {isOverdue && ` (${t("status.overdue")})`}
           </Typography>
 
           {/* 操作区 */}
@@ -95,7 +97,7 @@ export default function FollowUpPage() {
               variant="contained"
               onClick={() => navigate(`/customers/${c.id}`)}
             >
-              Follow Up
+              {t("followup.title")}
             </Button>
 
             <Button
@@ -126,21 +128,21 @@ export default function FollowUpPage() {
       >
         <Card>
           <CardContent>
-            <Typography color="error">Overdue</Typography>
+            <Typography color="error">{t("status.overdue")}</Typography>
             <Typography variant="h5">{data.overdue.length}</Typography>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent>
-            <Typography color="warning.main">Today</Typography>
+            <Typography color="warning.main">{t("status.today")}</Typography>
             <Typography variant="h5">{data.today.length}</Typography>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent>
-            <Typography>Upcoming</Typography>
+            <Typography>{t("status.upcoming")}</Typography>
             <Typography variant="h5">{data.upcoming.length}</Typography>
           </CardContent>
         </Card>
@@ -148,9 +150,9 @@ export default function FollowUpPage() {
 
       {/* Tabs */}
       <Tabs value={tab} onChange={(_, v) => setTab(v)}>
-        <Tab label={`Overdue (${data.overdue.length})`} />
-        <Tab label={`Today (${data.today.length})`} />
-        <Tab label={`Upcoming (${data.upcoming.length})`} />
+        <Tab label={`${t("status.overdue")} (${data.overdue.length})`} />
+        <Tab label={`${t("status.today")} (${data.today.length})`} />
+        <Tab label={`${t("status.upcoming")} (${data.upcoming.length})`} />
       </Tabs>
 
       {/* 内容 */}

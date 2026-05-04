@@ -8,6 +8,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { useTranslation } from "react-i18next";
 
 import  getDashboard  from "@/api/dashboard";
 
@@ -23,6 +24,7 @@ type Dashboard = {
 };
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [data, setData] = useState<Dashboard | null>(null);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function DashboardPage() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography color="error">Overdue</Typography>
+              <Typography color="error">{t("status.overdue")}</Typography>
               <Typography variant="h5">{data.today.overdue}</Typography>
             </CardContent>
           </Card>
@@ -50,7 +52,7 @@ export default function DashboardPage() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography color="warning.main">Today</Typography>
+              <Typography color="warning.main">{t("status.today")}</Typography>
               <Typography variant="h5">{data.today.today}</Typography>
             </CardContent>
           </Card>
@@ -59,7 +61,7 @@ export default function DashboardPage() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography>Upcoming</Typography>
+              <Typography>{t("status.upcoming")}</Typography>
               <Typography variant="h5">{data.today.upcoming}</Typography>
             </CardContent>
           </Card>
@@ -69,7 +71,7 @@ export default function DashboardPage() {
       {/* Pipeline */}
       <Card sx={{ mt: 3 }}>
         <CardContent>
-          <Typography variant="h6">Pipeline</Typography>
+          <Typography variant="h6">{t("dashboard.pipeline")}</Typography>
           <Stack sx={{ direction: "row", spacing: 2, mt: 2 }}>
             {data.pipeline.map((p) => (
               <Box key={p.status}>

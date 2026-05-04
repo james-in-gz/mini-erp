@@ -8,6 +8,8 @@ import {
   AppBar,
   Toolbar,
   Typography,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
@@ -15,12 +17,14 @@ import EventIcon from "@mui/icons-material/Event";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 200;
 const collapsedWidth = 60;
 
 export default function MainLayout() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   // 手机 drawer
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -35,12 +39,17 @@ export default function MainLayout() {
     setMobileOpen(false); // 手机点击自动关闭
   };
 
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+  };
+
   const menu = (
     <List>
       <ListItemButton onClick={() => handleNavigate("/")}>
         <DashboardIcon />
         <ListItemText
-          primary="Dashboard"
+          primary={t("menu.dashboard")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
@@ -48,7 +57,7 @@ export default function MainLayout() {
       <ListItemButton onClick={() => handleNavigate("/pipeline")}>
         <PeopleIcon />
         <ListItemText
-          primary="Pipeline"
+          primary={t("menu.pipeline")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
@@ -56,7 +65,7 @@ export default function MainLayout() {
       <ListItemButton onClick={() => handleNavigate("/customers")}>
         <PeopleIcon />
         <ListItemText
-          primary="Customers"
+          primary={t("menu.customers")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
@@ -64,7 +73,7 @@ export default function MainLayout() {
       <ListItemButton onClick={() => handleNavigate("/follow-ups")}>
         <EventIcon />
         <ListItemText
-          primary="Follow-ups"
+          primary={t("menu.followups")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
@@ -106,7 +115,31 @@ export default function MainLayout() {
             <MenuIcon />
           </IconButton>
 
-          <Typography variant="h6">CRM</Typography>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            CRM
+          </Typography>
+
+          {/* 语言切换 */}
+          <Select
+            value={i18n.language}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            sx={{
+              color: "white",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "white",
+              },
+            }}
+            size="small"
+          >
+            <MenuItem value="zh">{t("language.zh")}</MenuItem>
+            <MenuItem value="en">{t("language.en")}</MenuItem>
+          </Select>
         </Toolbar>
       </AppBar>
 

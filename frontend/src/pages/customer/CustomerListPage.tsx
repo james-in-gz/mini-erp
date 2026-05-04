@@ -15,11 +15,13 @@ import {
   TablePagination,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { getCustomers } from "@/api/customer";
 import { Customer } from "@/types/customer";
 
 export default function CustomerListPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -52,13 +54,13 @@ export default function CustomerListPage() {
       <Box
         sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
       >
-        <Typography variant="h5">Customers</Typography>
+        <Typography variant="h5">{t("customer.list")}</Typography>
 
         <Button
           variant="contained"
           onClick={() => navigate("/customers/create")}
         >
-          + New Customer
+          + {t("customer.createNew")}
         </Button>
       </Box>
 
@@ -66,9 +68,9 @@ export default function CustomerListPage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>{t("customer.name")}</TableCell>
+              <TableCell>{t("customer.phone")}</TableCell>
+              <TableCell>{t("customer.status")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -82,7 +84,7 @@ export default function CustomerListPage() {
               >
                 <TableCell>{c.name}</TableCell>
                 <TableCell>{c.phone}</TableCell>
-                <TableCell>{c.status}</TableCell>
+                <TableCell>{t(`status.${c.status}`)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

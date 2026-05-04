@@ -1,0 +1,77 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "loading": "加载中",
+    "save-success": "保存成功",
+    "save-failed": "保存失败",
+    "delete": "删除",
+    "search": "搜索",
+    "add": "添加",
+    "create": "新建",
+    "update": "更新",
+    "submit": "提交"
+  },
+  "menu": {
+    "dashboard": "仪表盘",
+    "pipeline": "销售漏斗",
+    "customers": "客户",
+    "followups": "跟进",
+    "logout": "退出登录"
+  },
+  "status": {
+    "new": "新客户",
+    "interested": "感兴趣",
+    "negotiating": "谈判中",
+    "won": "已成交",
+    "lost": "已流失",
+    "overdue": "逾期",
+    "today": "今天",
+    "upcoming": "即将到来"
+  },
+  "customer": {
+    "name": "姓名",
+    "phone": "电话",
+    "wechat": "微信",
+    "source": "来源",
+    "entry": "入口",
+    "status": "状态",
+    "list": "客户列表",
+    "createNew": "新建客户",
+    "detail": "客户详情"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "overdue": "逾期跟进",
+    "today": "今天跟进",
+    "upcoming": "即将跟进",
+    "pipeline": "销售漏斗",
+    "sources": "客户来源",
+    "owners": "销售员"
+  },
+  "followup": {
+    "title": "跟进",
+    "nextFollowupTime": "下次跟进时间",
+    "notScheduled": "未安排",
+    "overdue": "⚠ 已逾期",
+    "addNote": "添加备注",
+    "notes": "备注",
+    "timeline": "时间线"
+  },
+  "login": {
+    "title": "登录",
+    "username": "用户名",
+    "password": "密码",
+    "loginButton": "登录",
+    "loginFailed": "登录失败"
+  },
+  "pipeline": {
+    "title": "销售漏斗",
+    "dragToMove": "拖拽移动"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English"
+  }
+}

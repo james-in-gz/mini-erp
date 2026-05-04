@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 
 import { updateCustomerBaseInfo } from "@/api/customer";
+import { useTranslation } from "react-i18next";
 
 const SOURCE_OPTIONS = ["公众号A", "抖音广告", "转介绍"];
 const ENTRY_OPTIONS = ["销售A微信1", "销售A微信2", "客服号"];
@@ -30,6 +31,7 @@ const STATUS_COLORS: Record<string, any> = {
 export default function CustomerInfo({ customer, onUpdated }: any) {
   const [editing, setEditing] = useState(false);
   const [open, setOpen] = useState(false);
+  const {t} = useTranslation();
 
   const original = {
     name: customer.name,
@@ -65,16 +67,16 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
       <CardContent>
         <Stack spacing={2}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h6">Customer Info</Typography>
+            <Typography variant="h6">{t("customer.name")}</Typography>
 
             {!editing ? (
               <Button size="small" onClick={() => setEditing(true)}>
-                Edit
+                {t("common.edit")}
               </Button>
             ) : (
               <Stack direction="row" spacing={1}>
                 <Button size="small" onClick={handleCancel}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   size="small"
@@ -82,7 +84,7 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
                   onClick={handleSave}
                   disabled={!isChanged}
                 >
-                  Save
+                  {t("common.save")}
                 </Button>
               </Stack>
             )}
@@ -91,43 +93,44 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
           {/* Name */}
           {editing ? (
             <TextField
-              label="Name"
+              label={t("customer.name")}
               size="small"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
             />
           ) : (
-            <Typography>Name: {form.name}</Typography>
+            <Typography>{t("customer.name")}: {form.name}</Typography>
           )}
 
           {/* Phone */}
           {editing ? (
             <TextField
-              label="Phone"
+              label={t("customer.phone")}
               size="small"
               value={form.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
             />
           ) : (
-            <Typography>Phone: {form.phone}</Typography>
+            <Typography>{t("customer.phone")}: {form.phone}</Typography>
           )}
 
           {/* WeChat */}
           {editing ? (
             <TextField
-              label="WeChat"
+              label={t("customer.wechat")}
               size="small"
               value={form.wechat}
               onChange={(e) => handleChange("wechat", e.target.value)}
             />
           ) : (
-            <Typography>WeChat: {form.wechat || "-"}</Typography>
+            <Typography>{t("customer.wechat")}: {form.wechat || "-"}</Typography>
           )}
 
           {/* Source */}
           {editing ? (
             <Select
               size="small"
+              label={t("customer.source")}
               value={form.source}
               onChange={(e) => handleChange("source", e.target.value)}
             >
@@ -138,13 +141,14 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
               ))}
             </Select>
           ) : (
-            <Typography>Source: {form.source || "-"}</Typography>
+            <Typography>{t("customer.source")}: {form.source || "-"}</Typography>
           )}
 
           {/* Entry */}
           {editing ? (
             <Select
               size="small"
+              label={t("customer.entry")}
               value={form.entry}
               onChange={(e) => handleChange("entry", e.target.value)}
             >
@@ -155,25 +159,26 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
               ))}
             </Select>
           ) : (
-            <Typography>Entry: {form.entry || "-"}</Typography>
+            <Typography>{t("customer.entry")}: {form.entry || "-"}</Typography>
           )}
 
           {/* Status */}
           {editing ? (
             <Select
               size="small"
+              label={t("customer.status")}
               value={form.status}
               onChange={(e) => handleChange("status", e.target.value)}
             >
-              <MenuItem value="new">New</MenuItem>
-              <MenuItem value="interested">Interested</MenuItem>
-              <MenuItem value="negotiating">Negotiating</MenuItem>
-              <MenuItem value="won">Won</MenuItem>
-              <MenuItem value="lost">Lost</MenuItem>
+              <MenuItem value="new">{t("status.new")}</MenuItem>
+              <MenuItem value="interested">{t("status.interested")}</MenuItem>
+              <MenuItem value="negotiating">{t("status.negotiating")}</MenuItem>
+              <MenuItem value="won">{t("status.won")}</MenuItem>
+              <MenuItem value="lost">{t("status.lost")}</MenuItem>
             </Select>
           ) : (
             <Chip
-              label={form.status}
+              label={t(`status.${form.status}`)}
               size="small"
               color={STATUS_COLORS[form.status]}
               sx={{
@@ -192,7 +197,7 @@ export default function CustomerInfo({ customer, onUpdated }: any) {
           onClose={() => setOpen(false)}
         >
           <Alert severity="success" variant="filled">
-            Saved successfully
+            {t("common.save-success")}
           </Alert>
         </Snackbar>
       </CardContent>

@@ -8,10 +8,12 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { createCustomer } from "@/api/customer";
 
 export default function CreateCustomerPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -40,26 +42,26 @@ export default function CreateCustomerPage() {
     <Container maxWidth="sm" sx={{ mt: 6 }}>
       <Paper sx={{ p: 4, borderRadius: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Create Customer
+          {t("customer.createNew")}
         </Typography>
 
         <Stack spacing={2} sx={{ mt: 2 }}>
           <TextField
-            label="Name"
+            label={t("customer.name")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             fullWidth
           />
 
           <TextField
-            label="Phone"
+            label={t("customer.phone")}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             fullWidth
           />
 
           <TextField
-            label="Source"
+            label={t("customer.source")}
             value={source}
             onChange={(e) => setSource(e.target.value)}
             fullWidth
@@ -70,7 +72,7 @@ export default function CreateCustomerPage() {
             onClick={handleSubmit}
             disabled={loading}
           >
-            Create
+            {t("common.create")}
           </Button>
         </Stack>
       </Paper>

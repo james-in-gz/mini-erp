@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { useTranslation } from "react-i18next";
 import Column from "@/components/pipeline/Column";
 import { getCustomers, updateCustomerStatus } from "@/api/customer";
 import { Customer } from "@/types/customer";
@@ -8,6 +9,7 @@ import { Customer } from "@/types/customer";
 const STATUSES = ["new", "interested", "negotiating", "won", "lost"];
 
 export default function PipelinePage() {
+  const { t } = useTranslation();
   const [customers, setCustomers] = useState<Customer[]>([]);
 
   useEffect(() => {
