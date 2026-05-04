@@ -60,7 +60,7 @@ export default function FollowUpPage() {
 
   const renderList = (list: Customer[], isOverdue = false) => {
     if (list.length === 0) {
-      return <Typography sx={{ mt: 2 }}>{t("common.loading")}</Typography>;
+      return <Typography sx={{ mt: 2 }}>{t("common.no-data")}</Typography>;
     }
 
     return list.map((c) => (

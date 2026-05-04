@@ -11,7 +11,9 @@
     "add": "添加",
     "create": "新建",
     "update": "更新",
-    "submit": "提交"
+    "submit": "提交",
+    "no-data": "暂无数据",
+    "confirm": "确定吗？"
   },
   "menu": {
     "dashboard": "仪表盘",

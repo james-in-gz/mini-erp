@@ -11,7 +11,9 @@
     "add": "Add",
     "create": "Create",
     "update": "Update",
-    "submit": "Submit"
+    "submit": "Submit",
+    "no-data": "No data",
+    "confirm": "Are you sure?"
   },
   "menu": {
     "dashboard": "Dashboard",
