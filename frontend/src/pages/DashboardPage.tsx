@@ -73,7 +73,7 @@ export default function DashboardPage() {
         <CardContent>
           <Typography variant="h6">{t("dashboard.pipeline")}</Typography>
           <Stack sx={{ direction: "row", spacing: 2, mt: 2 }}>
-            {data.pipeline.map((p) => (
+            {data.pipeline?.map((p) => (
               <Box key={p.status}>
                 <Typography>{p.status}</Typography>
                 <Typography variant="h6">{p.count}</Typography>
