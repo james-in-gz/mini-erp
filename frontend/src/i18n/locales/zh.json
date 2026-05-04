@@ -20,7 +20,9 @@
     "pipeline": "销售漏斗",
     "customers": "客户",
     "followups": "跟进",
-    "logout": "退出登录"
+    "logout": "退出登录",
+    "orders": "订单",
+    "products": "产品"
   },
   "status": {
     "new": "新客户",

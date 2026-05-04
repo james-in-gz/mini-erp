@@ -24,5 +24,7 @@ func AutoMigrate() {
 
 		&model.Payment{},
 		&model.AuditLog{},
+
+		&model.CustomerAddress{},
 	)
 }

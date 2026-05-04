@@ -20,6 +20,7 @@
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.0.4",
     "axios": "^1.15.2",
+    "china-area-data": "^5.0.1",
     "dayjs": "^1.11.20",
     "i18next": "^26.0.8",
     "react": "^19.2.5",

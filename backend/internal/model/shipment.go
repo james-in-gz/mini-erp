@@ -3,28 +3,38 @@ package model
 import "time"
 
 type Shipment struct {
-	ID              uint      `gorm:"primaryKey"`
-	OrderID         uint      `gorm:"index"`
+	ID      uint `gorm:"primaryKey"`
+	OrderID uint
 
-	ShipmentNo      string    `gorm:"size:100;index"`
+	ShipmentNo string
+	Status     string
 
-	Status          string    `gorm:"size:50;index"`
+	// 🚚 物流
+	TrackingNumber string
+	Carrier        string
 
-	DeliveryType    string    `gorm:"size:50"` // express / local
+	// 📍 ⭐ 地址快照（关键）
+	ReceiverName     string
+	ReceiverPhone    string
+	ReceiverProvince string
+	ReceiverCity     string
+	ReceiverDistrict string
+	ReceiverAddress  string
 
-	TrackingNumber  string    `gorm:"size:100"`
-	Carrier         string    `gorm:"size:100"`
+	ShippedAt   *time.Time
+	DeliveredAt *time.Time
 
-	ShippedAt       *time.Time
-	DeliveredAt     *time.Time
-
-	ShipmentItems   []ShipmentItem
+	ShipmentItems []ShipmentItem
 }
 
 type ShipmentItem struct {
-	ID           uint `gorm:"primaryKey"`
-	ShipmentID   uint `gorm:"index"`
-	OrderItemID  uint
+	ID          uint `gorm:"primaryKey"`
+	ShipmentID  uint `gorm:"index"`
+	OrderItemID uint
 
-	Quantity     int
+	ProductID   uint
+	ProductName string
+
+	SKU      string
+	Quantity int
 }

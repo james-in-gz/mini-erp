@@ -20,7 +20,9 @@
     "pipeline": "Pipeline",
     "customers": "Customers",
     "followups": "Follow-ups",
-    "logout": "Logout"
+    "logout": "Logout",
+    "orders": "Orders",
+    "products": "Products"
   },
   "status": {
     "new": "New",

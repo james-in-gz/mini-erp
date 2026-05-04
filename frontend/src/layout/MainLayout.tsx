@@ -77,6 +77,22 @@ export default function MainLayout() {
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
+
+      <ListItemButton onClick={() => handleNavigate("/orders")}>
+        <EventIcon />
+        <ListItemText
+          primary={t("menu.orders")}
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
+
+      <ListItemButton onClick={() => handleNavigate("/products")}>
+        <EventIcon />
+        <ListItemText
+          primary={t("menu.products")}
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
     </List>
   );
 

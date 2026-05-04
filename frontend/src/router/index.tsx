@@ -1,7 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/LoginPage";
-import HomePage from "../pages/HomePage";
-import Orders from "../pages/OrderPage";
 import CustomerDetailPage from "@/pages/customer/CustomerDetailPage";
 import CustomerListPage from "@/pages/customer/CustomerListPage";
 import CreateCustomerPage from "@/pages/customer/CreateCustomerPage";
@@ -10,6 +8,10 @@ import { getToken } from "../utils/auth";
 import MainLayout from "@/layout/MainLayout";
 import DashboardPage from "@/pages/DashboardPage";
 import PipelinePage from "@/pages/customer/PipelinePage";
+import OrderDetailPage from "@/pages/order/OrderDetailPage";
+import OrdersPage from "@/pages/order/OrdersPage";
+import CreateOrderPage from "@/pages/order/CreateOrderPage";
+import ProductPage from "@/pages/product/ProductPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = getToken();
@@ -33,13 +35,16 @@ export default function Router() {
         {/* 默认首页 */}
         <Route path="/" element={<DashboardPage />} />
 
-        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders" element={<OrdersPage />} />
         <Route path="/pipeline" element={<PipelinePage />} />
         <Route path="/customers" element={<CustomerListPage />} />
         <Route path="/customers/create" element={<CreateCustomerPage />} />
         <Route path="/customers/:id" element={<CustomerDetailPage />} />
 
         <Route path="/follow-ups" element={<FollowUpPage />} />
+        <Route path="/order/:id" element={<OrderDetailPage />} />
+        <Route path="/order/create" element={<CreateOrderPage />} />
+        <Route path="/products" element={<ProductPage />} />
       </Route>
     </Routes>
   );

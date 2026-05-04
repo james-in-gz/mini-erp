@@ -8,6 +8,7 @@ import NotesTimeline from "@/components/customer/NotesTimeline";
 
 import { getCustomerDetail, addCustomerNote } from "@/api/customer";
 import { CustomerDetail } from "@/types/customer";
+import CustomerAddressManager from "@/components/customer/CustomerAddressManager";
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
@@ -25,9 +26,9 @@ export default function CustomerDetailPage() {
     fetchData();
   }, [id]);
 
-  const handleAddNote = async (content: string, nextFollowUpAt: string | null ) => {
+  const handleAddNote = async (content: string, nextFollowUpAt: string | null) => {
     if (!id) return;
-    await addCustomerNote(Number(id), { content: content ,nextFollowUpAt: nextFollowUpAt});
+    await addCustomerNote(Number(id), { content: content, nextFollowUpAt: nextFollowUpAt });
     fetchData(); // refresh
   };
 
@@ -36,9 +37,11 @@ export default function CustomerDetailPage() {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
       <Box>
-        <CustomerInfo customer={data.customer} onUpdated={fetchData}/>
+        <CustomerInfo customer={data.customer} onUpdated={fetchData} />
       </Box>
-
+      <Box>
+        <CustomerAddressManager customerId={data.customer.id} />
+      </Box>
       <Box>
         <FollowUpPanel data={data} onSubmit={handleAddNote} />
       </Box>

@@ -5,6 +5,8 @@ import (
 	"backend/internal/handler"
 	"backend/internal/handler/auth"
 	"backend/internal/handler/customer"
+	"backend/internal/handler/order"
+	"backend/internal/handler/product"
 	"backend/internal/handler/user"
 	"backend/internal/middleware"
 	"os"
@@ -41,6 +43,16 @@ func main() {
 		authGroup.GET("/customers/:id", customer.GetCustomerDetail)
 		authGroup.PUT("/customers/:id", customer.UpdateCustomerBaseInfo)
 		authGroup.GET("/dashboard", handler.GetDashboard)
+		authGroup.POST("/orders", order.CreateOrder)
+		authGroup.GET("/orders", order.GetOrders)
+		authGroup.POST("/orders/:id/shipping", order.AddShipping)
+		authGroup.POST("/orders/:id/shipments", order.CreateShipment)
+		authGroup.GET("/orders/:id/shipments", order.ListShipments)
+		authGroup.GET("/products", product.GetProducts)
+		authGroup.POST("/products", product.CreateProduct)
+		authGroup.GET("/customers/:id/addresses", handler.GetAddresses)
+		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
+		authGroup.POST("/addresses/:id/default", handler.SetDefault)
 	}
 
 	r.Run(":8080")
