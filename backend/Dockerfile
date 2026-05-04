@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o app
+RUN go build -o app ./cmd/server
 
 # ---- Run stage ----
 FROM debian:bookworm-slim
