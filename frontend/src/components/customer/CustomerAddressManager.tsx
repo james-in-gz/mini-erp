@@ -85,7 +85,7 @@ export default function CustomerAddressManager({ customerId }: any) {
       </CardContent>
 
       {/* 新建弹窗 */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>New Address</DialogTitle>
 
         <DialogContent>
@@ -98,6 +98,7 @@ export default function CustomerAddressManager({ customerId }: any) {
               onChange={(e) =>
                 setForm({ ...form, name: e.target.value })
               }
+              fullWidth
             />
 
             {/* 手机 */}
@@ -107,6 +108,7 @@ export default function CustomerAddressManager({ customerId }: any) {
               onChange={(e) =>
                 setForm({ ...form, phone: e.target.value })
               }
+              fullWidth
             />
 
             <AreaSelector
@@ -131,6 +133,7 @@ export default function CustomerAddressManager({ customerId }: any) {
                 setForm({ ...form, address: e.target.value })
               }
               fullWidth
+              multiline
             />
 
           </Stack>
