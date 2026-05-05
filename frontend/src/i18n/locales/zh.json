@@ -77,5 +77,20 @@
   "language": {
     "zh": "中文",
     "en": "English"
+  },
+  "order": {
+    "create": "创建订单",
+    "customer": "客户",
+    "address": "地址",
+    "product": "产品",
+    "quantity": "数量",
+    "price": "价格",
+    "total": "总计",
+    "addItem": "+ 添加商品",
+    "createOrder": "创建订单",
+    "orderCreated": "订单创建成功",
+    "fillRequired": "请填写所有必填字段",
+    "createFailed": "创建订单失败",
+    "items": "商品"
   }
 }

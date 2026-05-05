@@ -15,8 +15,10 @@ import {
 import { createOrder } from "@/api/order";
 import { getCustomers, searchCustomers } from "@/api/customer";
 import { getProducts } from "@/api/product";
+import { useTranslation } from "react-i18next";
 
 export default function CreateOrderPage() {
+    const { t } = useTranslation();
     const [customers, setCustomers] = useState<any[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState("");
@@ -76,31 +78,29 @@ export default function CreateOrderPage() {
 
     const handleSubmit = async () => {
         if (!form.customer_id || !form.address_id || !items.length) {
-            alert("Please fill in all required fields");
-            return;
-        }
+      alert(t("order.fillRequired"));
+      return;
+    }
 
-        try {
-            await createOrder({
-                customer_id: form.customer_id,
-                address_id: form.address_id,
-                items: items.map((i) => ({
-                    product_id: i.product_id,
-                    quantity: i.quantity,
-                })),
-            });
+    try {
+      await createOrder({
+        customer_id: form.customer_id,
+        address_id: form.address_id,
+        items: items.map((i) => ({
+          product_id: i.product_id,
+          quantity: i.quantity,
+        })),
+      });
 
-            alert("订单创建成功");
-        } catch (error) {
-            alert("Failed to create order");
-            console.error(error);
-        }
+      alert(t("order.orderCreated"));
+    } catch (error) {
+      alert(t("order.createFailed"));
     };
 
     return (
         <Box>
             <Typography sx={{ variant: "h5", mb: 2 }}>
-                Create Order
+                {t("order.create")}
             </Typography>
 
             <Card sx={{ borderRadius: 3 }}>
@@ -137,14 +137,14 @@ export default function CreateOrderPage() {
                                 `${option.name} (${option.phone})`
                             }
                             renderInput={(params) => (
-                                <TextField {...params} label="Search Customer" />
+                                <TextField {...params} label={t("order.customer")} />
                             )}
                         />
 
                         {/* 地址 */}
                         <TextField
                             select
-                            label="Address"
+                            label={t("order.address")}
                             value={form.address_id}
                             onChange={(e) =>
                                 setForm({ ...form, address_id: Number(e.target.value) })
@@ -159,13 +159,13 @@ export default function CreateOrderPage() {
                         </TextField>
 
                         {/* 商品 */}
-                        <Typography variant="subtitle1">Items</Typography>
+                        <Typography variant="subtitle1">{t("order.items")}</Typography>
 
                         {items.map((item, index) => (
                             <Stack direction="row" spacing={2} key={index}>
                                 <TextField
                                     select
-                                    label="Product"
+                                    label={t("order.product")}
                                     fullWidth
                                     value={item.product_id}
                                     onChange={(e) =>
@@ -184,7 +184,7 @@ export default function CreateOrderPage() {
                                 </TextField>
 
                                 <TextField
-                                    label="Qty"
+                                    label={t("order.quantity")}
                                     type="number"
                                     value={item.quantity}
                                     onChange={(e) =>
@@ -198,7 +198,7 @@ export default function CreateOrderPage() {
                                 />
 
                                 <TextField
-                                    label="Price"
+                                    label={t("order.price")}
                                     value={item.price}
                                     disabled
                                     sx={{ width: 120 }}
@@ -206,16 +206,16 @@ export default function CreateOrderPage() {
                             </Stack>
                         ))}
 
-                        <Button onClick={addItem}>+ Add Item</Button>
+                        <Button onClick={addItem}>{t("order.addItem")}</Button>
 
                         {/* 总价 */}
                         <Typography>
-                            Total: ¥{total}
+                            {t("order.total")}: ¥{total}
                         </Typography>
 
                         {/* 提交 */}
                         <Button variant="contained" onClick={handleSubmit}>
-                            Create Order
+                            {t("order.createOrder")}
                         </Button>
                     </Stack>
                 </CardContent>

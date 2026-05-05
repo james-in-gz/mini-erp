@@ -77,5 +77,20 @@
   "language": {
     "zh": "中文",
     "en": "English"
+  },
+  "order": {
+    "create": "Create Order",
+    "customer": "Customer",
+    "address": "Address",
+    "product": "Product",
+    "quantity": "Qty",
+    "price": "Price",
+    "total": "Total",
+    "addItem": "+ Add Item",
+    "createOrder": "Create Order",
+    "orderCreated": "Order created successfully",
+    "fillRequired": "Please fill in all required fields",
+    "createFailed": "Failed to create order",
+    "items": "Items"
   }
 }
