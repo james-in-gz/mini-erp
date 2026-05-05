@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -14,16 +15,20 @@ import request from "@/api/request";
 export default function ShipmentPage() {
   const { id } = useParams(); // ⭐ 从路由拿 orderId
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [order, setOrder] = useState<any>(null);
   const [items, setItems] = useState<any[]>([]);
 
   const [form, setForm] = useState({
-    tracking_number: "",
+    trackingNumber: "",
     carrier: "",
-    receiver_name: "",
-    receiver_phone: "",
-    receiver_addr: "",
+    receiverName: "",
+    receiverPhone: "",
+    receiverProvince: "",
+    receiverCity: "",
+    receiverDistrict: "",
+    receiverAddress: "",
   });
 
   // 🔥 加载订单
@@ -47,26 +52,36 @@ export default function ShipmentPage() {
     // ⭐ 自动填收货地址（推荐）
     setForm((prev) => ({
       ...prev,
-      receiver_name: res.data.receiver_name,
-      receiver_phone: res.data.receiver_phone,
-      receiver_addr: `${res.data.province} ${res.data.city} ${res.data.district} ${res.data.address}`,
+      receiverName: res.data.address?.name || "",
+      receiverPhone: res.data.address?.phone || "",
+      receiverProvince: res.data.address?.province || "",
+      receiverCity: res.data.address?.city || "",
+      receiverDistrict: res.data.address?.district || "",
+      receiverAddress: res.data.address?.address || "",
     }));
   };
 
   const handleSubmit = async () => {
     const payload = {
-      ...form,
+      trackingNumber: form.trackingNumber,
+      carrier: form.carrier,
+      receiverName: form.receiverName,
+      receiverPhone: form.receiverPhone,
+      receiverProvince: form.receiverProvince,
+      receiverCity: form.receiverCity,
+      receiverDistrict: form.receiverDistrict,
+      receiverAddress: form.receiverAddress,
       items: items.filter((i) => i.quantity > 0),
     };
 
     if (payload.items.length === 0) {
-      alert("请填写发货数量");
+      alert(t("order.fillShipQuantity"));
       return;
     }
 
     await request.post(`/orders/${id}/shipments`, payload);
 
-    alert("发货成功");
+    alert(t("order.shipSuccess"));
 
     navigate(`/orders/${id}`); // ⭐ 回到订单详情页
   };
@@ -78,20 +93,20 @@ export default function ShipmentPage() {
       <CardContent>
         <Stack spacing={2}>
           <Typography variant="h6">
-            发货订单 #{order.id}
+            {t("order.ship")} #{order.id}
           </Typography>
 
           {/* 物流 */}
           <TextField
-            label="Tracking Number"
-            value={form.tracking_number}
+            label={t("order.trackingNumber")}
+            value={form.trackingNumber}
             onChange={(e) =>
-              setForm({ ...form, tracking_number: e.target.value })
+              setForm({ ...form, trackingNumber: e.target.value })
             }
           />
 
           <TextField
-            label="Carrier"
+            label={t("order.carrier")}
             value={form.carrier}
             onChange={(e) =>
               setForm({ ...form, carrier: e.target.value })
@@ -100,31 +115,56 @@ export default function ShipmentPage() {
 
           {/* 收件人 */}
           <TextField
-            label="Receiver Name"
-            value={form.receiver_name}
+            label={t("order.receiverName")}
+            value={form.receiverName}
             onChange={(e) =>
-              setForm({ ...form, receiver_name: e.target.value })
+              setForm({ ...form, receiverName: e.target.value })
             }
           />
 
           <TextField
-            label="Phone"
-            value={form.receiver_phone}
+            label={t("order.phone")}
+            value={form.receiverPhone}
             onChange={(e) =>
-              setForm({ ...form, receiver_phone: e.target.value })
+              setForm({ ...form, receiverPhone: e.target.value })
+            }
+          />
+
+          {/* 收货地址 */}
+          <TextField
+            label={t("order.province")}
+            value={form.receiverProvince}
+            onChange={(e) =>
+              setForm({ ...form, receiverProvince: e.target.value })
             }
           />
 
           <TextField
-            label="Address"
-            value={form.receiver_addr}
+            label={t("order.city")}
+            value={form.receiverCity}
             onChange={(e) =>
-              setForm({ ...form, receiver_addr: e.target.value })
+              setForm({ ...form, receiverCity: e.target.value })
+            }
+          />
+
+          <TextField
+            label={t("order.district")}
+            value={form.receiverDistrict}
+            onChange={(e) =>
+              setForm({ ...form, receiverDistrict: e.target.value })
+            }
+          />
+
+          <TextField
+            label={t("order.address")}
+            value={form.receiverAddress}
+            onChange={(e) =>
+              setForm({ ...form, receiverAddress: e.target.value })
             }
           />
 
           {/* 商品发货 */}
-          <Typography>发货商品</Typography>
+          <Typography>{t("order.shipProducts")}</Typography>
 
           {items.map((i) => (
             <TextField
@@ -147,7 +187,7 @@ export default function ShipmentPage() {
           ))}
 
           <Button variant="contained" onClick={handleSubmit}>
-            发货
+            {t("order.ship")}
           </Button>
         </Stack>
       </CardContent>

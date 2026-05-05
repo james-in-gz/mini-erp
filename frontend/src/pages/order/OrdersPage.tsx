@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Card,
@@ -22,6 +23,7 @@ const statusColor: any = {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     getOrders().then(setOrders);
@@ -30,13 +32,13 @@ export default function OrdersPage() {
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Typography variant="h5">Orders</Typography>
+        <Typography variant="h5">{t("order.orders")}</Typography>
 
         <Button
           variant="contained"
           onClick={() => nav("/orders/create")}
         >
-          + Create Order
+          + {t("order.create")}
         </Button>
       </Box>
 
@@ -59,11 +61,11 @@ export default function OrdersPage() {
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
-                    Customer: {o.customer?.name || "N/A"}
+                    {t("order.customer")}: {o.customer?.name || "N/A"}
                   </Typography>
 
                   <Typography variant="body2">
-                    Amount: ¥{o.totalAmount}
+                    {t("order.amount")}: ¥{o.totalAmount}
                   </Typography>
                 </Box>
 
@@ -71,7 +73,7 @@ export default function OrdersPage() {
                 <Stack sx={{ alignItems: "flex-end", spacing: 1 }}>
                   <Chip
                     size="small"
-                    label={o.status}
+                    label={t(`order.${o.status}`)}
                     color={statusColor[o.status] || "default"}
                   />
 
@@ -80,7 +82,7 @@ export default function OrdersPage() {
                       size="small"
                       onClick={() => nav(`/orders/${o.id}`)}
                     >
-                      Detail
+                      {t("order.detail")}
                     </Button>
 
                     <Button
@@ -88,7 +90,7 @@ export default function OrdersPage() {
                       variant="contained"
                       onClick={() => nav(`/orders/${o.id}/ship`)}
                     >
-                      Ship
+                      {t("order.ship")}
                     </Button>
                   </Stack>
                 </Stack>

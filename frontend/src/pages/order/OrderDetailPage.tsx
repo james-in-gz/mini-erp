@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Card,
@@ -23,6 +24,7 @@ const statusColor: any = {
 export default function OrderDetailPage() {
   const { id } = useParams();
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   const [data, setData] = useState<any>(null);
 
@@ -48,17 +50,17 @@ export default function OrderDetailPage() {
                 Order #{data.id}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Customer: {data.customer?.name || "N/A"}
+                {t("order.customer")}: {data.customer?.name || "N/A"}
               </Typography>
               <Typography>
-                Amount: ¥{data.totalAmount}
+                {t("order.amount")}: ¥{data.totalAmount}
               </Typography>
             </Box>
 
             <Stack sx={{ alignItems: "flex-end", spacing: 1 }}>
               <Chip
                 size="small"
-                label={data.status}
+                label={t(`order.${data.status}`)}
                 color={statusColor[data.status] || "default"}
               />
 
@@ -67,7 +69,7 @@ export default function OrderDetailPage() {
                 variant="contained"
                 onClick={() => nav(`/orders/${data.id}/ship`)}
               >
-                发货
+                {t("order.ship")}
               </Button>
             </Stack>
           </Stack>
@@ -77,7 +79,7 @@ export default function OrderDetailPage() {
       {/* 📦 商品列表 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
-          <Typography variant="subtitle1">Items</Typography>
+          <Typography variant="subtitle1">{t("order.items")}</Typography>
 
           <Stack sx={{ spacing: 1, mt: 2 }}>
             {data.items.map((i: any) => (
@@ -102,7 +104,7 @@ export default function OrderDetailPage() {
       {/* 🚚 发货记录 */}
       <Card sx={{ borderRadius: 3 }}>
         <CardContent>
-          <Typography variant="subtitle1">Shipments</Typography>
+          <Typography variant="subtitle1">{t("order.shipments")}</Typography>
 
           <Stack sx={{ spacing: 2, mt: 2 }}>
             {data.shipments?.map((s: any) => (

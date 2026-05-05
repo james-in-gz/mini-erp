@@ -9,15 +9,18 @@ import (
 )
 
 type CreateShipmentReq struct {
-	TrackingNumber string `json:"tracking_number"`
+	TrackingNumber string `json:"trackingNumber"`
 	Carrier        string `json:"carrier"`
 
-	ReceiverName  string `json:"receiver_name"`
-	ReceiverPhone string `json:"receiver_phone"`
-	ReceiverAddr  string `json:"receiver_addr"`
+	ReceiverName     string `json:"receiverName"`
+	ReceiverPhone    string `json:"receiverPhone"`
+	ReceiverProvince string `json:"receiverProvince"`
+	ReceiverCity     string `json:"receiverCity"`
+	ReceiverDistrict string `json:"receiverDistrict"`
+	ReceiverAddress  string `json:"receiverAddress"`
 
 	Items []struct {
-		OrderItemID uint `json:"order_item_id"`
+		OrderItemID uint `json:"orderItemId"`
 		Quantity    int  `json:"quantity"`
 	} `json:"items"`
 }
@@ -31,7 +34,19 @@ func CreateShipment(c *gin.Context) {
 		return
 	}
 
-	err := service.CreateShipment(uint(orderID), req)
+	serviceReq := map[string]interface{}{
+		"TrackingNumber":   req.TrackingNumber,
+		"Carrier":          req.Carrier,
+		"ReceiverName":     req.ReceiverName,
+		"ReceiverPhone":    req.ReceiverPhone,
+		"ReceiverProvince": req.ReceiverProvince,
+		"ReceiverCity":     req.ReceiverCity,
+		"ReceiverDistrict": req.ReceiverDistrict,
+		"ReceiverAddress":  req.ReceiverAddress,
+		"Items":            req.Items,
+	}
+
+	err := service.CreateShipment(uint(orderID), serviceReq)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

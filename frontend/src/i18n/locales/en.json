@@ -91,6 +91,35 @@
     "orderCreated": "Order created successfully",
     "fillRequired": "Please fill in all required fields",
     "createFailed": "Failed to create order",
-    "items": "Items"
+    "items": "Items",
+    "orders": "Orders",
+    "amount": "Amount",
+    "detail": "Detail",
+    "ship": "Ship",
+    "pending": "Pending",
+    "partial": "Partial",
+    "shipped": "Shipped",
+    "completed": "Completed",
+    "shipments": "Shipments",
+    "trackingNumber": "Tracking Number",
+    "carrier": "Carrier",
+    "receiverName": "Receiver Name",
+    "phone": "Phone",
+    "province": "Province",
+    "city": "City",
+    "district": "District",
+    "shipProducts": "Ship Products",
+    "shipSuccess": "Shipped successfully",
+    "fillShipQuantity": "Please fill in shipping quantity"
+  },
+  "product": {
+    "products": "Products",
+    "newProduct": "New Product",
+    "name": "Name",
+    "sku": "SKU",
+    "price": "Price",
+    "stock": "Stock",
+    "create": "Create",
+    "cancel": "Cancel"
   }
 }

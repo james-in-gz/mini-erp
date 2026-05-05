@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Card,
@@ -18,6 +19,7 @@ import { getProducts, createProduct } from "@/api/product";
 export default function ProductPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     name: "",
@@ -45,10 +47,10 @@ export default function ProductPage() {
     <Box>
       {/* 顶部 */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Typography variant="h5">Products</Typography>
+        <Typography variant="h5">{t("product.products")}</Typography>
 
         <Button variant="contained" onClick={() => setOpen(true)}>
-          + New Product
+          + {t("product.newProduct")}
         </Button>
       </Box>
 
@@ -68,7 +70,7 @@ export default function ProductPage() {
                 <Box sx={{ textAlign: "right" }}>
                   <Typography>¥{p.price}</Typography>
                   <Typography variant="body2">
-                    Stock: {p.stock}
+                    {t("product.stock")}: {p.stock}
                   </Typography>
                 </Box>
               </Stack>
@@ -79,12 +81,12 @@ export default function ProductPage() {
 
       {/* 弹窗 */}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>New Product</DialogTitle>
+        <DialogTitle>{t("product.newProduct")}</DialogTitle>
 
         <DialogContent>
           <Stack sx={{ spacing: 2, mt: 1 }}>
             <TextField
-              label="Name"
+              label={t("product.name")}
               value={form.name}
               onChange={(e) =>
                 setForm({ ...form, name: e.target.value })
@@ -92,7 +94,7 @@ export default function ProductPage() {
             />
 
             <TextField
-              label="SKU"
+              label={t("product.sku")}
               value={form.sku}
               onChange={(e) =>
                 setForm({ ...form, sku: e.target.value })
@@ -100,7 +102,7 @@ export default function ProductPage() {
             />
 
             <TextField
-              label="Price"
+              label={t("product.price")}
               type="number"
               value={form.price}
               onChange={(e) =>
@@ -109,7 +111,7 @@ export default function ProductPage() {
             />
 
             <TextField
-              label="Stock"
+              label={t("product.stock")}
               type="number"
               value={form.stock}
               onChange={(e) =>
@@ -120,9 +122,9 @@ export default function ProductPage() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={() => setOpen(false)}>{t("product.cancel")}</Button>
           <Button variant="contained" onClick={handleCreate}>
-            Create
+            {t("product.create")}
           </Button>
         </DialogActions>
       </Dialog>
