@@ -72,3 +72,7 @@ func findOrderItem(items []model.OrderItem, id uint) *model.OrderItem {
 	}
 	return nil
 }
+
+func GetOrderByID(id uint) (model.Order, error) {
+	return repository.GetOrderByID(id)
+}

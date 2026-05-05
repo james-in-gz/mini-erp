@@ -48,10 +48,10 @@ export default function OrderDetailPage() {
                 Order #{data.id}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Customer: {data.customer_id}
+                Customer: {data.customer?.name || "N/A"}
               </Typography>
               <Typography>
-                Amount: ¥{data.total_amount}
+                Amount: ¥{data.totalAmount}
               </Typography>
             </Box>
 
@@ -88,7 +88,7 @@ export default function OrderDetailPage() {
                   </Typography>
 
                   <Typography>
-                    {i.shipped_quantity} / {i.quantity}
+                    {i.shipped_quantity !== undefined ? i.shipped_quantity : 0} / {i.quantity}
                   </Typography>
                 </Stack>
 

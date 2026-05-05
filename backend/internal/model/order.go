@@ -3,20 +3,22 @@ package model
 import "time"
 
 type Order struct {
-	ID             uint       `gorm:"primaryKey" json:"id,omitempty"`
-	CustomerID     uint       `gorm:"index" json:"customerID,omitempty"`
-	AddressID      uint       `json:"addressID,omitempty"`
-	UserID         uint       `json:"userID,omitempty"` // 关联 User
-	TotalAmount    float64    `json:"totalAmount,omitempty"`
-	Status         string     `json:"status,omitempty"`    // pending / shipped / done
-	OrderType      string     `json:"orderType,omitempty"` // single / subscription
-	Period         string     `json:"period,omitempty"`    // monthly / quarterly / yearly
-	NextDeliveryAt *time.Time `json:"nextDeliveryAt,omitempty"`
-	CreatedAt      time.Time  `json:"createdAt,omitempty"`
-	UpdatedAt      time.Time  `json:"updatedAt,omitempty"`
+	ID             uint            `gorm:"primaryKey" json:"id,omitempty"`
+	CustomerID     uint            `gorm:"index" json:"customerID,omitempty"`
+	Customer       Customer        `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
+	AddressID      uint            `json:"addressID,omitempty"`
+	Address        CustomerAddress `gorm:"foreignKey:AddressID;references:ID" json:"address,omitempty"`
+	UserID         uint            `json:"userID,omitempty"` // 关联 User
+	TotalAmount    float64         `json:"totalAmount,omitempty"`
+	Status         string          `json:"status,omitempty"`    // pending / shipped / done
+	OrderType      string          `json:"orderType,omitempty"` // single / subscription
+	Period         string          `json:"period,omitempty"`    // monthly / quarterly / yearly
+	NextDeliveryAt *time.Time      `json:"nextDeliveryAt,omitempty"`
+	CreatedAt      time.Time       `json:"createdAt,omitempty"`
+	UpdatedAt      time.Time       `json:"updatedAt,omitempty"`
 
-	Items     []OrderItem `json:"items,omitempty"`
-	Shippings []Shipment  `json:"shippings,omitempty"`
+	Items     []OrderItem `gorm:"foreignKey:OrderID" json:"items,omitempty"`
+	Shippings []Shipment  `gorm:"foreignKey:OrderID" json:"shippings,omitempty"`
 }
 
 func (Order) TableName() string {
@@ -30,6 +32,7 @@ type OrderItem struct {
 	ProductID       uint    `json:"productID,omitempty"`
 	ProductName     string  `gorm:"size:255" json:"productName,omitempty"`
 	ProductSKU      string  `gorm:"size:100" json:"productSKU,omitempty"`
+	Product         Product `gorm:"foreignKey:ProductID" json:"product,omitempty"`
 	Price           float64 `json:"price,omitempty"`
 	Quantity        int     `json:"quantity,omitempty"`
 	ShippedQuantity int     `json:"shippedQuantity,omitempty"`

@@ -11,7 +11,7 @@ func CreateOrder(order *model.Order) error {
 
 func GetOrders() ([]model.Order, error) {
 	var orders []model.Order
-	err := database.DB.Preload("Items").Preload("Shippings").Find(&orders).Error
+	err := database.DB.Preload("Customer").Preload("Items").Preload("Shippings").Find(&orders).Error
 	return orders, err
 }
 
@@ -22,6 +22,7 @@ func AddShipping(shipping *model.Shipment) error {
 func GetOrderByID(id uint) (model.Order, error) {
 	var order model.Order
 	err := database.DB.
+		Preload("Customer").Preload("Address").
 		Preload("Items.Product").
 		First(&order, id).Error
 	return order, err

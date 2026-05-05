@@ -34,7 +34,7 @@ export default function OrdersPage() {
 
         <Button
           variant="contained"
-          onClick={() => nav("/order/create")}
+          onClick={() => nav("/orders/create")}
         >
           + Create Order
         </Button>
@@ -59,11 +59,11 @@ export default function OrdersPage() {
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
-                    Customer: {o.customer_id}
+                    Customer: {o.customer?.name || "N/A"}
                   </Typography>
 
                   <Typography variant="body2">
-                    Amount: ¥{o.total_amount}
+                    Amount: ¥{o.totalAmount}
                   </Typography>
                 </Box>
 

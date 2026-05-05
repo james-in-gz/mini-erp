@@ -12,6 +12,7 @@ import OrderDetailPage from "@/pages/order/OrderDetailPage";
 import OrdersPage from "@/pages/order/OrdersPage";
 import CreateOrderPage from "@/pages/order/CreateOrderPage";
 import ProductPage from "@/pages/product/ProductPage";
+import ShipmentPage from "@/pages/order/ShipmentPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = getToken();
@@ -42,8 +43,9 @@ export default function Router() {
         <Route path="/customers/:id" element={<CustomerDetailPage />} />
 
         <Route path="/follow-ups" element={<FollowUpPage />} />
-        <Route path="/order/:id" element={<OrderDetailPage />} />
-        <Route path="/order/create" element={<CreateOrderPage />} />
+        <Route path="/orders/:id" element={<OrderDetailPage />} />
+        <Route path="/orders/create" element={<CreateOrderPage />} />
+        <Route path="/orders/:id/ship" element={<ShipmentPage />} />
         <Route path="/products" element={<ProductPage />} />
       </Route>
     </Routes>
