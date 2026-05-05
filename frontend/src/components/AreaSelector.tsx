@@ -19,7 +19,7 @@ export default function AreaSelector({ value, onChange }: any) {
     cityList.find((c: any) => c.name === city)?.children || [];
 
   return (
-    <Stack direction="row" spacing={1}>
+    <Stack direction={{ xs: "column", sm: "row" }} spacing={2} >
       <TextField
         select
         label="Province"
