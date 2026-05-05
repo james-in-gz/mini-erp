@@ -16,6 +16,7 @@ import { createOrder } from "@/api/order";
 import { getCustomers, searchCustomers } from "@/api/customer";
 import { getProducts } from "@/api/product";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateOrderPage() {
     const { t } = useTranslation();
@@ -23,7 +24,7 @@ export default function CreateOrderPage() {
     const [products, setProducts] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         customer_id: 0,
         address_id: 0,
@@ -78,25 +79,26 @@ export default function CreateOrderPage() {
 
     const handleSubmit = async () => {
         if (!form.customer_id || !form.address_id || !items.length) {
-      alert(t("order.fillRequired"));
-      return;
+            alert(t("order.fillRequired"));
+            return;
+        }
+
+        try {
+           const res = await createOrder({
+                customer_id: form.customer_id,
+                address_id: form.address_id,
+                items: items.map((i) => ({
+                    product_id: i.product_id,
+                    quantity: i.quantity,
+                })),
+            });
+
+            alert(t("order.orderCreated"));
+            navigate(`/orders/${res.id}`);
+        } catch (error) {
+            alert(t("order.createFailed"));
+        };
     }
-
-    try {
-      await createOrder({
-        customer_id: form.customer_id,
-        address_id: form.address_id,
-        items: items.map((i) => ({
-          product_id: i.product_id,
-          quantity: i.quantity,
-        })),
-      });
-
-      alert(t("order.orderCreated"));
-    } catch (error) {
-      alert(t("order.createFailed"));
-    };
-
     return (
         <Box>
             <Typography sx={{ variant: "h5", mb: 2 }}>
