@@ -194,3 +194,15 @@ func UpdateCustomerBaseInfo(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "ok"})
 }
+
+func SearchCustomers(c *gin.Context) {
+	keyword := c.Query("keyword")
+
+	list, err := service.SearchCustomers(keyword)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, list)
+}

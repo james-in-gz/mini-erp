@@ -175,3 +175,7 @@ func UpdateCustomerStatus(id string, status string) error {
 func UpdateCustomerBaseInfo(id string, req dto.UpdateCustomerRequest) error {
 	return repository.UpdateCustomerBaseInfo(id, req)
 }
+
+func SearchCustomers(keyword string) ([]model.Customer, error) {
+	return repository.Search(keyword)
+}

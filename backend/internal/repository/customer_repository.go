@@ -156,3 +156,25 @@ func UpdateCustomerBaseInfo(id string, req dto.UpdateCustomerRequest) error {
 			"status": req.Status,
 		}).Error
 }
+
+func Search(keyword string) ([]model.Customer, error) {
+	var list []model.Customer
+
+	db := database.DB.Model(&model.Customer{}).
+		Preload("Addresses")
+
+	if keyword != "" {
+		like := "%" + keyword + "%"
+		db = db.Where(
+			"name LIKE ? OR phone LIKE ? OR wechat LIKE ?",
+			like, like, like,
+		)
+	}
+
+	err := db.
+		Order("id DESC").
+		Limit(20). // ⭐ 限制返回数量（防炸）
+		Find(&list).Error
+
+	return list, err
+}

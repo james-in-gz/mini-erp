@@ -48,3 +48,8 @@ export const getFollowUps = async () => {
   const res = await request.get("/customers/follow-ups");
   return res.data;
 };
+
+export const searchCustomers = (keyword: string) =>
+  request.get("/customers/search", {
+    params: { keyword },
+  });

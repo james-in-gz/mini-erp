@@ -53,6 +53,7 @@ func main() {
 		authGroup.GET("/customers/:id/addresses", handler.GetAddresses)
 		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
 		authGroup.POST("/addresses/:id/default", handler.SetDefault)
+		authGroup.GET("/customers/search", customer.SearchCustomers)
 	}
 
 	r.Run(":8080")

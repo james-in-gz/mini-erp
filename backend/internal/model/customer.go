@@ -22,7 +22,9 @@ type Customer struct {
 	CreatedAt time.Time `json:"createdAt" form:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt"`
 
-	Tags []Tag `gorm:"many2many:customer_tags" json:"tags" form:"tags"`
+	Tags      []Tag             `gorm:"many2many:customer_tags" json:"tags" form:"tags"`
+	Addresses []CustomerAddress `json:"addresses" form:"addresses"`
+	Notes     []CustomerNote    `json:"notes" form:"notes"`
 }
 
 type Tag struct {
