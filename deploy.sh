@@ -4,7 +4,11 @@ set -e
 
 echo "🚀 Starting CRM Deploy..."
 
-PROJECT_DIR="."
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+cd "$REPO_DIR" || exit
+
+echo "当前目录: $REPO_DIR"
 
 BRANCH="main"
 
