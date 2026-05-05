@@ -21,4 +21,5 @@ services:
 
 networks:
   crm_network: 
+    external: ${is_external_network:-false}
     name: ${NETWORK_NAME:-crm_network}
