@@ -3,7 +3,10 @@ package service
 import (
 	"backend/internal/model"
 	"backend/internal/repository"
+	"errors"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type CreateOrderReq struct {
@@ -81,6 +84,45 @@ func GetOrders() ([]model.Order, error) {
 
 func updateOrderStatus(order model.Order) {
 	panic("unimplemented")
+}
+
+func updateOrderStatusWithTX(tx *gorm.DB, orderID uint) error {
+	var items []model.OrderItem
+	if err := tx.Where("order_id = ?", orderID).Find(&items).Error; err != nil {
+		return err
+	}
+
+	if len(items) == 0 {
+		return errors.New("no order items")
+	}
+
+	allShipped := true
+	anyShipped := false
+
+	for _, item := range items {
+		if item.ShippedQuantity > 0 {
+			anyShipped = true
+		}
+		if item.ShippedQuantity < item.Quantity {
+			allShipped = false
+		}
+	}
+
+	var order model.Order
+	if err := tx.First(&order, orderID).Error; err != nil {
+		return err
+	}
+
+	switch {
+	case allShipped:
+		order.Status = "completed"
+	case anyShipped:
+		order.Status = "partial_shipped"
+	default:
+		order.Status = "pending"
+	}
+
+	return tx.Save(&order).Error
 }
 
 func findOrderItem(items []model.OrderItem, id uint) *model.OrderItem {

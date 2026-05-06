@@ -1,29 +1,13 @@
 package order
 
 import (
+	"backend/internal/dto"
 	"backend/internal/service"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type CreateShipmentReq struct {
-	TrackingNumber string `json:"trackingNumber"`
-	Carrier        string `json:"carrier"`
-
-	ReceiverName     string `json:"receiverName"`
-	ReceiverPhone    string `json:"receiverPhone"`
-	ReceiverProvince string `json:"receiverProvince"`
-	ReceiverCity     string `json:"receiverCity"`
-	ReceiverDistrict string `json:"receiverDistrict"`
-	ReceiverAddress  string `json:"receiverAddress"`
-
-	Items []struct {
-		OrderItemID uint `json:"orderItemId"`
-		Quantity    int  `json:"quantity"`
-	} `json:"items"`
-}
 
 func CreateShipment(c *gin.Context) {
 	orderID, err := strconv.Atoi(c.Param("id"))
@@ -32,7 +16,7 @@ func CreateShipment(c *gin.Context) {
 		return
 	}
 
-	var req CreateShipmentReq
+	var req dto.CreateShipmentReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

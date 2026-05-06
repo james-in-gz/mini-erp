@@ -16,6 +16,7 @@ import { getOrders } from "@/api/order";
 const statusColor: any = {
   pending: "default",
   partial: "warning",
+  partial_shipped: "warning",
   shipped: "info",
   completed: "success",
 };
