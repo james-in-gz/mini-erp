@@ -29,7 +29,7 @@ if [ "$LOCAL" != "$REMOTE" ]; then
   git reset --hard origin/$BRANCH
 
   # 重新构建并启动（不会删 volume / 数据）
-  sudo docker compose up -d --build
+  sudo docker compose --env-file ../.env up -d --build
 
   echo "✅ deploy success"
 else
