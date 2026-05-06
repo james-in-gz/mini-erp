@@ -17,6 +17,7 @@ import StockOutPage from "@/pages/product/StockOutPage";
 import StockInPage from "@/pages/product/StockInPage";
 import InventoryPage from "@/pages/product/InventoryPage";
 import SKUPage from "@/pages/product/SKUPage";
+import ProductDetailPage from "@/pages/product/ProductDetailPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = getToken();
@@ -51,6 +52,7 @@ export default function Router() {
         <Route path="/orders/create" element={<CreateOrderPage />} />
         <Route path="/orders/:id/ship" element={<ShipmentPage />} />
         <Route path="/products" element={<ProductPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/skus" element={<SKUPage />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/stock-in" element={<StockInPage />} />

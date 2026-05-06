@@ -1,9 +1,14 @@
 package service
 
 import (
+	"backend/internal/database"
 	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"encoding/json"
+	"strings"
+
+	"gorm.io/gorm"
 )
 
 func GetProducts() ([]*model.Product, error) {
@@ -47,11 +52,6 @@ func CreateSKU(productID uint, req dto.CreateSKUReq) (*model.SKU, error) {
 	sku := model.SKU{
 		ProductID: productID,
 		Name:      req.Name,
-		Category:  req.Category,
-		Factory:   req.Factory,
-		Craft:     req.Craft,
-		Spec:      req.Spec,
-		Unit:      req.Unit,
 		Price:     req.Price,
 	}
 
@@ -60,6 +60,105 @@ func CreateSKU(productID uint, req dto.CreateSKUReq) (*model.SKU, error) {
 		return nil, err
 	}
 	return &sku, nil
+}
+
+func generateCombinations(specs map[string][]string) []map[string]string {
+	keys := make([]string, 0, len(specs))
+	for k := range specs {
+		keys = append(keys, k)
+	}
+
+	var result []map[string]string
+
+	var dfs func(int, map[string]string)
+	dfs = func(index int, current map[string]string) {
+		if index == len(keys) {
+			comb := make(map[string]string)
+			for k, v := range current {
+				comb[k] = v
+			}
+			result = append(result, comb)
+			return
+		}
+
+		key := keys[index]
+		for _, val := range specs[key] {
+			current[key] = val
+			dfs(index+1, current)
+		}
+	}
+
+	dfs(0, map[string]string{})
+	return result
+}
+
+func generateSKUs(productID int, specs map[string][]string) ([]model.SKU, error) {
+
+	product, err := repository.GetProductByID(productID)
+	if err != nil {
+		return nil, err
+	}
+
+	combinations := generateCombinations(specs)
+
+	var skus []model.SKU
+
+	for _, comb := range combinations {
+
+		// 👉 转 JSON
+		specJSON, _ := json.Marshal(comb)
+
+		// 👉 生成名称
+		name := ""
+		for _, v := range comb {
+			name += v + " "
+		}
+
+		// 👉 生成 SKU Code（关键）
+		code := product.SPU
+		for _, v := range comb {
+			code += "-" + strings.ToUpper(v)
+		}
+
+		sku := model.SKU{
+			ProductID: product.ID,
+			Code:      code,
+			Specs:     string(specJSON),
+			Name:      strings.TrimSpace(name),
+			Price:     0, // 默认价格
+		}
+
+		skus = append(skus, sku)
+	}
+
+	return skus, nil
+}
+
+func CreateBatchSKUs(productID int, specs map[string][]string) error {
+	skus, err := generateSKUs(productID, specs)
+	if err != nil {
+		return err
+	}
+
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		for i := range skus {
+			if err := tx.Create(&skus[i]).Error; err != nil {
+				return err
+			}
+
+			inv := model.Inventory{
+				SKUID:          skus[i].ID,
+				Stock:          0,
+				LockedStock:    0,
+				AvailableStock: 0,
+			}
+
+			if err := tx.Create(&inv).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func GetSKUByID(id int) (*model.SKU, error) {
@@ -73,11 +172,7 @@ func UpdateSKU(id int, req dto.CreateSKUReq) error {
 	}
 
 	sku.Name = req.Name
-	sku.Category = req.Category
-	sku.Factory = req.Factory
-	sku.Craft = req.Craft
-	sku.Spec = req.Spec
-	sku.Unit = req.Unit
+
 	sku.Price = req.Price
 
 	return repository.UpdateSKU(sku)

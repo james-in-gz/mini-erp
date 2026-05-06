@@ -13,14 +13,14 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 import { getProducts, createProduct } from "@/api/product";
 
 export default function ProductPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     spu: "",
@@ -55,7 +55,8 @@ export default function ProductPage() {
       {/* 列表 */}
       <Box sx={{ display: "grid", gap: 2 }}>
         {products.map((p) => (
-          <Card key={p.id} sx={{ borderRadius: 3 }}>
+          <Card key={p.id} sx={{ borderRadius: 3, cursor: "pointer" }}
+            onClick={() => navigate(`/products/${p.id}`)}>
             <CardContent>
               <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Box>
@@ -73,7 +74,7 @@ export default function ProductPage() {
 
       {/* 弹窗 */}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth
-  maxWidth="sm" >
+        maxWidth="sm" >
         <DialogTitle sx={{ fontWeight: 600 }}>{t("product.newProduct")}</DialogTitle>
 
         <DialogContent>
@@ -86,11 +87,11 @@ export default function ProductPage() {
               }
               fullWidth size="small"
             />
-<TextField
+            <TextField
               label={t("product.spu")}
               value={form.spu}
               onChange={(e) =>
-                setForm({ ...form, name: e.target.value })
+                setForm({ ...form, spu: e.target.value })
               }
               fullWidth size="small"
             />

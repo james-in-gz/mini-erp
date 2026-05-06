@@ -13,6 +13,8 @@ func AutoMigrate() {
 		&model.BizSequence{},
 
 		&model.Product{},
+		&model.SKU{},
+		&model.Inventory{},
 
 		&model.Order{},
 		&model.OrderItem{},

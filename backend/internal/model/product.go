@@ -12,15 +12,14 @@ type Product struct {
 
 type SKU struct {
 	ID        uint `gorm:"primaryKey" json:"id,omitempty"`
-	ProductID uint `gorm:"index" json:"productId,omitempty"`
+	ProductID uint `gorm:"index" json:"productID,omitempty"`
 
-	Code     string `gorm:"size:100;uniqueIndex" json:"code,omitempty"` // ⭐ SKU编码
-	Name     string `json:"name,omitempty"`                             // 如：500g装 / 红色 / 套餐A
-	Category string `json:"category,omitempty"`                         // 如：规格 / 颜色 / 套餐
-	Factory  string `json:"factory,omitempty"`                          // 生产厂家
-	Craft    string `json:"craft,omitempty"`                            // 工艺要求
-	Spec     string `json:"spec,omitempty"`                             // 规格型号
-	Unit     string `json:"unit,omitempty"`                             // 单位，如：瓶 / 盒 / 袋
+	Code string `gorm:"size:100;uniqueIndex" json:"code,omitempty"` // SKU编码
+
+	// ⭐ 核心：可扩展规格
+	Specs string `gorm:"type:json" json:"specs,omitempty"` // {"weight":"500g","color":"red"}
+
+	Name string `json:"name,omitempty"` // 展示用（自动生成）
 
 	Price float64 `json:"price,omitempty"`
 
@@ -29,24 +28,25 @@ type SKU struct {
 }
 
 type Inventory struct {
-	ID    uint `gorm:"primaryKey"`
-	SKUID uint `gorm:"uniqueIndex"`
+	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
+	SKUID uint `gorm:"index" json:"skuid,omitempty"`
 
-	Stock int // 当前库存
+	Stock          int `json:"stock,omitempty"`
+	LockedStock    int `json:"lockedStock,omitempty"`
+	AvailableStock int `json:"availableStock,omitempty"`
 
-	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 }
 
 type StockLog struct {
-	ID    uint `gorm:"primaryKey"`
-	SKUID uint
+	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
+	SKUID uint `json:"skuid,omitempty"`
 
-	Type string // IN / OUT
-	Qty  int
+	Type string `json:"type,omitempty"` // IN / OUT
+	Qty  int    `json:"qty,omitempty"`
 
-	RefType string // ORDER / MANUAL
-	RefID   uint
+	RefType string `json:"refType,omitempty"` // ORDER / MANUAL
+	RefID   uint   `json:"refID,omitempty"`
 
-	CreatedAt time.Time
+	CreatedAt time.Time `json:"createdAt,omitempty"`
 }
