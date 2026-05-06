@@ -3,7 +3,6 @@ package handler
 import (
 	"backend/internal/dto"
 	"backend/internal/service"
-	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,46 +10,58 @@ import (
 
 // GET /customers/:id/addresses
 func GetAddresses(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	list, err := service.GetAddresses(uint(id))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid customer id")
 		return
 	}
 
-	c.JSON(http.StatusOK, list)
+	list, err := service.GetAddresses(uint(id))
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, list)
 }
 
 // POST /customers/:id/addresses
 func CreateAddress(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid customer id")
+		return
+	}
 
 	var req dto.CreateAddressRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	err := service.CreateAddress(uint(id), req)
+	err = service.CreateAddress(uint(id), req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "created"})
+	dto.Success(c, gin.H{"message": "created"})
 }
 
 // POST /addresses/:id/default
 func SetDefault(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	err := service.SetDefaultAddress(uint(id))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid address id")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	err = service.SetDefaultAddress(uint(id))
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "ok"})
 }

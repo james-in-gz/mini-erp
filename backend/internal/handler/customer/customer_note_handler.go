@@ -1,10 +1,11 @@
 package customer
 
 import (
-	"net/http"
+	"backend/internal/dto"
 	"time"
 
 	"backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +13,7 @@ func CreateCustomerNote(c *gin.Context) {
 	var req CreateCustomerNoteRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid params"})
+		dto.Fail(c, "invalid params")
 		return
 	}
 
@@ -41,11 +42,11 @@ func CreateCustomerNote(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"})
+		dto.Fail(c, "failed")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "note added"})
+	dto.Success(c, gin.H{"message": "note added"})
 }
 
 func ListCustomerNotes(c *gin.Context) {
@@ -53,9 +54,9 @@ func ListCustomerNotes(c *gin.Context) {
 
 	notes, err := service.ListCustomerNotes(customerID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"})
+		dto.Fail(c, "failed")
 		return
 	}
 
-	c.JSON(http.StatusOK, notes)
+	dto.Success(c, notes)
 }

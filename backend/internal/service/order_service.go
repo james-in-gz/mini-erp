@@ -18,12 +18,12 @@ type CreateOrderReq struct {
 	} `json:"items"`
 }
 
-func CreateOrder(req CreateOrderReq) error {
+func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 
 	// ⭐ 获取客户的地址信息
 	address, err := repository.GetAddressByID(req.AddressID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var total float64
@@ -63,7 +63,12 @@ func CreateOrder(req CreateOrderReq) error {
 		DefaultAddress:  address.Address,
 	}
 
-	return repository.CreateOrder(&order)
+	err = repository.CreateOrder(&order)
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
 }
 
 func AddShipping(orderID uint, tracking string) error {

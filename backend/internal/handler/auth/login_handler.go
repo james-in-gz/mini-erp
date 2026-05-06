@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"net/http"
+	"backend/internal/dto"
 
 	"backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,21 +13,17 @@ func LoginHandler(c *gin.Context) {
 
 	// 🔥 use binding with validation
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid request params",
-		})
+		dto.Fail(c, "invalid request params")
 		return
 	}
 
 	token, err := service.Login(req.Username, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": err.Error(),
-		})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, LoginResponse{
+	dto.Success(c, LoginResponse{
 		Token: token,
 	})
 }
@@ -34,7 +31,7 @@ func LoginHandler(c *gin.Context) {
 func MeHandler(c *gin.Context) {
 	userID, _ := c.Get("userID")
 
-	c.JSON(http.StatusOK, gin.H{
+	dto.Success(c, gin.H{
 		"user_id": userID,
 	})
 }

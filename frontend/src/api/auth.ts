@@ -6,5 +6,11 @@ import request from "./request";
 
 export const login = (username: string, password: string) => {
     return request.post("/login", { username, password })
-        .then(res => res.data);
+        .then(res => {
+            if (res.data.code === 0) {
+                return res.data.data;
+            } else {
+                throw new Error(res.data.message);
+            }
+        });
 };

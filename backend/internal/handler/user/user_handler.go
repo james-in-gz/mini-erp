@@ -1,7 +1,7 @@
 package user
 
 import (
-	"net/http"
+	"backend/internal/dto"
 
 	"backend/internal/service"
 
@@ -12,7 +12,7 @@ func CreateUser(c *gin.Context) {
 	var req CreateUserRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid params"})
+		dto.Fail(c, "invalid params")
 		return
 	}
 
@@ -23,11 +23,9 @@ func CreateUser(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "user created",
-	})
+	dto.Success(c, gin.H{"message": "user created"})
 }

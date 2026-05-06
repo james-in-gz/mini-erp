@@ -1,11 +1,9 @@
 package customer
 
 import (
-	"net/http"
-	"strconv"
-
 	"backend/internal/dto"
 	"backend/internal/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,16 +20,14 @@ func CreateCustomer(c *gin.Context) {
 	var req CreateCustomerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid params",
-		})
+		dto.Fail(c, "invalid params")
 		return
 	}
 
 	// 🔥 从 JWT 中拿当前用户（owner）
 	userIDVal, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		dto.Fail(c, "unauthorized")
 		return
 	}
 
@@ -46,22 +42,18 @@ func CreateCustomer(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to create customer",
-		})
+		dto.Fail(c, "failed to create customer")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "customer created",
-	})
+	dto.Success(c, gin.H{"message": "customer created"})
 }
 
 func ListCustomers(c *gin.Context) {
 	var query ListCustomersQuery
 
 	if err := c.ShouldBindQuery(&query); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid query"})
+		dto.Fail(c, "invalid query")
 		return
 	}
 
@@ -76,7 +68,7 @@ func ListCustomers(c *gin.Context) {
 	// 🔥 从 JWT 获取当前用户
 	userIDVal, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		dto.Fail(c, "unauthorized")
 		return
 	}
 
@@ -91,17 +83,17 @@ func ListCustomers(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch customers"})
+		dto.Fail(c, "failed to fetch customers")
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	dto.Success(c, result)
 }
 
 func ListTodayFollowUps(c *gin.Context) {
 	userIDVal, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		dto.Fail(c, "unauthorized")
 		return
 	}
 
@@ -109,15 +101,11 @@ func ListTodayFollowUps(c *gin.Context) {
 
 	customers, err := service.ListTodayFollowUps(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to fetch follow-ups",
-		})
+		dto.Fail(c, "failed to fetch follow-ups")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"list": customers,
-	})
+	dto.Success(c, gin.H{"list": customers})
 }
 
 func GetCustomerDetail(c *gin.Context) {
@@ -126,7 +114,7 @@ func GetCustomerDetail(c *gin.Context) {
 
 	userIDVal, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		dto.Fail(c, "unauthorized")
 		return
 	}
 
@@ -134,11 +122,11 @@ func GetCustomerDetail(c *gin.Context) {
 
 	result, err := service.GetCustomerDetail(customerID, userID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	dto.Success(c, result)
 }
 
 func GetFollowUps(c *gin.Context) {
@@ -146,13 +134,11 @@ func GetFollowUps(c *gin.Context) {
 
 	data, err := service.GetFollowUps(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, data)
+	dto.Success(c, data)
 }
 
 func UpdateCustomerStatus(c *gin.Context) {
@@ -163,17 +149,17 @@ func UpdateCustomerStatus(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": "invalid request"})
+		dto.Fail(c, "invalid request")
 		return
 	}
 
 	err := service.UpdateCustomerStatus(id, req.Status)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "ok"})
+	dto.Success(c, gin.H{"message": "ok"})
 }
 
 func UpdateCustomerBaseInfo(c *gin.Context) {
@@ -182,17 +168,17 @@ func UpdateCustomerBaseInfo(c *gin.Context) {
 	var req dto.UpdateCustomerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": "invalid request"})
+		dto.Fail(c, "invalid request")
 		return
 	}
 
 	err := service.UpdateCustomerBaseInfo(id, req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "ok"})
+	dto.Success(c, gin.H{"message": "ok"})
 }
 
 func SearchCustomers(c *gin.Context) {
@@ -200,9 +186,9 @@ func SearchCustomers(c *gin.Context) {
 
 	list, err := service.SearchCustomers(keyword)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		dto.Fail(c, err.Error())
 		return
 	}
 
-	c.JSON(200, list)
+	dto.Success(c, list)
 }

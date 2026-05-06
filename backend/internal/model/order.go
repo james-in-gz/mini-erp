@@ -8,7 +8,7 @@ type Order struct {
 	Customer       Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
 	UserID         uint       `json:"userID,omitempty"` // 关联 User
 	TotalAmount    float64    `json:"totalAmount,omitempty"`
-	Status         string     `json:"status,omitempty"`    // pending / shipped / done
+	Status         string     `json:"status,omitempty"`    // pending / partial_shipped / shipped / done
 	OrderType      string     `json:"orderType,omitempty"` // single / subscription
 	Period         string     `json:"period,omitempty"`    // monthly / quarterly / yearly
 	NextDeliveryAt *time.Time `json:"nextDeliveryAt,omitempty"`
@@ -32,7 +32,7 @@ type Order struct {
 	DefaultAddress  string `json:"defaultAddress,omitempty"`
 
 	Items     []OrderItem `gorm:"foreignKey:OrderID" json:"items,omitempty"`
-	Shippings []Shipment  `gorm:"foreignKey:OrderID" json:"shippings,omitempty"`
+	Shipments []Shipment  `gorm:"foreignKey:OrderID" json:"shipments,omitempty"`
 }
 
 func (Order) TableName() string {

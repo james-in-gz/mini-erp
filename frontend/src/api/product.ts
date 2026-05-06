@@ -1,13 +1,28 @@
 import request from "./request";
 
 export const getProducts = async () => {
-  return request.get("/products").then((res) => res.data);
+  const res = await request.get("/products");
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
 };
 
 export const getProductDetail = async (productId: number) => {
-  return request.get(`/products/${productId}`).then((res) => res.data);
+  const res = await request.get(`/products/${productId}`);
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
 };
 
 export const createProduct = async (data: any) => {
-  return request.post("/products", data);
+  const res = await request.post("/products", data);
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
 };

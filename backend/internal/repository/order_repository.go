@@ -24,6 +24,7 @@ func GetOrderByID(id uint) (model.Order, error) {
 	err := database.DB.
 		Preload("Customer").
 		Preload("Items.Product").
+		Preload("Shipments").
 		First(&order, id).Error
 	return order, err
 }
