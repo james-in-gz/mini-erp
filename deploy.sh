@@ -28,6 +28,8 @@ if [ "$LOCAL" != "$REMOTE" ]; then
   # 强制对齐远程代码（不会影响 .env，因为你已经移出仓库了）
   git reset --hard origin/$BRANCH
 
+  sudo docker compose down  
+  
   sudo chmod +x $REPO_DIR/deploy.sh
 
   # 重新构建并启动（不会删 volume / 数据）
