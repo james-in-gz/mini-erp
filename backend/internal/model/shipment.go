@@ -21,7 +21,7 @@ type Shipment struct {
 	ReceiverDistrict string
 	ReceiverAddress  string
 
-	ShippedAt   *time.Time
+	ShippedAt   *time.Time `gorm:"autoCreateTime"`
 	DeliveredAt *time.Time
 
 	ShipmentItems []ShipmentItem
