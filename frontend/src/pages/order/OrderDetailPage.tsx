@@ -48,7 +48,7 @@ export default function OrderDetailPage() {
           <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
             <Box>
               <Typography variant="h6">
-                Order #{data.id}
+                Order <div id={data.orderNo?data.orderNo: data.id}></div>
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {t("order.customer")}: {data.customer?.name || "N/A"}
