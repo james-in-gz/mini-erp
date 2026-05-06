@@ -23,9 +23,7 @@ export default function ProductPage() {
 
   const [form, setForm] = useState({
     name: "",
-    sku: "",
-    price: 0,
-    stock: 0,
+    spu: "",
   });
 
   const load = () => {
@@ -39,7 +37,7 @@ export default function ProductPage() {
   const handleCreate = async () => {
     await createProduct(form);
     setOpen(false);
-    setForm({ name: "", sku: "", price: 0, stock: 0 });
+    setForm({ name: "", spu: "" });
     load();
   };
 
@@ -62,16 +60,10 @@ export default function ProductPage() {
               <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Box>
                   <Typography>{p.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    SKU: {p.sku}
-                  </Typography>
                 </Box>
 
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography>¥{p.price}</Typography>
-                  <Typography variant="body2">
-                    {t("product.stock")}: {p.stock}
-                  </Typography>
+                  <Typography>¥{p.spu}</Typography>
                 </Box>
               </Stack>
             </CardContent>
@@ -80,48 +72,32 @@ export default function ProductPage() {
       </Box>
 
       {/* 弹窗 */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{t("product.newProduct")}</DialogTitle>
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth
+  maxWidth="sm" >
+        <DialogTitle sx={{ fontWeight: 600 }}>{t("product.newProduct")}</DialogTitle>
 
         <DialogContent>
-          <Stack sx={{ spacing: 2, mt: 1 }}>
+          <Stack sx={{ spacing: 2.5, mt: 1 }}>
             <TextField
               label={t("product.name")}
               value={form.name}
               onChange={(e) =>
                 setForm({ ...form, name: e.target.value })
               }
+              fullWidth size="small"
             />
-
-            <TextField
-              label={t("product.sku")}
-              value={form.sku}
+<TextField
+              label={t("product.spu")}
+              value={form.spu}
               onChange={(e) =>
-                setForm({ ...form, sku: e.target.value })
+                setForm({ ...form, name: e.target.value })
               }
-            />
-
-            <TextField
-              label={t("product.price")}
-              type="number"
-              value={form.price}
-              onChange={(e) =>
-                setForm({ ...form, price: Number(e.target.value) })
-              }
-            />
-
-            <TextField
-              label={t("product.stock")}
-              type="number"
-              value={form.stock}
-              onChange={(e) =>
-                setForm({ ...form, stock: Number(e.target.value) })
-              }
+              fullWidth size="small"
             />
           </Stack>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setOpen(false)}>{t("product.cancel")}</Button>
           <Button variant="contained" onClick={handleCreate}>
             {t("product.create")}

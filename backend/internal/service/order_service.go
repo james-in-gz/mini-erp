@@ -45,7 +45,7 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 	}
 
 	NumberGenerator := number.NewNumberGenerator(database.DB)
-	orderNo, err := NumberGenerator.Generate("order")
+	orderNo, err := NumberGenerator.Generate("SO")
 	if err != nil {
 		return nil, err
 	}
