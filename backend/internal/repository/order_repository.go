@@ -22,7 +22,7 @@ func AddShipping(shipping *model.Shipment) error {
 func GetOrderByID(id uint) (model.Order, error) {
 	var order model.Order
 	err := database.DB.
-		Preload("Customer").Preload("Address").
+		Preload("Customer").
 		Preload("Items.Product").
 		First(&order, id).Error
 	return order, err

@@ -26,7 +26,11 @@ type CreateShipmentReq struct {
 }
 
 func CreateShipment(c *gin.Context) {
-	orderID, _ := strconv.Atoi(c.Param("id"))
+	orderID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || orderID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid order id"})
+		return
+	}
 
 	var req CreateShipmentReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -34,19 +38,8 @@ func CreateShipment(c *gin.Context) {
 		return
 	}
 
-	serviceReq := map[string]interface{}{
-		"TrackingNumber":   req.TrackingNumber,
-		"Carrier":          req.Carrier,
-		"ReceiverName":     req.ReceiverName,
-		"ReceiverPhone":    req.ReceiverPhone,
-		"ReceiverProvince": req.ReceiverProvince,
-		"ReceiverCity":     req.ReceiverCity,
-		"ReceiverDistrict": req.ReceiverDistrict,
-		"ReceiverAddress":  req.ReceiverAddress,
-		"Items":            req.Items,
-	}
-
-	err := service.CreateShipment(uint(orderID), serviceReq)
+	// ❗直接传 struct，不要用 map
+	err = service.CreateShipment(uint(orderID), req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -56,7 +49,11 @@ func CreateShipment(c *gin.Context) {
 }
 
 func ListShipments(c *gin.Context) {
-	orderID, _ := strconv.Atoi(c.Param("id"))
+	orderID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || orderID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid order id"})
+		return
+	}
 
 	data, err := service.ListShipments(uint(orderID))
 	if err != nil {

@@ -17,6 +17,12 @@ type CreateOrderReq struct {
 
 func CreateOrder(req CreateOrderReq) error {
 
+	// ⭐ 获取客户的地址信息
+	address, err := repository.GetAddressByID(req.AddressID)
+	if err != nil {
+		return err
+	}
+
 	var total float64
 	var items []model.OrderItem
 
@@ -35,10 +41,23 @@ func CreateOrder(req CreateOrderReq) error {
 
 	order := model.Order{
 		CustomerID:  req.CustomerID,
-		AddressID:   req.AddressID,
 		TotalAmount: total,
 		Status:      "pending",
 		Items:       items,
+		// 下单地址（不可变）
+		OriginName:     address.Name,
+		OriginPhone:    address.Phone,
+		OriginProvince: address.Province,
+		OriginCity:     address.City,
+		OriginDistrict: address.District,
+		OriginAddress:  address.Address,
+		// 当前默认地址（可改）
+		DefaultName:     address.Name,
+		DefaultPhone:    address.Phone,
+		DefaultProvince: address.Province,
+		DefaultCity:     address.City,
+		DefaultDistrict: address.District,
+		DefaultAddress:  address.Address,
 	}
 
 	return repository.CreateOrder(&order)

@@ -43,7 +43,7 @@ export default function ShipmentPage() {
     // ⭐ 初始化发货商品
     setItems(
       res.data.items.map((i: any) => ({
-        order_item_id: i.id,
+        orderItemId: i.id,
         quantity: 0,
         name: i.product?.name,
       }))
@@ -52,12 +52,12 @@ export default function ShipmentPage() {
     // ⭐ 自动填收货地址（推荐）
     setForm((prev) => ({
       ...prev,
-      receiverName: res.data.address?.name || "",
-      receiverPhone: res.data.address?.phone || "",
-      receiverProvince: res.data.address?.province || "",
-      receiverCity: res.data.address?.city || "",
-      receiverDistrict: res.data.address?.district || "",
-      receiverAddress: res.data.address?.address || "",
+      receiverName: res.data.defaultName || "",
+      receiverPhone: res.data.defaultPhone || "",
+      receiverProvince: res.data.defaultProvince || "",
+      receiverCity: res.data.defaultCity || "",
+      receiverDistrict: res.data.defaultDistrict || "",
+      receiverAddress: res.data.defaultAddress || "",
     }));
   };
 
@@ -168,7 +168,7 @@ export default function ShipmentPage() {
 
           {items.map((i) => (
             <TextField
-              key={i.order_item_id}
+              key={i.orderItemId}
               label={i.name}
               type="number"
               value={i.quantity}
@@ -177,7 +177,7 @@ export default function ShipmentPage() {
 
                 setItems((prev) =>
                   prev.map((p) =>
-                    p.order_item_id === i.order_item_id
+                    p.orderItemId === i.orderItemId
                       ? { ...p, quantity: val }
                       : p
                   )

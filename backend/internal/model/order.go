@@ -3,19 +3,33 @@ package model
 import "time"
 
 type Order struct {
-	ID             uint            `gorm:"primaryKey" json:"id,omitempty"`
-	CustomerID     uint            `gorm:"index" json:"customerID,omitempty"`
-	Customer       Customer        `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
-	AddressID      uint            `json:"addressID,omitempty"`
-	Address        CustomerAddress `gorm:"foreignKey:AddressID;references:ID" json:"address,omitempty"`
-	UserID         uint            `json:"userID,omitempty"` // 关联 User
-	TotalAmount    float64         `json:"totalAmount,omitempty"`
-	Status         string          `json:"status,omitempty"`    // pending / shipped / done
-	OrderType      string          `json:"orderType,omitempty"` // single / subscription
-	Period         string          `json:"period,omitempty"`    // monthly / quarterly / yearly
-	NextDeliveryAt *time.Time      `json:"nextDeliveryAt,omitempty"`
-	CreatedAt      time.Time       `json:"createdAt,omitempty"`
-	UpdatedAt      time.Time       `json:"updatedAt,omitempty"`
+	ID             uint       `gorm:"primaryKey" json:"id,omitempty"`
+	CustomerID     uint       `gorm:"index" json:"customerID,omitempty"`
+	Customer       Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
+	UserID         uint       `json:"userID,omitempty"` // 关联 User
+	TotalAmount    float64    `json:"totalAmount,omitempty"`
+	Status         string     `json:"status,omitempty"`    // pending / shipped / done
+	OrderType      string     `json:"orderType,omitempty"` // single / subscription
+	Period         string     `json:"period,omitempty"`    // monthly / quarterly / yearly
+	NextDeliveryAt *time.Time `json:"nextDeliveryAt,omitempty"`
+	CreatedAt      time.Time  `json:"createdAt,omitempty"`
+	UpdatedAt      time.Time  `json:"updatedAt,omitempty"`
+
+	// 下单地址（不可变）
+	OriginName     string `json:"originName,omitempty"`
+	OriginPhone    string `json:"originPhone,omitempty"`
+	OriginProvince string `json:"originProvince,omitempty"`
+	OriginCity     string `json:"originCity,omitempty"`
+	OriginDistrict string `json:"originDistrict,omitempty"`
+	OriginAddress  string `json:"originAddress,omitempty"`
+
+	// 当前默认地址（可改）
+	DefaultName     string `json:"defaultName,omitempty"`
+	DefaultPhone    string `json:"defaultPhone,omitempty"`
+	DefaultProvince string `json:"defaultProvince,omitempty"`
+	DefaultCity     string `json:"defaultCity,omitempty"`
+	DefaultDistrict string `json:"defaultDistrict,omitempty"`
+	DefaultAddress  string `json:"defaultAddress,omitempty"`
 
 	Items     []OrderItem `gorm:"foreignKey:OrderID" json:"items,omitempty"`
 	Shippings []Shipment  `gorm:"foreignKey:OrderID" json:"shippings,omitempty"`

@@ -79,6 +79,22 @@ export default function OrderDetailPage() {
       {/* 📦 商品列表 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
+          <Typography variant="subtitle1">{t("order.address")}</Typography>
+
+          <Stack sx={{ spacing: 1, mt: 1 }}>
+            <Typography variant="body2">
+              {data.defaultName} / {data.defaultPhone}
+            </Typography>
+            <Typography variant="body2">
+              {data.defaultProvince} {data.defaultCity} {data.defaultDistrict} {data.defaultAddress}
+            </Typography>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {/* 📦 商品列表 */}
+      <Card sx={{ borderRadius: 3, mb: 2 }}>
+        <CardContent>
           <Typography variant="subtitle1">{t("order.items")}</Typography>
 
           <Stack sx={{ spacing: 1, mt: 2 }}>

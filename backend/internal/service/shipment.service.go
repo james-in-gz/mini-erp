@@ -9,20 +9,7 @@ import (
 
 func CreateShipment(orderID uint, req interface{}) error {
 
-	r := req.(struct {
-		TrackingNumber   string
-		Carrier          string
-		ReceiverName     string
-		ReceiverPhone    string
-		ReceiverProvince string
-		ReceiverCity     string
-		ReceiverDistrict string
-		ReceiverAddress  string
-		Items            []struct {
-			OrderItemID uint
-			Quantity    int
-		}
-	})
+	r := req.(map[string]interface{})
 
 	order, err := repository.GetOrderByID(orderID)
 	if err != nil {
@@ -33,44 +20,49 @@ func CreateShipment(orderID uint, req interface{}) error {
 
 	shipment := model.Shipment{
 		OrderID:          orderID,
-		TrackingNumber:   r.TrackingNumber,
-		Carrier:          r.Carrier,
-		ReceiverName:     r.ReceiverName,
-		ReceiverPhone:    r.ReceiverPhone,
-		ReceiverProvince: r.ReceiverProvince,
-		ReceiverCity:     r.ReceiverCity,
-		ReceiverDistrict: r.ReceiverDistrict,
-		ReceiverAddress:  r.ReceiverAddress,
+		TrackingNumber:   r["TrackingNumber"].(string),
+		Carrier:          r["Carrier"].(string),
+		ReceiverName:     r["ReceiverName"].(string),
+		ReceiverPhone:    r["ReceiverPhone"].(string),
+		ReceiverProvince: r["ReceiverProvince"].(string),
+		ReceiverCity:     r["ReceiverCity"].(string),
+		ReceiverDistrict: r["ReceiverDistrict"].(string),
+		ReceiverAddress:  r["ReceiverAddress"].(string),
 		ShippedAt:        &now,
 		Status:           "shipped",
 	}
 
 	// ⭐ 构建 ShipmentItems
-	for _, item := range r.Items {
+	items := r["Items"].([]interface{})
+	for _, itemInterface := range items {
+		item := itemInterface.(map[string]interface{})
 
-		orderItem := findOrderItem(order.Items, item.OrderItemID)
+		orderItemID := uint(item["OrderItemID"].(float64))
+		quantity := int(item["Quantity"].(float64))
+
+		orderItem := findOrderItem(order.Items, orderItemID)
 		if orderItem == nil {
 			return errors.New("order item not found")
 		}
 
-		if item.Quantity <= 0 {
+		if quantity <= 0 {
 			return errors.New("invalid quantity")
 		}
 
-		if orderItem.ShippedQuantity+item.Quantity > orderItem.Quantity {
+		if orderItem.ShippedQuantity+quantity > orderItem.Quantity {
 			return errors.New("exceed quantity")
 		}
 
 		shipment.ShipmentItems = append(shipment.ShipmentItems, model.ShipmentItem{
-			OrderItemID: item.OrderItemID,
+			OrderItemID: orderItemID,
 			ProductID:   orderItem.ProductID,
 			ProductName: orderItem.ProductName,
 			SKU:         orderItem.ProductSKU,
-			Quantity:    item.Quantity,
+			Quantity:    quantity,
 		})
 
 		// 更新已发数量
-		orderItem.ShippedQuantity += item.Quantity
+		orderItem.ShippedQuantity += quantity
 	}
 
 	// 更新订单状态
