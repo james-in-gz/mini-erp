@@ -38,7 +38,7 @@ export default function CreateOrderPage() {
 
     const handleSearch = debounce(async (value: string) => {
         const res = await searchCustomers(value);
-        setOptions(res.data);
+        setOptions(res.data?.data);
     }, 300);
 
     // 加载数据
