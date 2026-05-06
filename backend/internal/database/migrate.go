@@ -10,6 +10,7 @@ func AutoMigrate() {
 		&model.Tag{},
 		&model.CustomerTag{},
 		&model.CustomerNote{},
+		&model.BizSequence{},
 
 		&model.Product{},
 

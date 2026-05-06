@@ -4,6 +4,7 @@ import "time"
 
 type Order struct {
 	ID             uint       `gorm:"primaryKey" json:"id,omitempty"`
+	OrderNo        string     `gorm:"size:100;uniqueIndex" json:"orderNo,omitempty"`
 	CustomerID     uint       `gorm:"index" json:"customerID,omitempty"`
 	Customer       Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
 	UserID         uint       `json:"userID,omitempty"` // 关联 User

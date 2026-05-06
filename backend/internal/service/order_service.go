@@ -1,7 +1,9 @@
 package service
 
 import (
+	"backend/internal/database"
 	"backend/internal/model"
+	"backend/internal/number"
 	"backend/internal/repository"
 	"errors"
 	"time"
@@ -42,8 +44,15 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 		})
 	}
 
+	NumberGenerator := number.NewNumberGenerator(database.DB)
+	orderNo, err := NumberGenerator.Generate("order")
+	if err != nil {
+		return nil, err
+	}
+
 	order := model.Order{
 		CustomerID:  req.CustomerID,
+		OrderNo:     orderNo,
 		TotalAmount: total,
 		Status:      "pending",
 		Items:       items,
