@@ -11,12 +11,12 @@ func CreateOrder(order *model.Order) error {
 
 func GetOrders() ([]model.Order, error) {
 	var orders []model.Order
-	err := database.DB.Preload("Customer").Preload("Items").Preload("Shippings").Find(&orders).Error
+	err := database.DB.Preload("Customer").Preload("Items").Preload("Shipments").Find(&orders).Error
 	return orders, err
 }
 
-func AddShipping(shipping *model.Shipment) error {
-	return database.DB.Create(shipping).Error
+func AddShipping(shipment *model.Shipment) error {
+	return database.DB.Create(shipment).Error
 }
 
 func GetOrderByID(id uint) (model.Order, error) {
