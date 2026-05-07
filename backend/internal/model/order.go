@@ -45,6 +45,7 @@ type OrderItem struct {
 	OrderID uint `gorm:"index" json:"orderID,omitempty"`
 
 	SKUID uint `gorm:"index" json:"skuid,omitempty"`
+	SKU   SKU  `gorm:"foreignKey:SKUID;references:ID" json:"sku,omitempty"`
 
 	SKUCode string `json:"skuCode,omitempty"`
 	SKUName string `json:"skuName,omitempty"`

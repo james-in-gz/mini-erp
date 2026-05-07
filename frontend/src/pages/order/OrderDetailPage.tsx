@@ -103,14 +103,16 @@ export default function OrderDetailPage() {
               <Box key={i.id}>
                 <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
                   <Typography>
-                    {i.product?.name}
+                    {i.skuName || i.skuCode || `SKU ${i.skuid || i.SKUID}`}
                   </Typography>
 
                   <Typography>
-                    {i.shipped_quantity !== undefined ? i.shipped_quantity : 0} / {i.quantity}
+                    {i.shippedQuantity !== undefined ? i.shippedQuantity : 0} / {i.quantity}
                   </Typography>
                 </Stack>
-
+                <Typography variant="body2" color="text.secondary">
+                  ¥{i.price} x {i.quantity} = ¥{i.subtotal}
+                </Typography>
                 <Divider sx={{ mt: 1 }} />
               </Box>
             ))}
@@ -151,9 +153,9 @@ export default function OrderDetailPage() {
 
                     {/* 商品 */}
                     <Stack sx={{ mt: 1, spacing: 0.5 }}>
-                      {s.shipment_items?.map((si: any) => (
+                      {(s.shipmentItems || s.shipment_items || []).map((si: any) => (
                         <Typography key={si.id} variant="body2">
-                          {si.product_name} x {si.quantity}
+                          {si.sku || `SKU ${si.productID}`} x {si.quantity}
                         </Typography>
                       ))}
                     </Stack>

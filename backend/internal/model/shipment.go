@@ -28,13 +28,9 @@ type Shipment struct {
 }
 
 type ShipmentItem struct {
-	ID          uint `gorm:"primaryKey"`
-	ShipmentID  uint `gorm:"index"`
-	OrderItemID uint
-
-	ProductID   uint
-	ProductName string
-
-	SKU      string
-	Quantity int
+	ID          uint   `gorm:"primaryKey" json:"id,omitempty"`
+	ShipmentID  uint   `gorm:"index" json:"shipmentID,omitempty"`
+	OrderItemID uint   `json:"orderItemID,omitempty"`
+	SKU         string `json:"sku,omitempty"`
+	Quantity    int    `json:"quantity,omitempty"`
 }
