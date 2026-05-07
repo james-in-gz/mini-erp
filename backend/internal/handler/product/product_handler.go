@@ -92,9 +92,7 @@ func GetSKUs(c *gin.Context) {
 func GenerateSKUs(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	var req struct {
-		Specs map[string][]string `json:"specs"`
-	}
+	var req dto.GenerateSKURequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		dto.Fail(c, err.Error())

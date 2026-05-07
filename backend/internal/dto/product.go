@@ -14,3 +14,12 @@ type CreateSKUReq struct {
 	Unit     string  `json:"unit"`     // 单位，如：瓶 / 盒 / 袋
 	Price    float64 `json:"price"`
 }
+
+type SpecInput struct {
+	Key    string   `json:"key"`
+	Values []string `json:"values"`
+}
+
+type GenerateSKURequest struct {
+	Specs []SpecInput `json:"specs"`
+}

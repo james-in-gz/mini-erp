@@ -60,26 +60,26 @@ export default function ProductDetailPage() {
     }, [id]);
 
 
-    const buildSpecs = () => {
-  const obj: Record<string, string[]> = {};
 
-  specs.forEach((s) => {
-    if (s.key && s.values.length) {
-      obj[s.key] = s.values.map((v) => v.trim());
-    }
-  });
-
-  return obj;
-};
 
     // 创建SKU
     const handleCreateSku = async () => {
-        await generateSKUs(productId, {
-  specs: buildSpecs(),
-});
+        const payload = {
+            specs: specs
+                .filter((s) => s.key.trim())
+                .map((s) => ({
+                    key: s.key.trim(),
+
+                    values: s.values
+                        .map((v) => v.trim())
+                        .filter(Boolean),
+                })),
+        };
+
+        await generateSKUs(productId, payload);
 
         setOpen(false);
-        setForm({ name: "", price: "", stock: "" });
+
         load();
     };
 
@@ -157,9 +157,9 @@ export default function ProductDetailPage() {
                 <DialogTitle>新增SKU</DialogTitle>
 
                 <DialogContent>
-                    <Stack sx={{ spacing: 2 , mt: 1}}>
+                    <Stack sx={{ spacing: 2, mt: 1 }}>
                         {specs.map((spec, i) => (
-                            <Stack key={i} direction="row" sx={{ spacing: 2.5 , mb: 1}}>
+                            <Stack key={i} direction="row" sx={{ spacing: 2.5, mb: 1 }}>
                                 <TextField
                                     label="规格名"
                                     value={spec.key}
@@ -168,15 +168,18 @@ export default function ProductDetailPage() {
                                         newSpecs[i].key = e.target.value;
                                         setSpecs(newSpecs);
                                     }}
-                                    
+
                                 />
 
                                 <TextField
-                                    label="选项（逗号分隔）"
+                                    label="选项（逗号、分号、空格或换行符分隔）"
                                     value={spec.values.join(",")}
                                     onChange={(e) => {
                                         const newSpecs = [...specs];
-                                        newSpecs[i].values = e.target.value.split(",");
+
+                                        newSpecs[i].values = e.target.value
+                                            .split(/[,， ;\n]/);
+
                                         setSpecs(newSpecs);
                                     }}
                                     fullWidth

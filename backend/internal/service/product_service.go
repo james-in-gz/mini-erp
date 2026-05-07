@@ -62,37 +62,54 @@ func CreateSKU(productID uint, req dto.CreateSKUReq) (*model.SKU, error) {
 	return &sku, nil
 }
 
-func generateCombinations(specs map[string][]string) []map[string]string {
-	keys := make([]string, 0, len(specs))
-	for k := range specs {
-		keys = append(keys, k)
-	}
+func generateCombinations(
+	specs []dto.SpecInput,
+) []map[string]string {
 
 	var result []map[string]string
 
-	var dfs func(int, map[string]string)
-	dfs = func(index int, current map[string]string) {
-		if index == len(keys) {
+	var dfs func(
+		int,
+		map[string]string,
+	)
+
+	dfs = func(
+		index int,
+		current map[string]string,
+	) {
+
+		if index == len(specs) {
+
 			comb := make(map[string]string)
+
 			for k, v := range current {
 				comb[k] = v
 			}
+
 			result = append(result, comb)
+
 			return
 		}
 
-		key := keys[index]
-		for _, val := range specs[key] {
-			current[key] = val
+		spec := specs[index]
+
+		for _, val := range spec.Values {
+
+			current[spec.Key] = val
+
 			dfs(index+1, current)
 		}
 	}
 
 	dfs(0, map[string]string{})
+
 	return result
 }
 
-func generateSKUs(productID int, specs map[string][]string) ([]model.SKU, error) {
+func generateSKUs(
+	productID int,
+	specs []dto.SpecInput,
+) ([]model.SKU, error) {
 
 	product, err := repository.GetProductByID(productID)
 	if err != nil {
@@ -105,27 +122,35 @@ func generateSKUs(productID int, specs map[string][]string) ([]model.SKU, error)
 
 	for _, comb := range combinations {
 
-		// 👉 转 JSON
 		specJSON, _ := json.Marshal(comb)
 
-		// 👉 生成名称
-		name := ""
-		for _, v := range comb {
-			name += v + " "
+		var nameParts []string
+		var codeParts []string
+
+		for _, spec := range specs {
+
+			val := comb[spec.Key]
+
+			nameParts = append(nameParts, val)
+
+			codeParts = append(
+				codeParts,
+				strings.ToUpper(val),
+			)
 		}
 
-		// 👉 生成 SKU Code（关键）
-		code := product.SPU
-		for _, v := range comb {
-			code += "-" + strings.ToUpper(v)
-		}
+		name := strings.Join(nameParts, " ")
+
+		code := product.SPU +
+			"-" +
+			strings.Join(codeParts, "-")
 
 		sku := model.SKU{
 			ProductID: product.ID,
 			Code:      code,
 			Specs:     string(specJSON),
-			Name:      strings.TrimSpace(name),
-			Price:     0, // 默认价格
+			Name:      name,
+			Price:     0,
 		}
 
 		skus = append(skus, sku)
@@ -134,7 +159,7 @@ func generateSKUs(productID int, specs map[string][]string) ([]model.SKU, error)
 	return skus, nil
 }
 
-func CreateBatchSKUs(productID int, specs map[string][]string) error {
+func CreateBatchSKUs(productID int, specs []dto.SpecInput) error {
 	skus, err := generateSKUs(productID, specs)
 	if err != nil {
 		return err
