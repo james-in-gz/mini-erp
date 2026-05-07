@@ -110,7 +110,7 @@ export default function CreateOrderPage() {
         }
 
         try {
-           const res = await createOrder({
+            const res = await createOrder({
                 customer_id: form.customer_id,
                 address_id: form.address_id,
                 items: items.map((i) => ({
@@ -190,7 +190,22 @@ export default function CreateOrderPage() {
                         <Typography variant="subtitle1">{t("order.items")}</Typography>
 
                         {items.map((item, index) => (
-                            <Stack direction="row" spacing={2} key={index}>
+                            <Box
+                                key={index}
+                                sx={{
+                                    display: "grid",
+
+                                    gridTemplateColumns: {
+                                        xs: "1fr",
+                                        md: "2fr 2fr 100px 120px",
+                                    },
+
+                                    gap: 2,
+
+                                    alignItems: "center",
+                                }}
+                            >
+                                {/* 产品 */}
                                 <TextField
                                     select
                                     label={t("order.product")}
@@ -211,6 +226,7 @@ export default function CreateOrderPage() {
                                     ))}
                                 </TextField>
 
+                                {/* SKU */}
                                 <TextField
                                     select
                                     label={t("order.sku")}
@@ -232,6 +248,7 @@ export default function CreateOrderPage() {
                                     ))}
                                 </TextField>
 
+                                {/* 数量 */}
                                 <TextField
                                     label={t("order.quantity")}
                                     type="number"
@@ -243,16 +260,17 @@ export default function CreateOrderPage() {
                                             Number(e.target.value)
                                         )
                                     }
-                                    sx={{ width: 100 }}
+                                    fullWidth
                                 />
 
+                                {/* 价格 */}
                                 <TextField
                                     label={t("order.price")}
                                     value={item.price}
                                     disabled
-                                    sx={{ width: 120 }}
+                                    fullWidth
                                 />
-                            </Stack>
+                            </Box>
                         ))}
 
                         <Button onClick={addItem}>{t("order.addItem")}</Button>
