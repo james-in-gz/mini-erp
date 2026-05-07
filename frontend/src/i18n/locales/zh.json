@@ -118,6 +118,7 @@
     "newProduct": "新建产品",
     "name": "名称",
     "sku": "SKU",
+    "spu": "SPU",
     "price": "价格",
     "stock": "库存",
     "create": "创建",

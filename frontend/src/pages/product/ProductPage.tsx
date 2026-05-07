@@ -64,7 +64,7 @@ export default function ProductPage() {
                 </Box>
 
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography>¥{p.spu}</Typography>
+                  <Typography>{p.spu}</Typography>
                 </Box>
               </Stack>
             </CardContent>

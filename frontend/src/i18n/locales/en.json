@@ -118,6 +118,7 @@
     "newProduct": "New Product",
     "name": "Name",
     "sku": "SKU",
+    "spu": "SPU",
     "price": "Price",
     "stock": "Stock",
     "create": "Create",
