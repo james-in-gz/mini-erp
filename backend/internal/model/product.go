@@ -19,9 +19,14 @@ type SKU struct {
 	// ⭐ 核心：可扩展规格
 	Specs string `gorm:"type:json" json:"specs,omitempty"` // {"weight":"500g","color":"red"}
 
-	Name string `json:"name,omitempty"` // 展示用（自动生成）
+	Name   string `json:"name,omitempty"`   // 展示用（自动生成）
+	Unit   string `json:"unit,omitempty"`   // 单位	计量单位，如：件、盒、瓶
+	Weight int64  `json:"weight,omitempty"` // 重量，单位克 计算运费
 
-	Price float64 `json:"price,omitempty"`
+	Price     float64 `json:"price,omitempty"`
+	CostPrice float64 `json:"costPrice,omitempty"`
+
+	Status string `json:"status,omitempty"` // active / inactive
 
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`

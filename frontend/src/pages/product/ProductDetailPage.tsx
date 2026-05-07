@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Box,
     Tabs,
@@ -25,6 +25,7 @@ import { getProductDetail } from "@/api/product";
 import { getSKUs, createSKU, generateSKUs } from "@/api/sku";
 
 export default function ProductDetailPage() {
+    const navigate = useNavigate();
     const { id } = useParams();
 
     const [tab, setTab] = useState(0);
@@ -130,6 +131,7 @@ export default function ProductDetailPage() {
                                     <TableCell>名称</TableCell>
                                     <TableCell>价格</TableCell>
                                     <TableCell>库存</TableCell>
+                                    <TableCell>操作</TableCell>
                                 </TableRow>
                             </TableHead>
 
@@ -139,6 +141,18 @@ export default function ProductDetailPage() {
                                         <TableCell>{sku.name}</TableCell>
                                         <TableCell>¥{sku.price}</TableCell>
                                         <TableCell>{sku.stock}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={() => {
+                                                    // Handle edit action
+                                                    navigate(`/sku/${sku.id}`);
+                                                }}
+                                            >
+                                                编辑
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
