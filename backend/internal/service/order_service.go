@@ -15,8 +15,9 @@ type CreateOrderReq struct {
 	CustomerID uint `json:"customer_id"`
 	AddressID  uint `json:"address_id"`
 	Items      []struct {
-		SKUID    uint `json:"skuId"`
-		Quantity int  `json:"quantity"`
+		SKUID    uint    `json:"skuId"`
+		Quantity int     `json:"quantity"`
+		Price    float64 `json:"price"`
 	} `json:"items"`
 }
 
@@ -37,7 +38,7 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 			return nil, err
 		}
 
-		price := sku.Price
+		price := i.Price
 
 		total += price * float64(i.Quantity)
 

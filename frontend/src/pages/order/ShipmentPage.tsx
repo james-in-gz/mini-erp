@@ -50,8 +50,10 @@ export default function ShipmentPage() {
       setItems(
         orderData.items.map((i: any) => ({
           orderItemId: i.id,
-          quantity: 0,
+          quantity: i.quantity - (i.shippedQuantity || 0), // 只能发未发货的数量
           name: i.skuName,
+          orderedQuantity: i.quantity,
+          shippedQuantity: i.shippedQuantity || 0,
         })),
       );
 
@@ -92,7 +94,7 @@ export default function ShipmentPage() {
         alert(t("order.shipSuccess"));
         navigate(`/orders/${id}`); // ⭐ 回到订单详情页
       } else {
-        alert(t("error."+res.data.message));
+        alert(t("error." + res.data.message));
         return;
       }
     });
@@ -175,9 +177,18 @@ export default function ShipmentPage() {
           {items.map((i) => (
             <TextField
               key={i.orderItemId}
-              label={i.name}
+              label={`${i.name}（已发 ${i.shippedQuantity}/${i.orderedQuantity}，剩余 ${
+                i.orderedQuantity - i.shippedQuantity
+              }）`}
               type="number"
               value={i.quantity}
+              slotProps={{
+                htmlInput: {
+                  min: 0,
+                  max: i.orderedQuantity - i.shippedQuantity,
+                },
+              }}
+              disabled={i.shippedQuantity >= i.orderedQuantity} // 已全部发货的商品不能再修改数量了
               onChange={(e) => {
                 const val = Number(e.target.value);
 
