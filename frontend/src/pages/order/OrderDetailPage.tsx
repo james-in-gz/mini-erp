@@ -87,7 +87,7 @@ export default function OrderDetailPage() {
         <CardContent>
           <Typography variant="subtitle1">{t("order.address")}</Typography>
 
-          <Stack sx={{ spacing: 1, mt: 1 }}>
+          <Stack spacing={1} sx={{  mt: 1 }}>
             <Typography variant="body2">
               {data.defaultName} / {data.defaultPhone}
             </Typography>
@@ -104,7 +104,7 @@ export default function OrderDetailPage() {
         <CardContent>
           <Typography variant="subtitle1">{t("order.items")}</Typography>
 
-          <Stack sx={{ spacing: 1, mt: 2 }}>
+          <Stack spacing={1} sx={{  mt: 2 }}>
             {data.items.map((i: OrderItem) => (
               <Box key={i.id}>
                 <Stack
@@ -134,7 +134,7 @@ export default function OrderDetailPage() {
         <CardContent>
           <Typography variant="subtitle1">{t("order.shipments")}</Typography>
 
-          <Stack sx={{ spacing: 2, mt: 2 }}>
+          <Stack spacing={1} sx={{ mt: 2 }}>
             {data.shipments?.map((s: Shipment) => (
               <Card key={s.id} variant="outlined">
                 <CardContent>
@@ -160,7 +160,7 @@ export default function OrderDetailPage() {
                     </Typography>
 
                     {/* 商品 */}
-                    <Stack sx={{ mt: 1, spacing: 0.5 }}>
+                    <Stack spacing={1} sx={{ mt: 1}}>
                       {(s.shipmentItems || []).map((si: any) => (
                         <Typography key={si.id} variant="body2">
                           {`SKU ${si.sku}`} x {si.quantity}

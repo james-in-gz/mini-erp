@@ -78,7 +78,7 @@ export default function ProductPage() {
         <DialogTitle sx={{ fontWeight: 600 }}>{t("product.newProduct")}</DialogTitle>
 
         <DialogContent>
-          <Stack sx={{ spacing: 2.5, mt: 1 }}>
+          <Stack spacing={1} sx={{ mt: 1 }}>
             <TextField
               label={t("product.name")}
               value={form.name}

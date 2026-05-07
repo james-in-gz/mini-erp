@@ -71,14 +71,14 @@ export default function OrdersPage() {
                 </Box>
 
                 {/* 右侧 */}
-                <Stack sx={{ alignItems: "flex-end", spacing: 1 }}>
+                <Stack sx={{ alignItems: "flex-end"}} spacing={1}>
                   <Chip
                     size="small"
                     label={t(`order.${o.status}`)}
                     color={statusColor[o.status] || "default"}
                   />
 
-                  <Stack sx={{ flexDirection: "row", spacing: 1 }}>
+                  <Stack sx={{ flexDirection: "row", }} spacing={1}>
                     <Button
                       size="small"
                       onClick={() => nav(`/orders/${o.id}`)}

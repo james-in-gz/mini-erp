@@ -114,7 +114,7 @@ export default function ProductDetailPage() {
             {tab === 1 && (
                 <Card sx={{ borderRadius: 3 }}>
                     <CardContent>
-                        <Stack sx={{ spacing: 2, mb: 2, justifyContent: "space-between", direction: "row" }}>
+                        <Stack spacing={2} sx={{  mb: 2, justifyContent: "space-between", direction: "row" }}>
                             <Typography variant="h6">SKU列表</Typography>
 
                             <Button
@@ -171,9 +171,9 @@ export default function ProductDetailPage() {
                 <DialogTitle>新增SKU</DialogTitle>
 
                 <DialogContent>
-                    <Stack sx={{ spacing: 2, mt: 1 }}>
+                    <Stack spacing={2} sx={{ mt: 1 }}>
                         {specs.map((spec, i) => (
-                            <Stack key={i} direction="row" sx={{ spacing: 2.5, mb: 1 }}>
+                            <Stack key={i} direction="row" spacing={2} sx={{ mb: 1 }}>
                                 <TextField
                                     label="规格名"
                                     value={spec.key}

@@ -39,7 +39,7 @@ export default function Column({ status, items = [] }: ColumnProps) {
         items={items.map((item) => item.id.toString())}
         strategy={verticalListSortingStrategy}
       >
-        <Stack sx={{ spacing: 1 }}>
+        <Stack spacing={1}>
           {items.map((item) => (
             <CustomerCard key={item.id} item={item} />
           ))}

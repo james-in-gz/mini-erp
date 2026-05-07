@@ -89,7 +89,7 @@ export default function CustomerAddressManager({ customerId }: any) {
         <DialogTitle>New Address</DialogTitle>
 
         <DialogContent>
-          <Stack sx={{ spacing: 2, mt: 1 }}>
+          <Stack spacing={1} sx={{ mt: 1 }}>
 
             {/* 收件人 */}
             <TextField
