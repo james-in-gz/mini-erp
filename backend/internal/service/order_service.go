@@ -31,14 +31,20 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 	var total float64
 	var items []model.OrderItem
 
-	// ⭐ 简化：先写死价格（后面再接 product）
 	for _, i := range req.Items {
-		price := 100.0
+		sku, err := repository.GetSKUByID(int(i.SKUID))
+		if err != nil {
+			return nil, err
+		}
+
+		price := sku.Price
 
 		total += price * float64(i.Quantity)
 
 		items = append(items, model.OrderItem{
 			SKUID:    i.SKUID,
+			SKUCode:  sku.Code,
+			SKUName:  sku.Name,
 			Quantity: i.Quantity,
 			Price:    price,
 			Subtotal: price * float64(i.Quantity),
