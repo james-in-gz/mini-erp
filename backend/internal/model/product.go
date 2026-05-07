@@ -26,7 +26,7 @@ type SKU struct {
 	Price     float64 `json:"price,omitempty"`
 	CostPrice float64 `json:"costPrice,omitempty"`
 
-	Status string `json:"status,omitempty"` // active / inactive
+	Status int `json:"status,omitempty"` // active / inactive
 
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`

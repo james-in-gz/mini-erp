@@ -40,9 +40,9 @@ export const getSKUDetail = (id: string) => {
                 typeof sku.specs === "string"
                     ? JSON.parse(sku.specs)
                     : sku.specs || {};
-            const specs = Object.entries(specsObject || {}).map(([key, value]) => ({
-                key,
-                value,
+            const specs = Object.entries(specsObject || {}).map(([name, value]) => ({
+                name: name,
+                value:value
             }));
             return { ...res.data.data, specs };
         } else {
@@ -66,3 +66,7 @@ export const updateSKU = (
         }
     });
 };
+
+export function deleteSKU(id: string | number) {
+  return request.delete(`/skus/${id}`);
+}

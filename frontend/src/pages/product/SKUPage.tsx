@@ -9,29 +9,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import { getSKUDetail, updateSKU } from "@/api/sku";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { deleteSKU, getSKUDetail, updateSKU } from "@/api/sku";
 
 interface SKU {
   id: number;
-
-  skuCode: string;
-
-  spuId: number;
+  code: string;
+  productId: number;
 
   image?: string;
 
-  // 金额建议后端用分
   price: number;
-
   costPrice: number;
 
-  // 重量(g)
   weight?: number;
 
-  // 单位
   unit: string;
 
   status: number;
@@ -43,14 +38,14 @@ interface SKU {
 }
 
 export default function SKUEditPage() {
-  const { id } = useParams();
-
+  const { id, productId } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState<SKU>({
     id: 0,
-    skuCode: "",
-    spuId: 0,
+    code: "",
+    productId: 0,
     image: "",
     price: 0,
     costPrice: 0,
@@ -65,14 +60,33 @@ export default function SKUEditPage() {
   }, []);
 
   const fetchDetail = async () => {
-
     if (!id) return;
 
     const data = await getSKUDetail(id);
 
     setForm(data);
   };
+  const handleDelete = async () => {
+    if (!id) return;
 
+    const confirmed = window.confirm(
+      "确定删除这个SKU吗？"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+
+      await deleteSKU(id);
+
+      alert("删除成功");
+
+      navigate(`/products/${productId}`);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleChange = (key: keyof SKU, value: any) => {
     setForm((prev) => ({
       ...prev,
@@ -80,53 +94,10 @@ export default function SKUEditPage() {
     }));
   };
 
-  const handleSpecChange = (
-    index: number,
-    key: "name" | "value",
-    value: string
-  ) => {
-    const newSpecs = [...form.specs];
-
-    newSpecs[index] = {
-      ...newSpecs[index],
-      [key]: value,
-    };
-
-    setForm((prev) => ({
-      ...prev,
-      specs: newSpecs,
-    }));
-  };
-
-  const addSpec = () => {
-    setForm((prev) => ({
-      ...prev,
-      specs: [
-        ...prev.specs,
-        {
-          name: "",
-          value: "",
-        },
-      ],
-    }));
-  };
-
-  const removeSpec = (index: number) => {
-    const newSpecs = [...form.specs];
-
-    newSpecs.splice(index, 1);
-
-    setForm((prev) => ({
-      ...prev,
-      specs: newSpecs,
-    }));
-  };
-
   const handleSubmit = async () => {
     try {
+      if (!id) return;
 
-       if (!id) return;
-       
       setLoading(true);
 
       await updateSKU(id, form);
@@ -138,11 +109,7 @@ export default function SKUEditPage() {
   };
 
   return (
-    <Box
-      sx={{
-        p: 2,
-      }}
-    >
+    <Box sx={{ p: 2 }}>
       <Typography
         variant="h5"
         sx={{
@@ -166,14 +133,10 @@ export default function SKUEditPage() {
             }}
           >
             {/* 左侧 */}
-            <Stack
-              sx={{
-                gap: 2,
-              }}
-            >
+            <Stack sx={{ gap: 2 }}>
               <TextField
                 label="SKU编码"
-                value={form.skuCode}
+                value={form.code}
                 disabled
                 fullWidth
               />
@@ -181,7 +144,7 @@ export default function SKUEditPage() {
               <TextField
                 label="销售价格"
                 type="number"
-                value={form.price}
+                value={form.price ?? 0}
                 onChange={(e) =>
                   handleChange("price", Number(e.target.value))
                 }
@@ -191,7 +154,7 @@ export default function SKUEditPage() {
               <TextField
                 label="成本价格"
                 type="number"
-                value={form.costPrice}
+                value={form.costPrice ?? 0}
                 onChange={(e) =>
                   handleChange("costPrice", Number(e.target.value))
                 }
@@ -201,7 +164,7 @@ export default function SKUEditPage() {
               <TextField
                 label="重量(g)"
                 type="number"
-                value={form.weight}
+                value={form.weight ?? 0}
                 onChange={(e) =>
                   handleChange("weight", Number(e.target.value))
                 }
@@ -210,18 +173,17 @@ export default function SKUEditPage() {
 
               <TextField
                 label="单位"
-                value={form.unit}
+                value={form.unit ?? ""}
                 onChange={(e) =>
                   handleChange("unit", e.target.value)
                 }
-                placeholder="瓶 / 箱 / 个 / 件"
                 fullWidth
               />
 
               <TextField
                 select
                 label="状态"
-                value={form.status}
+                value={form.status ?? 1}
                 onChange={(e) =>
                   handleChange("status", Number(e.target.value))
                 }
@@ -245,81 +207,54 @@ export default function SKUEditPage() {
                   mb: 2,
                 }}
               >
-                SKU规格
+                SKU规格（只读）
               </Typography>
 
-              <Stack
-                sx={{
-                  gap: 2,
-                }}
-              >
+              <Stack sx={{ gap: 2 }}>
                 {form.specs.map((item, index) => (
                   <Box
                     key={index}
                     sx={{
                       display: "flex",
                       gap: 2,
-                      alignItems: "center",
                     }}
                   >
                     <TextField
                       label="规格名"
                       value={item.name}
-                      onChange={(e) =>
-                        handleSpecChange(
-                          index,
-                          "name",
-                          e.target.value
-                        )
-                      }
+                      disabled
                       fullWidth
                     />
 
                     <TextField
                       label="规格值"
                       value={item.value}
-                      onChange={(e) =>
-                        handleSpecChange(
-                          index,
-                          "value",
-                          e.target.value
-                        )
-                      }
+                      disabled
                       fullWidth
                     />
-
-                    <Button
-                      color="error"
-                      variant="outlined"
-                      onClick={() => removeSpec(index)}
-                    >
-                      删除
-                    </Button>
                   </Box>
                 ))}
-
-                <Button
-                  variant="outlined"
-                  onClick={addSpec}
-                >
-                  添加规格
-                </Button>
               </Stack>
             </Box>
           </Box>
 
-          <Divider
-            sx={{
-              my: 3,
-            }}
-          />
+          <Divider sx={{ my: 3 }} />
 
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
             }}
           >
+            <Button
+              color="error"
+              variant="outlined"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              删除SKU
+            </Button>
+
             <Button
               variant="contained"
               onClick={handleSubmit}

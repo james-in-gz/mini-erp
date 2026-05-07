@@ -122,5 +122,10 @@
     "stock": "Stock",
     "create": "Create",
     "cancel": "Cancel"
+  },
+  "error": {
+    "invalid_quantity": "Invalid quantity",
+    "insufficient_stock": "Insufficient stock",
+    "exceed_available_quantity": "Exceed available quantity"
   }
 }

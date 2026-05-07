@@ -3,28 +3,28 @@ package model
 import "time"
 
 type Shipment struct {
-	ID      uint `gorm:"primaryKey"`
-	OrderID uint
+	ID      uint `gorm:"primaryKey" json:"id,omitempty"`
+	OrderID uint `json:"orderID,omitempty"`
 
-	ShipmentNo string
-	Status     string
+	ShipmentNo string `json:"shipmentNo,omitempty"`
+	Status     string `json:"status,omitempty"`
 
 	// 🚚 物流
-	TrackingNumber string
-	Carrier        string
+	TrackingNumber string `json:"trackingNumber,omitempty"`
+	Carrier        string `json:"carrier,omitempty"`
 
 	// 📍 ⭐ 地址快照（关键）
-	ReceiverName     string
-	ReceiverPhone    string
-	ReceiverProvince string
-	ReceiverCity     string
-	ReceiverDistrict string
-	ReceiverAddress  string
+	ReceiverName     string `json:"receiverName,omitempty"`
+	ReceiverPhone    string `json:"receiverPhone,omitempty"`
+	ReceiverProvince string `json:"receiverProvince,omitempty"`
+	ReceiverCity     string `json:"receiverCity,omitempty"`
+	ReceiverDistrict string `json:"receiverDistrict,omitempty"`
+	ReceiverAddress  string `json:"receiverAddress,omitempty"`
 
-	ShippedAt   *time.Time `gorm:"autoCreateTime"`
-	DeliveredAt *time.Time
+	ShippedAt   *time.Time `gorm:"autoCreateTime" json:"shippedAt,omitempty"`
+	DeliveredAt *time.Time `json:"deliveredAt,omitempty"`
 
-	ShipmentItems []ShipmentItem
+	ShipmentItems []ShipmentItem `json:"shipmentItems,omitempty"`
 }
 
 type ShipmentItem struct {

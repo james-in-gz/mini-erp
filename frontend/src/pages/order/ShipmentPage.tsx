@@ -33,33 +33,41 @@ export default function ShipmentPage() {
 
   // 🔥 加载订单
   useEffect(() => {
+    const fetchOrder = async () => {
+      const res = await request.get(`/orders/${id}`);
+
+      if (res.data.code !== 0) {
+        alert(t("order.loadFailed"));
+        navigate(`/orders/${id}`); // ⭐ 回到订单详情页
+        return;
+      }
+
+      const orderData = res.data.data;
+
+      setOrder(orderData);
+
+      // ⭐ 初始化发货商品
+      setItems(
+        orderData.items.map((i: any) => ({
+          orderItemId: i.id,
+          quantity: 0,
+          name: i.skuName,
+        })),
+      );
+
+      // ⭐ 自动填收货地址（推荐）
+      setForm((prev) => ({
+        ...prev,
+        receiverName: orderData.defaultName || "",
+        receiverPhone: orderData.defaultPhone || "",
+        receiverProvince: orderData.defaultProvince || "",
+        receiverCity: orderData.defaultCity || "",
+        receiverDistrict: orderData.defaultDistrict || "",
+        receiverAddress: orderData.defaultAddress || "",
+      }));
+    };
     fetchOrder();
   }, [id]);
-
-  const fetchOrder = async () => {
-    const res = await request.get(`/orders/${id}`);
-    setOrder(res.data);
-
-    // ⭐ 初始化发货商品
-    setItems(
-      res.data.items.map((i: any) => ({
-        orderItemId: i.id,
-        quantity: 0,
-        name: i.product?.name,
-      }))
-    );
-
-    // ⭐ 自动填收货地址（推荐）
-    setForm((prev) => ({
-      ...prev,
-      receiverName: res.data.defaultName || "",
-      receiverPhone: res.data.defaultPhone || "",
-      receiverProvince: res.data.defaultProvince || "",
-      receiverCity: res.data.defaultCity || "",
-      receiverDistrict: res.data.defaultDistrict || "",
-      receiverAddress: res.data.defaultAddress || "",
-    }));
-  };
 
   const handleSubmit = async () => {
     const payload = {
@@ -79,11 +87,15 @@ export default function ShipmentPage() {
       return;
     }
 
-    await request.post(`/orders/${id}/shipments`, payload);
-
-    alert(t("order.shipSuccess"));
-
-    navigate(`/orders/${id}`); // ⭐ 回到订单详情页
+    request.post(`/orders/${id}/shipments`, payload).then((res) => {
+      if (res.data.code === 0) {
+        alert(t("order.shipSuccess"));
+        navigate(`/orders/${id}`); // ⭐ 回到订单详情页
+      } else {
+        alert(t("error."+res.data.message));
+        return;
+      }
+    });
   };
 
   if (!order) return <div>Loading...</div>;
@@ -93,7 +105,7 @@ export default function ShipmentPage() {
       <CardContent>
         <Stack spacing={2}>
           <Typography variant="h6">
-            {t("order.ship")} #{order.id}
+            {t("order.ship")} #{order.orderNo || order.id}
           </Typography>
 
           {/* 物流 */}
@@ -108,18 +120,14 @@ export default function ShipmentPage() {
           <TextField
             label={t("order.carrier")}
             value={form.carrier}
-            onChange={(e) =>
-              setForm({ ...form, carrier: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, carrier: e.target.value })}
           />
 
           {/* 收件人 */}
           <TextField
             label={t("order.receiverName")}
             value={form.receiverName}
-            onChange={(e) =>
-              setForm({ ...form, receiverName: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, receiverName: e.target.value })}
           />
 
           <TextField
@@ -142,9 +150,7 @@ export default function ShipmentPage() {
           <TextField
             label={t("order.city")}
             value={form.receiverCity}
-            onChange={(e) =>
-              setForm({ ...form, receiverCity: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, receiverCity: e.target.value })}
           />
 
           <TextField
@@ -179,8 +185,8 @@ export default function ShipmentPage() {
                   prev.map((p) =>
                     p.orderItemId === i.orderItemId
                       ? { ...p, quantity: val }
-                      : p
-                  )
+                      : p,
+                  ),
                 );
               }}
             />

@@ -122,3 +122,19 @@ func UpdateSKU(c *gin.Context) {
 
 	dto.Success(c, result)
 }
+
+func DeleteSKU(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		dto.Fail(c, "Invalid SKU ID")
+		return
+	}
+
+	err = service.DeleteSKU(id)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "ok"})
+}

@@ -56,6 +56,7 @@ func main() {
 		authGroup.GET("/products/:id/skus", product.GetSKUs)
 		authGroup.GET("/skus/:id", product.GetSKUDetail)
 		authGroup.PUT("/skus/:id", product.UpdateSKU)
+		authGroup.DELETE("/skus/:id", product.DeleteSKU)
 		authGroup.GET("/customers/:id/addresses", handler.GetAddresses)
 		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
 		authGroup.POST("/addresses/:id/default", handler.SetDefault)

@@ -11,10 +11,15 @@ import {
   Button,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
+import { Order,OrderItem} from "@/types/order";
 
 import { getOrderDetail } from "@/api/order";
+import { Shipment } from "@/types/shipment";
 
-const statusColor: any = {
+const statusColor: Record<
+  string,
+  "default" | "primary" | "secondary" | "success" | "error" | "warning" | "info"
+>  = {
   pending: "default",
   partial: "warning",
   partial_shipped: "warning",
@@ -27,7 +32,7 @@ export default function OrderDetailPage() {
   const nav = useNavigate();
   const { t } = useTranslation();
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Order | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -48,7 +53,7 @@ export default function OrderDetailPage() {
           <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
             <Box>
               <Typography variant="h6">
-                Order <div id={data.orderNo?data.orderNo: data.id}></div>
+                Order {data.orderNo ? data.orderNo : data.id}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {t("order.customer")}: {data.customer?.name || "N/A"}
@@ -87,7 +92,8 @@ export default function OrderDetailPage() {
               {data.defaultName} / {data.defaultPhone}
             </Typography>
             <Typography variant="body2">
-              {data.defaultProvince} {data.defaultCity} {data.defaultDistrict} {data.defaultAddress}
+              {data.defaultProvince} {data.defaultCity} {data.defaultDistrict}{" "}
+              {data.defaultAddress}
             </Typography>
           </Stack>
         </CardContent>
@@ -99,15 +105,18 @@ export default function OrderDetailPage() {
           <Typography variant="subtitle1">{t("order.items")}</Typography>
 
           <Stack sx={{ spacing: 1, mt: 2 }}>
-            {data.items.map((i: any) => (
+            {data.items.map((i: OrderItem) => (
               <Box key={i.id}>
-                <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
+                <Stack
+                  sx={{ direction: "row", justifyContent: "space-between" }}
+                >
                   <Typography>
-                    {i.skuName || i.skuCode || `SKU ${i.skuid || i.SKUID}`}
+                    {i.skuName || i.skuCode }
                   </Typography>
 
                   <Typography>
-                    {i.shippedQuantity !== undefined ? i.shippedQuantity : 0} / {i.quantity}
+                    {i.shippedQuantity !== undefined ? i.shippedQuantity : 0} /{" "}
+                    {i.quantity}
                   </Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary">
@@ -126,36 +135,35 @@ export default function OrderDetailPage() {
           <Typography variant="subtitle1">{t("order.shipments")}</Typography>
 
           <Stack sx={{ spacing: 2, mt: 2 }}>
-            {data.shipments?.map((s: any) => (
+            {data.shipments?.map((s: Shipment) => (
               <Card key={s.id} variant="outlined">
                 <CardContent>
                   <Stack spacing={1}>
-                    <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
+                    <Stack
+                      sx={{ direction: "row", justifyContent: "space-between" }}
+                    >
                       <Typography>
-                        {s.carrier} - {s.tracking_number}
+                        {s.carrier} - {s.trackingNumber}
                       </Typography>
 
-                      <Chip
-                        size="small"
-                        label={s.status}
-                        color="info"
-                      />
+                      <Chip size="small" label={s.status} color="info" />
                     </Stack>
 
                     {/* 地址快照 */}
                     <Typography variant="body2" color="text.secondary">
-                      {s.receiver_name} / {s.receiver_phone}
+                      {s.receiverName} / {s.receiverPhone}
                     </Typography>
 
                     <Typography variant="body2">
-                      {s.receiver_addr}
+                      {s.receiverProvince} {s.receiverCity} {s.receiverDistrict}{" "}
+                      {s.receiverAddress}
                     </Typography>
 
                     {/* 商品 */}
                     <Stack sx={{ mt: 1, spacing: 0.5 }}>
-                      {(s.shipmentItems || s.shipment_items || []).map((si: any) => (
+                      {(s.shipmentItems || []).map((si: any) => (
                         <Typography key={si.id} variant="body2">
-                          {si.sku || `SKU ${si.productID}`} x {si.quantity}
+                          {`SKU ${si.sku}`} x {si.quantity}
                         </Typography>
                       ))}
                     </Stack>

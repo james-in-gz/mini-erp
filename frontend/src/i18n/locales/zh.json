@@ -122,5 +122,10 @@
     "stock": "库存",
     "create": "创建",
     "cancel": "取消"
+  },
+  "error": {
+    "invalid_quantity": "无效的数量",
+    "insufficient_stock": "库存不足",
+    "exceed_available_quantity": "超过可用数量"
   }
 }

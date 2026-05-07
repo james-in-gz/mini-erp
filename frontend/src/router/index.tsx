@@ -53,7 +53,7 @@ export default function Router() {
         <Route path="/orders/:id/ship" element={<ShipmentPage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
-        <Route path="/sku/:id" element={<SKUPage />} />
+        <Route path="/products/:productId/sku/:id" element={<SKUPage />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/stock-in" element={<StockInPage />} />
         <Route path="/stock-out" element={<StockOutPage />} />

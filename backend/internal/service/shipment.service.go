@@ -68,11 +68,11 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 
 			// ❗校验数量
 			if item.Quantity <= 0 {
-				return errors.New("invalid quantity")
+				return errors.New("invalid_quantity")
 			}
 
 			if orderItem.ShippedQuantity+item.Quantity > orderItem.Quantity {
-				return errors.New("exceed available quantity")
+				return errors.New("exceed_available_quantity")
 			}
 
 			// 3️⃣ 创建发货商品

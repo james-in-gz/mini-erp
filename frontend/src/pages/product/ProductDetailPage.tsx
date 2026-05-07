@@ -147,7 +147,7 @@ export default function ProductDetailPage() {
                                                 size="small"
                                                 onClick={() => {
                                                     // Handle edit action
-                                                    navigate(`/sku/${sku.id}`);
+                                                    navigate(`/products/${productId}/sku/${sku.id}`);
                                                 }}
                                             >
                                                 编辑
