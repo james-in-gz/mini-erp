@@ -38,9 +38,9 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 		total += price * float64(i.Quantity)
 
 		items = append(items, model.OrderItem{
-			ProductID: i.ProductID,
-			Quantity:  i.Quantity,
-			Price:     price,
+
+			Quantity: i.Quantity,
+			Price:    price,
 		})
 	}
 

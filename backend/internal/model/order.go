@@ -44,12 +44,16 @@ type OrderItem struct {
 	ID      uint `gorm:"primaryKey" json:"id,omitempty"`
 	OrderID uint `gorm:"index" json:"orderID,omitempty"`
 
-	ProductID       uint    `json:"productID,omitempty"`
-	ProductName     string  `gorm:"size:255" json:"productName,omitempty"`
-	ProductSKU      string  `gorm:"size:100" json:"productSKU,omitempty"`
-	Product         Product `gorm:"foreignKey:ProductID" json:"product,omitempty"`
-	Price           float64 `json:"price,omitempty"`
-	Quantity        int     `json:"quantity,omitempty"`
-	ShippedQuantity int     `json:"shippedQuantity,omitempty"`
-	TotalPrice      float64 `json:"totalPrice,omitempty"`
+	SKUID uint `gorm:"index" json:"skuid,omitempty"`
+
+	SKUCode string `json:"skuCode,omitempty"`
+	SKUName string `json:"skuName,omitempty"`
+
+	Quantity int     `json:"quantity,omitempty"`
+	Price    float64 `json:"price,omitempty"`
+	Subtotal float64 `json:"subtotal,omitempty"`
+
+	ShippedQuantity int `json:"shippedQuantity,omitempty"`
+
+	CreatedAt time.Time
 }

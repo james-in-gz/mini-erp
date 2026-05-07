@@ -79,7 +79,6 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 			shipmentItem := model.ShipmentItem{
 				ShipmentID:  shipment.ID,
 				OrderItemID: orderItem.ID,
-				ProductID:   orderItem.ProductID,
 				Quantity:    item.Quantity,
 			}
 
