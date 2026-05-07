@@ -33,9 +33,18 @@ export const generateSKUs = (productId: number, data: any) => {
  * 获取SKU详情
  */
 export const getSKUDetail = (id: string) => {
-    return request.get(`/api/skus/${id}`).then(res => {
+    return request.get(`/skus/${id}`).then(res => {
         if (res.data.code === 0) {
-            return res.data.data;
+            var sku = res.data.data;
+            const specsObject =
+                typeof sku.specs === "string"
+                    ? JSON.parse(sku.specs)
+                    : sku.specs || {};
+            const specs = Object.entries(specsObject || {}).map(([key, value]) => ({
+                key,
+                value,
+            }));
+            return { ...res.data.data, specs };
         } else {
             throw new Error(res.data.message);
         }
@@ -49,7 +58,7 @@ export const updateSKU = (
     id: string,
     data: any
 ) => {
-    return request.put(`/api/skus/${id}`, data).then(res => {
+    return request.put(`/skus/${id}`, data).then(res => {
         if (res.data.code === 0) {
             return res.data.data;
         } else {

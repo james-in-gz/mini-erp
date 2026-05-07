@@ -48,20 +48,6 @@ func GetSKUsByProductID(productID int) ([]*model.SKU, error) {
 	return repository.ListSKUsByProductID(productID)
 }
 
-func CreateSKU(productID uint, req dto.CreateSKUReq) (*model.SKU, error) {
-	sku := model.SKU{
-		ProductID: productID,
-		Name:      req.Name,
-		Price:     req.Price,
-	}
-
-	err := repository.CreateSKU(&sku)
-	if err != nil {
-		return nil, err
-	}
-	return &sku, nil
-}
-
 func generateCombinations(
 	specs []dto.SpecInput,
 ) []map[string]string {
@@ -190,17 +176,24 @@ func GetSKUByID(id int) (*model.SKU, error) {
 	return repository.GetSKUByID(id)
 }
 
-func UpdateSKU(id int, req dto.CreateSKUReq) error {
+func UpdateSKU(id int, req dto.UpdateSKUReq) (*model.SKU, error) {
 	sku, err := repository.GetSKUByID(id) // TODO: handle error
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	sku.Name = req.Name
-
+	sku.Unit = req.Unit
+	sku.Weight = req.Weight
 	sku.Price = req.Price
+	sku.CostPrice = req.CostPrice
+	sku.Status = req.Status
 
-	return repository.UpdateSKU(sku)
+	err = repository.UpdateSKU(sku)
+	if err != nil {
+		return nil, err
+	}
+	return sku, nil
 }
 
 func DeleteSKU(id int) error {

@@ -50,29 +50,6 @@ func CreateProduct(c *gin.Context) {
 	dto.Success(c, gin.H{"message": "ok"})
 }
 
-func CreateSKU(c *gin.Context) {
-	var req dto.CreateSKUReq
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		dto.Fail(c, err.Error())
-		return
-	}
-
-	productID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		dto.Fail(c, "Invalid product ID")
-		return
-	}
-
-	sku, err := service.CreateSKU(uint(productID), req)
-	if err != nil {
-		dto.Fail(c, err.Error())
-		return
-	}
-
-	dto.Success(c, sku)
-}
-
 func GetSKUs(c *gin.Context) {
 	productID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -105,4 +82,43 @@ func GenerateSKUs(c *gin.Context) {
 	}
 
 	dto.Success(c, gin.H{"message": "ok"})
+}
+
+func GetSKUDetail(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		dto.Fail(c, "Invalid SKU ID")
+		return
+	}
+
+	result, err := service.GetSKUByID(id)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, result)
+}
+
+func UpdateSKU(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		dto.Fail(c, "Invalid SKU ID")
+		return
+	}
+
+	var req dto.UpdateSKUReq
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	result, err := service.UpdateSKU(id, req)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, result)
 }
