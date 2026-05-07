@@ -15,8 +15,8 @@ type CreateOrderReq struct {
 	CustomerID uint `json:"customer_id"`
 	AddressID  uint `json:"address_id"`
 	Items      []struct {
-		ProductID uint `json:"product_id"`
-		Quantity  int  `json:"quantity"`
+		SKUID    uint `json:"skuId"`
+		Quantity int  `json:"quantity"`
 	} `json:"items"`
 }
 
@@ -38,9 +38,10 @@ func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 		total += price * float64(i.Quantity)
 
 		items = append(items, model.OrderItem{
-
+			SKUID:    i.SKUID,
 			Quantity: i.Quantity,
 			Price:    price,
+			Subtotal: price * float64(i.Quantity),
 		})
 	}
 

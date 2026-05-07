@@ -15,6 +15,7 @@ import {
 import { createOrder } from "@/api/order";
 import { getCustomers, searchCustomers } from "@/api/customer";
 import { getProducts } from "@/api/product";
+import { getSKUs } from "@/api/sku";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -31,9 +32,10 @@ export default function CreateOrderPage() {
     });
 
     const [items, setItems] = useState<any[]>([
-        { product_id: 0, quantity: 1, price: 0 },
+        { product_id: 0, sku_id: 0, quantity: 1, price: 0 },
     ]);
 
+    const [skuOptions, setSKUOptions] = useState<Record<number, any[]>>({});
     const [options, setOptions] = useState([]);
 
     const handleSearch = debounce(async (value: string) => {
@@ -49,15 +51,39 @@ export default function CreateOrderPage() {
 
 
     // 商品变化
-    const handleItemChange = (index: number, key: string, value: any) => {
+    const loadSKUsForProduct = async (productId: number) => {
+        if (!productId || skuOptions[productId]?.length) {
+            return skuOptions[productId] || [];
+        }
+
+        try {
+            const skus = await getSKUs(productId);
+            setSKUOptions((prev) => ({ ...prev, [productId]: skus }));
+            return skus;
+        } catch {
+            return [];
+        }
+    };
+
+    const handleItemChange = async (index: number, key: string, value: any) => {
         const newItems = [...items];
 
         if (key === "product_id") {
             const product = products.find((p) => p.id === value);
+            const skus = await loadSKUsForProduct(value);
             newItems[index] = {
                 ...newItems[index],
                 product_id: value,
-                price: product?.price || 0,
+                sku_id: skus?.[0]?.id || 0,
+                price: skus?.[0]?.price || product?.price || 0,
+            };
+        } else if (key === "sku_id") {
+            const currentItem = newItems[index];
+            const sku = skuOptions[currentItem.product_id]?.find((s) => s.id === value);
+            newItems[index] = {
+                ...currentItem,
+                sku_id: value,
+                price: sku?.price || currentItem.price,
             };
         } else {
             newItems[index][key] = value;
@@ -68,7 +94,7 @@ export default function CreateOrderPage() {
 
     // 添加商品
     const addItem = () => {
-        setItems([...items, { product_id: 0, quantity: 1, price: 0 }]);
+        setItems([...items, { product_id: 0, sku_id: 0, quantity: 1, price: 0 }]);
     };
 
     // 总价
@@ -88,7 +114,7 @@ export default function CreateOrderPage() {
                 customer_id: form.customer_id,
                 address_id: form.address_id,
                 items: items.map((i) => ({
-                    product_id: i.product_id,
+                    skuId: i.sku_id,
                     quantity: i.quantity,
                 })),
             });
@@ -181,6 +207,27 @@ export default function CreateOrderPage() {
                                     {products.map((p) => (
                                         <MenuItem key={p.id} value={p.id}>
                                             {p.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+
+                                <TextField
+                                    select
+                                    label={t("order.sku")}
+                                    fullWidth
+                                    value={item.sku_id}
+                                    onChange={(e) =>
+                                        handleItemChange(
+                                            index,
+                                            "sku_id",
+                                            Number(e.target.value)
+                                        )
+                                    }
+                                    disabled={!item.product_id}
+                                >
+                                    {(skuOptions[item.product_id] || []).map((sku) => (
+                                        <MenuItem key={sku.id} value={sku.id}>
+                                            {sku.name}
                                         </MenuItem>
                                     ))}
                                 </TextField>
