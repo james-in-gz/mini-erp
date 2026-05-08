@@ -27,19 +27,13 @@ func InitDB() {
 		dialector = sqlite.Open("test.db")
 
 	} else {
-		user := os.Getenv("DB_USER")
-		password := os.Getenv("DB_PASSWORD")
-		host := os.Getenv("DB_HOST")
-		dbname := os.Getenv("DB_NAME")
-		port := os.Getenv("DB_PORT")
-
 		dsn := fmt.Sprintf(
-			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=skip",
-			user,
-			password,
-			host,
-			port,
-			dbname,
+			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			os.Getenv("DB_USER"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_PORT"),
+			os.Getenv("DB_NAME"),
 		)
 		dialector = mysql.Open(dsn)
 
