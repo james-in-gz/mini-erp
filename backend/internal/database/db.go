@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,7 +16,7 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	// dsn := "root:password@tcp(127.0.0.1:3306)/oms_crm?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "ypyy:你的密码@tcp(172.18.0.2:3306)/ypyy?charset=utf8mb4&parseTime=True&loc=Local&tls=skip"
 
 	var dialector gorm.Dialector
 
@@ -34,10 +34,14 @@ func InitDB() {
 		port := os.Getenv("DB_PORT")
 
 		dsn := fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
-			host, user, password, dbname, port,
+			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=skip",
+			user,
+			password,
+			host,
+			port,
+			dbname,
 		)
-		dialector = postgres.Open(dsn)
+		dialector = mysql.Open(dsn)
 
 		logMode = logger.Warn
 	}
