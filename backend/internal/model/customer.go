@@ -11,11 +11,23 @@ type Customer struct {
 
 	Entry string `gorm:"size:100" json:"entry" form:"entry"` // 门店1，属于哪个业务微信号入口
 
-	Source string `gorm:"size:100" json:"source" form:"source"`      //客户来源：朋友圈、线下门店、活动拉新、广告、公众号等
-	Level  string `gorm:"size:50" json:"level" form:"level"`         //vip normal potential
-	Status string `gorm:"size:50;index" json:"status" form:"status"` // new contacted in_progress won lost
+	Source        string `gorm:"size:100" json:"source" form:"source"`              //客户来源：朋友圈、线下门店、活动拉新、广告、公众号等
+	Level         string `gorm:"size:50" json:"level" form:"level"`                 //potential new casual regular vip super_vip 对应生命周期 'new' | 'growing' | 'mature' | 'vip' | 'churn'
+	LifetimeLevel string `gorm:"size:50" json:"lifetimeLevel" form:"lifetimeLevel"` // 终身客户等级，基于累计消费金额评定
+	Status        string `gorm:"size:50;index" json:"status" form:"status"`         // new interested negotiating won slept lost
 
 	NextFollowUpAt *time.Time `gorm:"index" json:"nextFollowUpAt" form:"nextFollowUpAt"`
+
+	TotalAmount12m     float64    `json:"totalAmount12m" form:"totalAmount12m"`         // 过去12个月累计消费金额
+	OrderCount12m      int        `json:"orderCount12m" form:"orderCount12m"`           // 过去12个月订单数
+	RepurchaseCount12m int        `json:"repurchaseCount12m" form:"repurchaseCount12m"` // 过去12个月回购次数
+	AvgRepurchaseDays  int        `json:"avgRepurchaseDays" form:"avgRepurchaseDays"`   // 平均回购周期（天）
+	LevelUpdatedAt     *time.Time `json:"levelUpdatedAt" form:"levelUpdatedAt"`         // 会员等级更新时间
+
+	LifetimeOrderCount int     `json:"lifetimeOrderCount" form:"lifetimeOrderCount"` // 终身订单数
+	LifetimeAmount     float64 `json:"lifetimeAmount" form:"lifetimeAmount"`         // 终身累计消费金额
+
+	LastOrderAt *time.Time `json:"lastOrderAt" form:"lastOrderAt"`
 
 	OwnerID uint `gorm:"index" json:"ownerID" form:"ownerID"` // 客户归属的员工ID
 

@@ -6,7 +6,7 @@ import Column from "@/components/pipeline/Column";
 import { getCustomers, updateCustomerStatus } from "@/api/customer";
 import { Customer } from "@/types/customer";
 
-const STATUSES = ["new", "interested", "negotiating", "won", "lost"];
+const STATUSES = ["new", "interested", "negotiating", "won"];
 
 export default function PipelinePage() {
   const { t } = useTranslation();

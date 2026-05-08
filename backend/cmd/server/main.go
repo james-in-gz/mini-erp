@@ -11,7 +11,11 @@ import (
 	"backend/internal/middleware"
 	"os"
 
+	"backend/internal/jobs"
+
 	"github.com/gin-gonic/gin"
+
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -24,6 +28,16 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	c := cron.New()
+
+	// 每天凌晨2点
+	c.AddFunc("0 2 * * *", func() {
+
+		jobs.RefreshAllCustomerLevels(database.DB)
+	})
+
+	c.Start()
 
 	// Public routes
 	r.POST("/api/login", auth.LoginHandler)
