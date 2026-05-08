@@ -9,17 +9,23 @@ import {
   Chip,
   Divider,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import { Order,OrderItem} from "@/types/order";
+import { Order, OrderItem } from "@/types/order";
 
-import { getOrderDetail } from "@/api/order";
+import { getOrderDetail, updateOrderAddress } from "@/api/order";
 import { Shipment } from "@/types/shipment";
+import OrderAddressSelectDialog from "@/components/customer/OrderAddressSelectDialog";
 
 const statusColor: Record<
   string,
   "default" | "primary" | "secondary" | "success" | "error" | "warning" | "info"
->  = {
+> = {
   pending: "default",
   partial: "warning",
   partial_shipped: "warning",
@@ -33,6 +39,18 @@ export default function OrderDetailPage() {
   const { t } = useTranslation();
 
   const [data, setData] = useState<Order | null>(null);
+  const [openAddressDialog, setOpenAddressDialog] = useState(false);
+
+  const [addressForm, setAddressForm] = useState({
+    name: "",
+    phone: "",
+
+    province: "",
+    city: "",
+    district: "",
+
+    address: "",
+  });
 
   useEffect(() => {
     if (id) {
@@ -43,6 +61,7 @@ export default function OrderDetailPage() {
     }
   }, [id]);
 
+ 
   if (!data) return null;
 
   return (
@@ -85,9 +104,25 @@ export default function OrderDetailPage() {
       {/* 📦 商品列表 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
-          <Typography variant="subtitle1">{t("order.address")}</Typography>
+          <Stack
+            sx={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="subtitle1">{t("order.address")}</Typography>
 
-          <Stack spacing={1} sx={{  mt: 1 }}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setOpenAddressDialog(true)}
+            >
+              {t("common.change_address")}
+            </Button>
+          </Stack>
+
+          <Stack spacing={1} sx={{ mt: 1 }}>
             <Typography variant="body2">
               {data.defaultName} / {data.defaultPhone}
             </Typography>
@@ -104,15 +139,13 @@ export default function OrderDetailPage() {
         <CardContent>
           <Typography variant="subtitle1">{t("order.items")}</Typography>
 
-          <Stack spacing={1} sx={{  mt: 2 }}>
+          <Stack spacing={1} sx={{ mt: 2 }}>
             {data.items.map((i: OrderItem) => (
               <Box key={i.id}>
                 <Stack
                   sx={{ direction: "row", justifyContent: "space-between" }}
                 >
-                  <Typography>
-                    {i.skuName || i.skuCode }
-                  </Typography>
+                  <Typography>{i.skuName || i.skuCode}</Typography>
 
                   <Typography>
                     {i.shippedQuantity !== undefined ? i.shippedQuantity : 0} /{" "}
@@ -120,7 +153,8 @@ export default function OrderDetailPage() {
                   </Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary">
-                  ¥{i.price} x {i.quantity} = ¥{i.subtotal}
+                  ¥{i.price} x {i.quantity} = ¥
+                  {i.subtotal || i.price * i.quantity}
                 </Typography>
                 <Divider sx={{ mt: 1 }} />
               </Box>
@@ -160,7 +194,7 @@ export default function OrderDetailPage() {
                     </Typography>
 
                     {/* 商品 */}
-                    <Stack spacing={1} sx={{ mt: 1}}>
+                    <Stack spacing={1} sx={{ mt: 1 }}>
                       {(s.shipmentItems || []).map((si: any) => (
                         <Typography key={si.id} variant="body2">
                           {`SKU ${si.sku}`} x {si.quantity}
@@ -174,6 +208,32 @@ export default function OrderDetailPage() {
           </Stack>
         </CardContent>
       </Card>
+
+      <OrderAddressSelectDialog
+        open={openAddressDialog}
+        customerId={data.customer.id}
+        onClose={() => setOpenAddressDialog(false)}
+        onConfirm={async (addr) => {
+          await updateOrderAddress(data.id, {
+            customerAddressId: addr.id,
+          });
+
+          setData({
+            ...data,
+
+            defaultName: addr.name,
+            defaultPhone: addr.phone,
+
+            defaultProvince: addr.province,
+            defaultCity: addr.city,
+            defaultDistrict: addr.district,
+
+            defaultAddress: addr.address,
+          });
+
+          setOpenAddressDialog(false);
+        }}
+      />
     </Box>
   );
 }

@@ -46,6 +46,7 @@ func main() {
 		authGroup.POST("/orders", order.CreateOrder)
 		authGroup.GET("/orders", order.GetOrders)
 		authGroup.GET("/orders/:id", order.GetOrderByID)
+		authGroup.PUT("/orders/:id/address", order.UpdateOrderAddress)
 		authGroup.POST("/orders/:id/shipping", order.AddShipping)
 		authGroup.POST("/orders/:id/shipments", order.CreateShipment)
 		authGroup.GET("/orders/:id/shipments", order.ListShipments)

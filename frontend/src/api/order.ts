@@ -44,3 +44,12 @@ export const createOrder = async (orderData: any) => {
     throw new Error(res.data.message);
   }
 };
+
+export const updateOrderAddress = async (orderId: number, addressData: any) => {
+  const res = await request.put(`/orders/${orderId}/address`, addressData);
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
+};

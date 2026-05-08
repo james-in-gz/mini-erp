@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -8,10 +8,15 @@ import {
   Chip,
   Stack,
   Button,
+  TextField,
+  MenuItem,
+  InputAdornment,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 
 import { getOrders } from "@/api/order";
+import { Order } from "@/types/order";
 
 const statusColor: any = {
   pending: "default",
@@ -22,7 +27,9 @@ const statusColor: any = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const nav = useNavigate();
   const { t } = useTranslation();
 
@@ -30,18 +37,87 @@ export default function OrdersPage() {
     getOrders().then(setOrders);
   }, []);
 
+  const filteredOrders = useMemo(() => {
+    const normalized = searchText.trim().toLowerCase();
+    return orders.filter((o) => {
+      const customerName = o.customer?.name?.toLowerCase() || "";
+      const orderNo = (o.orderNo || String(o.id)).toLowerCase();
+      const matchesText =
+        !normalized ||
+        customerName.includes(normalized) ||
+        orderNo.includes(normalized);
+      const matchesStatus = !statusFilter || o.status === statusFilter;
+      return matchesText && matchesStatus;
+    });
+  }, [orders, searchText, statusFilter]);
+
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2,
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
         <Typography variant="h5">{t("order.orders")}</Typography>
 
-        <Button
-          variant="contained"
-          onClick={() => nav("/orders/create")}
-        >
+        <Button variant="contained" onClick={() => nav("/orders/create")}>
           + {t("order.create")}
         </Button>
       </Box>
+
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        sx={{
+          mb: 2,
+          alignItems: { xs: "stretch", sm: "center" },
+        }}
+      >
+        <TextField
+          size="small"
+          label={t("common.search")}
+          placeholder={t("order.searchPlaceholder")}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          fullWidth
+          sx={{
+            width: { xs: "100%", sm: 260 },
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+
+        <TextField
+          select
+          size="small"
+          label={t("order.status")}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          fullWidth
+          sx={{
+            width: { xs: "100%", sm: 180 },
+          }}
+        >
+          <MenuItem value="">{t("common.all", "All")}</MenuItem>
+
+          {Object.keys(statusColor).map((status) => (
+            <MenuItem key={status} value={status}>
+              {t(`order.${status}`)}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Stack>
 
       {/* ✅ 用 CSS Grid 替代 MUI Grid */}
       <Box
@@ -50,55 +126,75 @@ export default function OrdersPage() {
           gap: 2,
         }}
       >
-        {orders.map((o) => (
-          <Card key={o.id} sx={{ borderRadius: 3 }}>
-            <CardContent>
-              <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+        {filteredOrders.map((o) => {
+          const products = o.items || [];
+          const productSummary = products.length
+            ? `${products
+                .slice(0, 2)
+                .map(
+                  (item) =>
+                    `${item.skuName || item.sku || "Product"} x${item.quantity}`,
+                )
+                .join(
+                  ", ",
+                )}${products.length > 2 ? ` +${products.length - 2}...` : ""}`
+            : "N/A";
 
-                {/* 左侧 */}
-                <Box>
-                  <Typography variant="subtitle1">
-                    Order #{o.id}
-                  </Typography>
+          return (
+            <Card key={o.id} sx={{ borderRadius: 3 }}>
+              <CardContent>
+                <Stack
+                  sx={{ flexDirection: "row", justifyContent: "space-between" }}
+                >
+                  {/* 左侧 */}
+                  <Box>
+                    <Typography variant="subtitle1">
+                      {o.customer?.name || o.defaultName || "N/A"}
+                    </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    {t("order.customer")}: {o.customer?.name || "N/A"}
-                  </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {t("order.orderNo")}: {o.orderNo || o.id}
+                    </Typography>
 
-                  <Typography variant="body2">
-                    {t("order.amount")}: ¥{o.totalAmount}
-                  </Typography>
-                </Box>
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {t("order.amount")}: ¥{o.totalAmount}
+                    </Typography>
 
-                {/* 右侧 */}
-                <Stack sx={{ alignItems: "flex-end"}} spacing={1}>
-                  <Chip
-                    size="small"
-                    label={t(`order.${o.status}`)}
-                    color={statusColor[o.status] || "default"}
-                  />
+                    <Typography variant="body2" color="text.secondary">
+                      {t("order.products")}: {productSummary}
+                    </Typography>
+                  </Box>
 
-                  <Stack sx={{ flexDirection: "row", }} spacing={1}>
-                    <Button
+                  {/* 右侧 */}
+                  <Stack sx={{ alignItems: "flex-end" }} spacing={1}>
+                    <Chip
                       size="small"
-                      onClick={() => nav(`/orders/${o.id}`)}
-                    >
-                      {t("order.detail")}
-                    </Button>
+                      label={t(`order.${o.status}`)}
+                      color={statusColor[o.status] || "default"}
+                    />
 
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => nav(`/orders/${o.id}/ship`)}
-                    >
-                      {t("order.ship")}
-                    </Button>
+                    <Stack sx={{ flexDirection: "row" }} spacing={1}>
+                      <Button
+                        size="small"
+                        onClick={() => nav(`/orders/${o.id}`)}
+                      >
+                        {t("order.detail")}
+                      </Button>
+
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => nav(`/orders/${o.id}/ship`)}
+                      >
+                        {t("order.ship")}
+                      </Button>
+                    </Stack>
                   </Stack>
                 </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </Box>
     </Box>
   );

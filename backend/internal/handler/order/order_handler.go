@@ -74,3 +74,27 @@ func GetOrderByID(c *gin.Context) {
 
 	dto.Success(c, order)
 }
+
+func UpdateOrderAddress(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid order id")
+		return
+	}
+
+	var req = struct {
+		CustomerAddressID uint `json:"customerAddressId"`
+	}{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	err = service.ChangeOrderAddress(uint(id), req.CustomerAddressID)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "address updated"})
+}

@@ -28,3 +28,14 @@ func GetOrderByID(id uint) (model.Order, error) {
 		First(&order, id).Error
 	return order, err
 }
+
+func UpdateOrderAddress(orderID uint, newAddr model.CustomerAddress) error {
+	return database.DB.Model(&model.Order{}).Where("id = ?", orderID).Updates(map[string]interface{}{
+		"default_name":     newAddr.Name,
+		"default_phone":    newAddr.Phone,
+		"default_province": newAddr.Province,
+		"default_city":     newAddr.City,
+		"default_district": newAddr.District,
+		"default_address":  newAddr.Address,
+	}).Error
+}

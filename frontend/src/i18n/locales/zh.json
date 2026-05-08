@@ -13,7 +13,11 @@
     "update": "更新",
     "submit": "提交",
     "no-data": "暂无数据",
-    "confirm": "确定吗？"
+    "confirm": "确定吗？",
+    "all": "全部",
+    "change_address": "修改地址",
+    "select_address": "选择地址",
+    "confirm_button": "确认"
   },
   "menu": {
     "dashboard": "仪表盘",
@@ -79,10 +83,12 @@
     "en": "English"
   },
   "order": {
+    "orderNo": "订单号",
     "create": "创建订单",
     "customer": "客户",
     "address": "地址",
     "product": "产品",
+    "products": "商品",
     "quantity": "数量",
     "price": "价格",
     "total": "总计",
@@ -111,7 +117,19 @@
     "district": "区县",
     "shipProducts": "发货商品",
     "shipSuccess": "发货成功",
-    "fillShipQuantity": "请填写发货数量"
+    "fillShipQuantity": "请填写发货数量",
+    "selectProduct": "选择商品",
+    "availableStock": "可用库存",
+    "enterShipQuantity": "请输入发货数量",
+    "shipQuantityExceeds": "发货数量不能超过可用库存",
+    "invalidShipQuantity": "请输入有效的发货数量",
+    "noProductsToShip": "没有可发货的商品",
+    "status": "订单状态",
+    "updateStatus": "更新状态",
+    "statusUpdated": "订单状态更新成功",
+    "failedToUpdateStatus": "更新订单状态失败",
+    "search": "按客户或订单号搜索",
+    "searchPlaceholder": "搜索 客户 / 订单号"
   },
   "product": {
     "products": "产品",

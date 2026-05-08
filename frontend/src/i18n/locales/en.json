@@ -13,7 +13,11 @@
     "update": "Update",
     "submit": "Submit",
     "no-data": "No data",
-    "confirm": "Are you sure?"
+    "confirm": "Are you sure?",
+    "all": "All",
+    "change_address": "Change Address",
+    "select_address": "Select Address",
+    "confirm_button": "Confirm"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -79,10 +83,12 @@
     "en": "English"
   },
   "order": {
+    "orderNo": "Order No",
     "create": "Create Order",
     "customer": "Customer",
     "address": "Address",
     "product": "Product",
+    "products": "Products",
     "quantity": "Qty",
     "price": "Price",
     "total": "Total",
@@ -111,7 +117,19 @@
     "district": "District",
     "shipProducts": "Ship Products",
     "shipSuccess": "Shipped successfully",
-    "fillShipQuantity": "Please fill in shipping quantity"
+    "fillShipQuantity": "Please fill in shipping quantity",
+    "selectProduct": "Select Product",
+    "availableStock": "Available Stock",
+    "enterShipQuantity": "Please enter shipping quantity",
+    "shipQuantityExceeds": "Shipping quantity cannot exceed available stock",
+    "invalidShipQuantity": "Please enter a valid shipping quantity",
+    "noProductsToShip": "No products available for shipping",
+    "status": "Order Status",
+    "updateStatus": "Update Status",
+    "statusUpdated": "Order status updated successfully",
+    "failedToUpdateStatus": "Failed to update order status",
+    "search": "Search by Customer or Order No",
+    "searchPlaceholder": "Search Customer / Order No"
   },
   "product": {
     "products": "Products",

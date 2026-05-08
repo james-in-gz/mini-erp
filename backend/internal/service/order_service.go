@@ -159,3 +159,12 @@ func findOrderItem(items []model.OrderItem, id uint) *model.OrderItem {
 func GetOrderByID(id uint) (model.Order, error) {
 	return repository.GetOrderByID(id)
 }
+
+func ChangeOrderAddress(orderID uint, addressID uint) error {
+	address, err := repository.GetAddressByID(addressID)
+	if err != nil {
+		return err
+	}
+
+	return repository.UpdateOrderAddress(orderID, address)
+}
