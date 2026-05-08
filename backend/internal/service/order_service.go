@@ -168,3 +168,27 @@ func ChangeOrderAddress(orderID uint, addressID uint) error {
 
 	return repository.UpdateOrderAddress(orderID, address)
 }
+
+func CancelOrder(orderID uint) error {
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		var order model.Order
+		if err := tx.Preload("Items").First(&order, orderID).Error; err != nil {
+			return err
+		}
+
+		for _, item := range order.Items {
+			if err := tx.Model(&model.Inventory{}).
+				Where("sku_id = ?", item.SKUID).
+				UpdateColumn("stock", gorm.Expr("stock + ?", item.Quantity)).Error; err != nil {
+				return err
+			}
+		}
+
+		order.Status = "cancelled"
+		if err := tx.Save(&order).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}

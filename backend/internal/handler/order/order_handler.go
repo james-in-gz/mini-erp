@@ -98,3 +98,19 @@ func UpdateOrderAddress(c *gin.Context) {
 
 	dto.Success(c, gin.H{"message": "address updated"})
 }
+
+func CancelOrder(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid order id")
+		return
+	}
+
+	err = service.CancelOrder(uint(id))
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "order cancelled"})
+}

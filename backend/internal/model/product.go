@@ -34,7 +34,7 @@ type SKU struct {
 
 type Inventory struct {
 	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
-	SKUID uint `gorm:"index" json:"skuid,omitempty"`
+	SKUID uint `gorm:"column:sku_id;index" json:"skuid,omitempty"`
 
 	Stock          int `json:"stock,omitempty"`
 	LockedStock    int `json:"lockedStock,omitempty"`
@@ -45,7 +45,7 @@ type Inventory struct {
 
 type StockLog struct {
 	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
-	SKUID uint `json:"skuid,omitempty"`
+	SKUID uint `gorm:"column:sku_id" json:"skuid,omitempty"`
 
 	Type string `json:"type,omitempty"` // IN / OUT
 	Qty  int    `json:"qty,omitempty"`

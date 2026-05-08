@@ -20,10 +20,10 @@ import { Order } from "@/types/order";
 
 const statusColor: any = {
   pending: "default",
-  partial: "warning",
   partial_shipped: "warning",
   shipped: "info",
   completed: "success",
+  cancelled: "error",
 };
 
 export default function OrdersPage() {

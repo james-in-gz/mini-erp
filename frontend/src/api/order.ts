@@ -53,3 +53,12 @@ export const updateOrderAddress = async (orderId: number, addressData: any) => {
     throw new Error(res.data.message);
   }
 };
+
+export const cancelOrder = async (orderId: number) => {
+  const res = await request.post(`/orders/${orderId}/cancel`);
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
+};

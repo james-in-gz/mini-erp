@@ -18,7 +18,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { Order, OrderItem } from "@/types/order";
 
-import { getOrderDetail, updateOrderAddress } from "@/api/order";
+import { cancelOrder, getOrderDetail, updateOrderAddress } from "@/api/order";
 import { Shipment } from "@/types/shipment";
 import OrderAddressSelectDialog from "@/components/customer/OrderAddressSelectDialog";
 
@@ -31,6 +31,7 @@ const statusColor: Record<
   partial_shipped: "warning",
   shipped: "info",
   completed: "success",
+  cancelled: "error",
 };
 
 export default function OrderDetailPage() {
@@ -41,16 +42,20 @@ export default function OrderDetailPage() {
   const [data, setData] = useState<Order | null>(null);
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
 
-  const [addressForm, setAddressForm] = useState({
-    name: "",
-    phone: "",
+  const handleCancel = async () => {
+    if (!data) return;
 
-    province: "",
-    city: "",
-    district: "",
+    try {
+      await cancelOrder(data.id);
 
-    address: "",
-  });
+      setData({
+        ...data,
+        status: "cancelled",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -61,7 +66,6 @@ export default function OrderDetailPage() {
     }
   }, [id]);
 
- 
   if (!data) return null;
 
   return (
@@ -88,14 +92,26 @@ export default function OrderDetailPage() {
                 label={t(`order.${data.status}`)}
                 color={statusColor[data.status] || "default"}
               />
-
-              <Button
-                size="small"
-                variant="contained"
-                onClick={() => nav(`/orders/${data.id}/ship`)}
+              <Stack sx={{ direction: "row", justifyContent: "space-between" ,mt:2,flexWrap:"wrap"}}
+                spacing={2}
               >
-                {t("order.ship")}
-              </Button>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => nav(`/orders/${data.id}/ship`)}
+                >
+                  {t("order.ship")}
+                </Button>
+                {["pending", "partial"].includes(data.status) && (
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={handleCancel}
+                  >
+                     {t("order.cancel")}
+                  </Button>
+                )}
+              </Stack>
             </Stack>
           </Stack>
         </CardContent>

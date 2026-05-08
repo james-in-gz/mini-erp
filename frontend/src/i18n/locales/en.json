@@ -107,6 +107,7 @@
     "partial_shipped": "Partial Shipped",
     "shipped": "Shipped",
     "completed": "Completed",
+    "cancelled": "Cancelled",
     "shipments": "Shipments",
     "trackingNumber": "Tracking Number",
     "carrier": "Carrier",
@@ -129,7 +130,8 @@
     "statusUpdated": "Order status updated successfully",
     "failedToUpdateStatus": "Failed to update order status",
     "search": "Search by Customer or Order No",
-    "searchPlaceholder": "Search Customer / Order No"
+    "searchPlaceholder": "Search Customer / Order No",
+    "cancel":"Cancel"
   },
   "product": {
     "products": "Products",
