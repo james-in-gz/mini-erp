@@ -17,7 +17,9 @@
     "all": "All",
     "change_address": "Change Address",
     "select_address": "Select Address",
-    "confirm_button": "Confirm"
+    "confirm_button": "Confirm",
+    "page_size": "Page Size",
+    "page": "Page"
   },
   "menu": {
     "dashboard": "Dashboard",

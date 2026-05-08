@@ -13,8 +13,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
-import EventIcon from "@mui/icons-material/Event";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
+import InsightsIcon from "@mui/icons-material/Insights";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import GroupIcon from "@mui/icons-material/Group";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -55,7 +59,7 @@ export default function MainLayout() {
       </ListItemButton>
 
       <ListItemButton onClick={() => handleNavigate("/pipeline")}>
-        <PeopleIcon />
+        <InsightsIcon />
         <ListItemText
           primary={t("menu.pipeline")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
@@ -63,7 +67,7 @@ export default function MainLayout() {
       </ListItemButton>
 
       <ListItemButton onClick={() => handleNavigate("/customers")}>
-        <PeopleIcon />
+        <GroupIcon />
         <ListItemText
           primary={t("menu.customers")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
@@ -71,7 +75,7 @@ export default function MainLayout() {
       </ListItemButton>
 
       <ListItemButton onClick={() => handleNavigate("/follow-ups")}>
-        <EventIcon />
+        <PendingActionsIcon />
         <ListItemText
           primary={t("menu.followups")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
@@ -79,7 +83,7 @@ export default function MainLayout() {
       </ListItemButton>
 
       <ListItemButton onClick={() => handleNavigate("/orders")}>
-        <EventIcon />
+        <ReceiptLongIcon />
         <ListItemText
           primary={t("menu.orders")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
@@ -87,7 +91,7 @@ export default function MainLayout() {
       </ListItemButton>
 
       <ListItemButton onClick={() => handleNavigate("/products")}>
-        <EventIcon />
+        <Inventory2Icon />
         <ListItemText
           primary={t("menu.products")}
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}

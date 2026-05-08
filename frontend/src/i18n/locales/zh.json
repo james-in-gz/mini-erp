@@ -17,7 +17,9 @@
     "all": "全部",
     "change_address": "修改地址",
     "select_address": "选择地址",
-    "confirm_button": "确认"
+    "confirm_button": "确认", 
+    "page_size": "每页条数",
+    "page": "页"
   },
   "menu": {
     "dashboard": "仪表盘",

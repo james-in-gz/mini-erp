@@ -13,6 +13,8 @@ import {
   Paper,
   CircularProgress,
   TablePagination,
+  TextField,
+  debounce,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -30,15 +32,22 @@ export default function CustomerListPage() {
 
   const [page, setPage] = useState(0); // MUI starts from 0
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const fetchData = async () => {
+  const [searchText, setSearchText] = useState("");
+  const fetchData = debounce(async () => {
     setLoading(true);
-    const res = await getCustomers(page + 1, rowsPerPage);
-    setCustomers(res.list);
-    setTotal(res.total);
-    setLoading(false);
-  };
 
+    const data = await getCustomers(page + 1, rowsPerPage, searchText);
+
+    setCustomers(data.list);
+    setTotal(data.total);
+    setLoading(false);
+  }, 300);
+  useEffect(() => {
+
+      setPage(0); // reset page when searching
+      fetchData();
+  }, [searchText]);
+  
   useEffect(() => {
     fetchData();
   }, [page, rowsPerPage]);
@@ -52,7 +61,12 @@ export default function CustomerListPage() {
   return (
     <Container sx={{ mt: 4 }}>
       <Box
-        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
       >
         <Typography variant="h5">{t("customer.list")}</Typography>
 
@@ -64,6 +78,18 @@ export default function CustomerListPage() {
         </Button>
       </Box>
 
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          size="small"
+          placeholder="Search customer..."
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setPage(0);
+          }}
+          fullWidth
+        />
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

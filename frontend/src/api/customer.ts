@@ -26,9 +26,9 @@ export interface CustomerListResponse {
   list: Customer[];
 }
 
-export const getCustomers = async (page = 1, pageSize = 10) => {
+export const getCustomers = async (page = 1, pageSize = 10, searchText?: string) => {
   const res = await request.get(
-    `/customers?page=${page}&page_size=${pageSize}`
+    `/customers?page=${page}&page_size=${pageSize}${searchText ? `&search=${searchText}` : ''}`
   );
   if (res.data.code === 0) {
     return res.data.data;

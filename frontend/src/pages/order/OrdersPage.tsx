@@ -11,6 +11,7 @@ import {
   TextField,
   MenuItem,
   InputAdornment,
+  Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +31,8 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const nav = useNavigate();
   const { t } = useTranslation();
 
@@ -51,6 +54,14 @@ export default function OrdersPage() {
     });
   }, [orders, searchText, statusFilter]);
 
+  const pagedOrders = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredOrders.slice(start, start + pageSize);
+  }, [filteredOrders, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchText, statusFilter]);
   return (
     <Box>
       <Box
@@ -126,7 +137,7 @@ export default function OrdersPage() {
           gap: 2,
         }}
       >
-        {filteredOrders.map((o) => {
+        {pagedOrders.map((o) => {
           const products = o.items || [];
           const productSummary = products.length
             ? `${products
@@ -195,6 +206,40 @@ export default function OrdersPage() {
             </Card>
           );
         })}
+
+        <Stack
+          spacing={2}
+          sx={{
+            mt: 3,
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          <TextField
+            select
+            size="small"
+            label={t("common.page_size")}
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+            sx={{ width: 140 }}
+          >
+            {[5, 10, 20, 50].map((size) => (
+              <MenuItem key={size} value={size}>
+                {size} / {t("common.page")}
+              </MenuItem>
+            ))}
+          </TextField>
+          <Pagination
+            count={Math.ceil(filteredOrders.length / pageSize)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+          />
+        </Stack>
       </Box>
     </Box>
   );
