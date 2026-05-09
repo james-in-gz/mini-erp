@@ -142,67 +142,109 @@ export default function OrdersPage() {
           const products = o.items || [];
           const productSummary = products.length
             ? `${products
-                .slice(0, 2)
-                .map(
-                  (item) =>
-                    `${item.skuName || item.sku || "Product"} x${item.quantity}`,
-                )
-                .join(
-                  ", ",
-                )}${products.length > 2 ? ` +${products.length - 2}...` : ""}`
+              .slice(0, 2)
+              .map(
+                (item) =>
+                  `${item.skuName || item.sku || "Product"} x${item.quantity}`,
+              )
+              .join(
+                ", ",
+              )}${products.length > 2 ? ` +${products.length - 2}...` : ""}`
             : "N/A";
 
           return (
             <Card key={o.id} sx={{ borderRadius: 3 }}>
               <CardContent>
-                <Stack
-                  sx={{ flexDirection: "row", justifyContent: "space-between" }}
-                >
-                  {/* 左侧 */}
-                  <Box>
-                    <Typography variant="subtitle1">
-                      {o.customer?.name || o.defaultName || "N/A"}
-                    </Typography>
+                <Stack spacing={1.5}>
 
-                    <Typography variant="body2" color="text.secondary">
-                      {t("order.orderNo")}: {o.orderNo || o.id}
-                    </Typography>
+                  {/* ========== 1. HEADER ========== */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        {o.customer?.name || o.defaultName || "N/A"}
+                      </Typography>
 
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      {t("order.amount")}: ¥{o.totalAmount}
-                    </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {t("order.orderNo")}: {o.orderNo || o.id}
+                      </Typography>
+                    </Box>
 
-                    <Typography variant="body2" color="text.secondary">
-                      {t("order.products")}: {productSummary}
-                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-end",
+                      }}
+                    >
+                      <Chip
+                        size="small"
+                        label={t(`order.${o.status}`)}
+                        color={statusColor[o.status] || "default"}
+                      />
+
+                      <PaymentStatusChip status={o.paymentStatus} />
+                    </Box>
                   </Box>
 
-                  {/* 右侧 */}
-                  <Stack sx={{ alignItems: "flex-end" }} spacing={1}>
-                    
-                    <Chip
-                      size="small"
-                      label={t(`order.${o.status}`)}
-                      color={statusColor[o.status] || "default"}
-                    />
-<PaymentStatusChip status={o.paymentStatus}></PaymentStatusChip>
-                    <Stack sx={{ flexDirection: "row" }} spacing={1}>
-                      <Button
-                        size="small"
-                        onClick={() => nav(`/orders/${o.id}`)}
-                      >
-                        {t("order.detail")}
-                      </Button>
+                  {/* ========== 2. FINANCE ========== */}
+                  <Box
+                    sx={{
+                      p: 1.5,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(0,0,0,0.03)",
+                    }}
+                  >
+                    <Stack direction="row" spacing={3}>
+                      <Typography variant="body2">
+                        💰 {t("order.amount")}: ¥{o.totalAmount}
+                      </Typography>
 
-                      <Button
-                        size="small"
-                        variant="contained"
-                        onClick={() => nav(`/orders/${o.id}/ship`)}
-                      >
-                        {t("order.ship")}
-                      </Button>
+                      <Typography variant="body2">
+                        📦 商品数: {o.items?.length || 0}
+                      </Typography>
                     </Stack>
+                  </Box>
+
+                  {/* ========== 3. PRODUCTS ========== */}
+                  <Typography variant="body2" color="text.secondary">
+                    {t("order.products")}:
+                    {" "}
+                    {o.items?.length
+                      ? o.items
+                        .slice(0, 2)
+                        .map(
+                          (item) =>
+                            `${item.skuName || item.sku} ×${item.quantity}`
+                        )
+                        .join(", ")
+                      : "N/A"}
+                    {o.items?.length > 2 && ` +${o.items.length - 2}`}
+                  </Typography>
+
+                  {/* ========== 4. ACTIONS ========== */}
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      onClick={() => nav(`/orders/${o.id}`)}
+                    >
+                      {t("order.detail")}
+                    </Button>
+
+                    <Button
+                      size="small"
+                      variant="contained"
+                      onClick={() => nav(`/orders/${o.id}/ship`)}
+                    >
+                      {t("order.ship")}
+                    </Button>
                   </Stack>
+
                 </Stack>
               </CardContent>
             </Card>
