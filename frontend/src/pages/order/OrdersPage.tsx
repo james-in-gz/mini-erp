@@ -155,7 +155,7 @@ export default function OrdersPage() {
           return (
             <Card key={o.id} sx={{ borderRadius: 3 }}>
               <CardContent>
-                <Stack spacing={1.5}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
 
                   {/* ========== 1. HEADER ========== */}
                   <Box
@@ -180,6 +180,7 @@ export default function OrdersPage() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "flex-end",
+                        gap: 0.5,
                       }}
                     >
                       <Chip
@@ -200,7 +201,7 @@ export default function OrdersPage() {
                       backgroundColor: "rgba(0,0,0,0.03)",
                     }}
                   >
-                    <Stack direction="row" spacing={3}>
+                    <Box sx={{ display: "flex", gap: 3 }}>
                       <Typography variant="body2">
                         💰 {t("order.amount")}: ¥{o.totalAmount}
                       </Typography>
@@ -208,13 +209,12 @@ export default function OrdersPage() {
                       <Typography variant="body2">
                         📦 商品数: {o.items?.length || 0}
                       </Typography>
-                    </Stack>
+                    </Box>
                   </Box>
 
                   {/* ========== 3. PRODUCTS ========== */}
                   <Typography variant="body2" color="text.secondary">
-                    {t("order.products")}:
-                    {" "}
+                    {t("order.products")}:{" "}
                     {o.items?.length
                       ? o.items
                         .slice(0, 2)
@@ -228,11 +228,8 @@ export default function OrdersPage() {
                   </Typography>
 
                   {/* ========== 4. ACTIONS ========== */}
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      size="small"
-                      onClick={() => nav(`/orders/${o.id}`)}
-                    >
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button size="small" onClick={() => nav(`/orders/${o.id}`)}>
                       {t("order.detail")}
                     </Button>
 
@@ -243,9 +240,9 @@ export default function OrdersPage() {
                     >
                       {t("order.ship")}
                     </Button>
-                  </Stack>
+                  </Box>
 
-                </Stack>
+                </Box>
               </CardContent>
             </Card>
           );
