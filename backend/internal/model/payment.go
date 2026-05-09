@@ -16,7 +16,7 @@ type Payment struct {
 type PaymentRecord struct {
 	ID uint `gorm:"primaryKey" json:"id,omitempty"`
 
-	OrderID uint `gorm:"index" json:"order_id,omitempty"`
+	OrderID uint `gorm:"index" json:"orderId,omitempty"`
 
 	Amount float64 `gorm:"type:decimal(10,2)" json:"amount,omitempty"`
 
@@ -29,7 +29,7 @@ type PaymentRecord struct {
 
 	Remark string `json:"remark,omitempty"`
 
-	UserID uint `json:"user_id,omitempty"`
+	UserID uint `json:"userId,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"createdAt,omitempty"`
 }
