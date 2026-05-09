@@ -106,7 +106,7 @@ export default function ProductDetailPage() {
 
                         <Stack spacing={1.5}>
                             <Typography>{t("product.detail.name")}：{product.name}</Typography>
-                            <Typography>{t("product.detail.createdAt")}：{product.createdAt}</Typography>
+                            <Typography>{t("product.detail.createdAt")}：{new Date(product.createdAt).toLocaleDateString()}</Typography>
                         </Stack>
                     </CardContent>
                 </Card>
@@ -131,8 +131,8 @@ export default function ProductDetailPage() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>{t("product.detail.name")}</TableCell>
-                                    <TableCell>{t("product.detail.price")}</TableCell>
-                                    <TableCell>{t("product.detail.stock")}</TableCell>
+                                    <TableCell>{t("product.price")}</TableCell>
+                                    <TableCell>{t("product.stock")}</TableCell>
                                     <TableCell>{t("product.detail.actions")}</TableCell>
                                 </TableRow>
                             </TableHead>
