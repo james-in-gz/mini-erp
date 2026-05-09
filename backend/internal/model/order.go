@@ -16,6 +16,17 @@ type Orders struct {
 	CreatedAt      time.Time  `json:"createdAt,omitempty"`
 	UpdatedAt      time.Time  `json:"updatedAt,omitempty"`
 
+	// 支付相关字段
+	PaymentStatus string     `gorm:"type:varchar(20);default:'pending';index" json:"paymentStatus"`
+	PaymentMethod string     `gorm:"type:varchar(20);default:''" json:"paymentMethod"`
+	PaymentNo     string     `gorm:"type:varchar(64);" json:"paymentNo"`            // 支付平台交易号
+	PayAmount     float64    `gorm:"type:decimal(10,2);default:0" json:"payAmount"` // 实际支付金额
+	PaidAt        *time.Time `json:"paidAt"`                                        // 支付完成时间
+
+	// 退款相关
+	RefundAmount float64    `gorm:"type:decimal(10,2);default:0" json:"refundAmount"`
+	RefundedAt   *time.Time `json:"refundedAt"`
+
 	// 下单地址（不可变）
 	OriginName     string `json:"originName,omitempty"`
 	OriginPhone    string `json:"originPhone,omitempty"`
