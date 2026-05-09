@@ -144,7 +144,7 @@ export default function MainLayout() {
           </IconButton>
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            CRM
+            {t("app.title")}
           </Typography>
 
           {/* 语言切换 */}

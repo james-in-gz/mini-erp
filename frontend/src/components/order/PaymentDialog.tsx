@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -30,6 +31,7 @@ export default function PaymentDialog({
   onClose,
   onSubmit,
 }: Props) {
+  const { t } = useTranslation();
 
   const [amount, setAmount] = useState(0);
 
@@ -64,14 +66,14 @@ export default function PaymentDialog({
       fullWidth
     >
       <DialogTitle>
-        新增收款
+        {t("payment.dialog.title")}
       </DialogTitle>
 
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
 
           <TextField
-            label="收款金额"
+            label={t("payment.dialog.amount")}
             type="number"
             value={amount}
             onChange={(e) =>
@@ -84,7 +86,7 @@ export default function PaymentDialog({
 
           <TextField
             select
-            label="收款方式"
+            label={t("payment.dialog.method")}
             value={method}
             onChange={(e) =>
               setMethod(e.target.value)
@@ -92,24 +94,24 @@ export default function PaymentDialog({
             fullWidth
           >
             <MenuItem value="cash">
-              现金
+              {t("payment.method.cash")}
             </MenuItem>
 
             <MenuItem value="bank">
-              银行转账
+              {t("payment.method.bank")}
             </MenuItem>
 
             <MenuItem value="wechat">
-              微信
+              {t("payment.method.wechat")}
             </MenuItem>
 
             <MenuItem value="alipay">
-              支付宝
+              {t("payment.method.alipay")}
             </MenuItem>
           </TextField>
 
           <TextField
-            label="备注"
+            label={t("payment.dialog.remark")}
             value={remark}
             onChange={(e) =>
               setRemark(e.target.value)
@@ -124,14 +126,14 @@ export default function PaymentDialog({
 
       <DialogActions>
         <Button onClick={onClose}>
-          取消
+          {t("common.cancel")}
         </Button>
 
         <Button
           variant="contained"
           onClick={handleSubmit}
         >
-          确认收款
+          {t("payment.dialog.confirm")}
         </Button>
       </DialogActions>
     </Dialog>

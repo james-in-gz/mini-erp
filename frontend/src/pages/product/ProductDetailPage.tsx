@@ -20,11 +20,13 @@ import {
     DialogActions,
     TextField,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import { getProductDetail } from "@/api/product";
 import { getSKUs, createSKU, generateSKUs } from "@/api/sku";
 
 export default function ProductDetailPage() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -84,14 +86,14 @@ export default function ProductDetailPage() {
         load();
     };
 
-    if (!product) return <div>Loading...</div>;
+    if (!product) return <div>{t("common.loading")}</div>;
 
     return (
         <Box>
             {/* Tabs */}
             <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
-                <Tab label="基本信息" />
-                <Tab label="SKU" />
+                <Tab label={t("product.detail.tabs.basic")} />
+                <Tab label={t("product.detail.tabs.sku")} />
             </Tabs>
 
             {/* 基本信息 */}
@@ -99,12 +101,12 @@ export default function ProductDetailPage() {
                 <Card sx={{ borderRadius: 3 }}>
                     <CardContent>
                         <Typography variant="h6" sx={{ mb: 2 }}>
-                            商品信息
+                            {t("product.detail.infoTitle")}
                         </Typography>
 
                         <Stack spacing={1.5}>
-                            <Typography>名称：{product.name}</Typography>
-                            <Typography>创建时间：{product.createdAt}</Typography>
+                            <Typography>{t("product.detail.name")}：{product.name}</Typography>
+                            <Typography>{t("product.detail.createdAt")}：{product.createdAt}</Typography>
                         </Stack>
                     </CardContent>
                 </Card>
@@ -114,24 +116,24 @@ export default function ProductDetailPage() {
             {tab === 1 && (
                 <Card sx={{ borderRadius: 3 }}>
                     <CardContent>
-                        <Stack spacing={2} sx={{  mb: 2, justifyContent: "space-between", direction: "row" }}>
-                            <Typography variant="h6">SKU列表</Typography>
+                        <Stack spacing={2} sx={{ mb: 2, justifyContent: "space-between", direction: "row" }}>
+                            <Typography variant="h6">{t("product.detail.skuListTitle")}</Typography>
 
                             <Button
                                 variant="contained"
                                 onClick={() => setOpen(true)}
                             >
-                                + 新增SKU
+                                + {t("product.detail.addSku")}
                             </Button>
                         </Stack>
 
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>名称</TableCell>
-                                    <TableCell>价格</TableCell>
-                                    <TableCell>库存</TableCell>
-                                    <TableCell>操作</TableCell>
+                                    <TableCell>{t("product.detail.name")}</TableCell>
+                                    <TableCell>{t("product.detail.price")}</TableCell>
+                                    <TableCell>{t("product.detail.stock")}</TableCell>
+                                    <TableCell>{t("product.detail.actions")}</TableCell>
                                 </TableRow>
                             </TableHead>
 
@@ -150,7 +152,7 @@ export default function ProductDetailPage() {
                                                     navigate(`/products/${productId}/sku/${sku.id}`);
                                                 }}
                                             >
-                                                编辑
+                                                {t("product.detail.edit")}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -168,14 +170,14 @@ export default function ProductDetailPage() {
                 fullWidth
                 maxWidth="sm"
             >
-                <DialogTitle>新增SKU</DialogTitle>
+                <DialogTitle>{t("product.detail.addSkuDialogTitle")}</DialogTitle>
 
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         {specs.map((spec, i) => (
                             <Stack key={i} direction="row" spacing={2} sx={{ mb: 1 }}>
                                 <TextField
-                                    label="规格名"
+                                    label={t("product.detail.specName")}
                                     value={spec.key}
                                     onChange={(e) => {
                                         const newSpecs = [...specs];
@@ -186,7 +188,7 @@ export default function ProductDetailPage() {
                                 />
 
                                 <TextField
-                                    label="选项（逗号、分号、空格或换行符分隔）"
+                                    label={t("product.detail.specOptions")}
                                     value={spec.values.join(",")}
                                     onChange={(e) => {
                                         const newSpecs = [...specs];
@@ -206,15 +208,15 @@ export default function ProductDetailPage() {
                                 setSpecs([...specs, { key: "", values: [] }])
                             }
                         >
-                            + 添加规格
+                            + {t("product.detail.addSpec")}
                         </Button>
                     </Stack>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)}>取消</Button>
+                    <Button onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
                     <Button variant="contained" onClick={handleCreateSku}>
-                        创建
+                        {t("common.create")}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -5,6 +5,7 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface PaymentRecord {
   id: number;

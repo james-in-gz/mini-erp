@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import PaymentDialog from "./PaymentDialog";
 
@@ -28,6 +29,7 @@ export default function PaymentCard({
   order,
   onRefresh,
 }: Props) {
+  const { t } = useTranslation();
 
   const [open, setOpen] =
     useState(false);
@@ -48,17 +50,17 @@ export default function PaymentCard({
 
       <CardContent>
 
-        <Stack sx={{mb:2,justifyContent:"space-between",direction:"row"}}   >
+        <Stack sx={{ mb: 2, justifyContent: "space-between", direction: "row" }}>
 
           <Typography variant="h6">
-            收款信息
+            {t("payment.card.title")}
           </Typography>
 
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
           >
-            新增收款
+            {t("payment.card.addPayment")}
           </Button>
 
         </Stack>
@@ -66,28 +68,22 @@ export default function PaymentCard({
         <Stack spacing={1} sx={{ mb: 3 }}>
 
           <Typography>
-            订单金额：
+            {t("payment.card.orderAmount")}：
             ￥{order.totalAmount}
           </Typography>
 
           <Typography>
-            已付款：
+            {t("payment.card.paidAmount")}：
             ￥{order.paidAmount}
           </Typography>
 
-          <Stack sx={{direction:"row",alignItems:"center"}}
-           
-            spacing={1}
-            
-          >
+          <Stack sx={{ direction: "row", alignItems: "center" }} spacing={1}>
             <Typography>
-              付款状态：
+              {t("payment.card.paymentStatus")}：
             </Typography>
 
             <PaymentStatusChip
-              status={
-                order.paymentStatus
-              }
+              status={order.paymentStatus}
             />
           </Stack>
 

@@ -85,6 +85,62 @@
     "zh": "中文",
     "en": "English"
   },
+  "app": {
+    "title": "CRM"
+  },
+  "payment": {
+    "dialog": {
+      "title": "Add Payment",
+      "amount": "Amount",
+      "method": "Payment Method",
+      "remark": "Remark",
+      "confirm": "Confirm Payment"
+    },
+    "card": {
+      "title": "Payment Info",
+      "addPayment": "Add Payment",
+      "orderAmount": "Order Amount",
+      "paidAmount": "Paid Amount",
+      "paymentStatus": "Payment Status"
+    },
+    "record": {
+      "time": "Time",
+      "method": "Method",
+      "amount": "Amount",
+      "remark": "Remark"
+    },
+    "status": {
+      "unpaid": "Unpaid",
+      "partial": "Partial Payment",
+      "paid": "Paid",
+      "refunded": "Refunded"
+    },
+    "method": {
+      "cash": "Cash",
+      "bank": "Bank Transfer",
+      "wechat": "WeChat",
+      "alipay": "Alipay"
+    }
+  },
+  "product": {
+    "detail": {
+      "tabs": {
+        "basic": "Basic Info",
+        "sku": "SKU"
+      },
+      "infoTitle": "Product Info",
+      "name": "Name",
+      "createdAt": "Created At",
+      "skuListTitle": "SKU List",
+      "addSku": "Add SKU",
+      "actions": "Actions",
+      "edit": "Edit",
+      "addSkuDialogTitle": "Add SKU",
+      "specName": "Spec Name",
+      "specOptions": "Options (comma, semicolon, space or newline separated)",
+      "addSpec": "Add Spec"
+    }
+  },
   "order": {
     "orderNo": "Order No",
     "create": "Create Order",
