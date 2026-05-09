@@ -125,7 +125,7 @@ export default function OrderDetailPage() {
         </CardContent>
       </Card>
 
-      {/* 📦 商品列表 */}
+      {/* 地址列表 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
           <Stack
@@ -158,7 +158,7 @@ export default function OrderDetailPage() {
         </CardContent>
       </Card>
 
-      {/* 📦 商品列表 */}
+      {/* 商品列表 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
           <Typography variant="subtitle1">{t("order.items")}</Typography>
