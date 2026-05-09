@@ -6,6 +6,7 @@ import (
 	"backend/internal/model"
 	"backend/internal/repository"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -20,6 +21,7 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 
+		now := time.Now().UTC()
 		// 1️⃣ 创建发货单（地址从订单复制，未覆盖时使用默认地址）
 		shipment := model.Shipment{
 			OrderID: order.ID,
@@ -34,6 +36,7 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 			Carrier:        req.Carrier,
 			TrackingNumber: req.TrackingNumber,
 			Status:         "shipped",
+			ShippedAt:      &now,
 		}
 
 		if shipment.ReceiverName == "" {

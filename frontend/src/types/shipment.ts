@@ -13,7 +13,7 @@
     receiverDistrict: string;
     receiverAddress: string;
 
-    createAt: Date;
+    shippedAt: Date;
     status: string;
 
     shipmentItems?: ShipmentItem[];

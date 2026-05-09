@@ -202,9 +202,18 @@ export default function OrderDetailPage() {
                     <Stack
                       sx={{ direction: "row", justifyContent: "space-between" }}
                     >
-                      <Typography>
-                        {s.carrier} - {s.trackingNumber}
-                      </Typography>
+                      <Box>
+                        <Typography>
+                          {s.carrier} - {s.trackingNumber}
+                        </Typography>
+
+                        {/* 👇 时间 */}
+                        <Typography variant="caption" color="text.secondary">
+                          {s.shippedAt
+                            ? new Date(s.shippedAt).toLocaleString()
+                            : "-"}
+                        </Typography>
+                      </Box>
 
                       <Chip size="small" label={s.status} color="info" />
                     </Stack>
