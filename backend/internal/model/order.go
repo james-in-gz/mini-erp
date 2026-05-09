@@ -3,29 +3,27 @@ package model
 import "time"
 
 type Orders struct {
-	ID             uint       `gorm:"primaryKey" json:"id,omitempty"`
-	OrderNo        string     `gorm:"size:100;uniqueIndex" json:"orderNo,omitempty"`
-	CustomerID     uint       `gorm:"index" json:"customerID,omitempty"`
-	Customer       Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
-	UserID         uint       `json:"userID,omitempty"` // 关联 User
-	TotalAmount    float64    `json:"totalAmount,omitempty"`
-	Status         string     `json:"status,omitempty"`    // pending / partial_shipped / shipped / done
+	ID            uint       `gorm:"primaryKey" json:"id,omitempty"`
+	OrderNo       string     `gorm:"size:100;uniqueIndex" json:"orderNo,omitempty"`
+	CustomerID    uint       `gorm:"index" json:"customerID,omitempty"`
+	Customer      Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
+	UserID        uint       `json:"userID,omitempty"` // 关联 User
+	TotalAmount   float64    `json:"totalAmount,omitempty"`
+	Status        string     `gorm:"size:30" json:"status,omitempty"` // pending / partial_shipped / shipped / done
+	PaymentStatus string     `gorm:"size:30" json:"payment_status,omitempty"`
+	PaymentMethod string     `gorm:"size:30" json:"payment_method,omitempty"` // wechat / alipay / cash / pos
+	PaidAmount    float64    `gorm:"type:decimal(10,2)" json:"paid_amount,omitempty"`
+	PaidAt        *time.Time `json:"paidAt,omitempty"`
+
 	OrderType      string     `json:"orderType,omitempty"` // single / subscription
 	Period         string     `json:"period,omitempty"`    // monthly / quarterly / yearly
 	NextDeliveryAt *time.Time `json:"nextDeliveryAt,omitempty"`
 	CreatedAt      time.Time  `json:"createdAt,omitempty"`
 	UpdatedAt      time.Time  `json:"updatedAt,omitempty"`
 
-	// 支付相关字段
-	PaymentStatus string     `gorm:"type:varchar(20);default:'pending';index" json:"paymentStatus"`
-	PaymentMethod string     `gorm:"type:varchar(20);default:''" json:"paymentMethod"`
-	PaymentNo     string     `gorm:"type:varchar(64);" json:"paymentNo"`            // 支付平台交易号
-	PayAmount     float64    `gorm:"type:decimal(10,2);default:0" json:"payAmount"` // 实际支付金额
-	PaidAt        *time.Time `json:"paidAt"`                                        // 支付完成时间
-
 	// 退款相关
-	RefundAmount float64    `gorm:"type:decimal(10,2);default:0" json:"refundAmount"`
-	RefundedAt   *time.Time `json:"refundedAt"`
+	RefundAmount float64    `gorm:"type:decimal(10,2);default:0" json:"refundAmount,omitempty"`
+	RefundedAt   *time.Time `json:"refundedAt,omitempty"`
 
 	// 下单地址（不可变）
 	OriginName     string `json:"originName,omitempty"`
@@ -43,8 +41,9 @@ type Orders struct {
 	DefaultDistrict string `json:"defaultDistrict,omitempty"`
 	DefaultAddress  string `json:"defaultAddress,omitempty"`
 
-	Items     []OrderItem `gorm:"foreignKey:OrderID" json:"items,omitempty"`
-	Shipments []Shipment  `gorm:"foreignKey:OrderID" json:"shipments,omitempty"`
+	Items          []OrderItem     `gorm:"foreignKey:OrderID" json:"items,omitempty"`
+	PaymentRecords []PaymentRecord `json:"paymentRecords,omitempty"`
+	Shipments      []Shipment      `gorm:"foreignKey:OrderID" json:"shipments,omitempty"`
 }
 
 type OrderItem struct {

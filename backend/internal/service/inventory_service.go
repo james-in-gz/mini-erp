@@ -85,7 +85,7 @@ func BatchGetBySKUIDs(skuIDs []uint) (map[uint]*model.Inventory, error) {
 	return repository.BatchGetBySKUIDs(skuIDs)
 }
 
-func AdjustStock(skuID uint, quantity int, remark string, operatorId int) error {
+func AdjustStock(skuID uint, quantity int, remark string, operatorId uint) error {
 	operator, err := repository.GetUserById(operatorId)
 	if err != nil {
 		return err

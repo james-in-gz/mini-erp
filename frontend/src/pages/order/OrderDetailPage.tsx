@@ -21,6 +21,7 @@ import { Order, OrderItem } from "@/types/order";
 import { cancelOrder, getOrderDetail, updateOrderAddress } from "@/api/order";
 import { Shipment } from "@/types/shipment";
 import OrderAddressSelectDialog from "@/components/customer/OrderAddressSelectDialog";
+import PaymentCard from "@/components/order/PaymentCard";
 
 const statusColor: Record<
   string,
@@ -57,13 +58,17 @@ export default function OrderDetailPage() {
     }
   };
 
+  const fetchOrder = async () => {
+
+    const res = await getOrderDetail(
+      Number(id)
+    );
+
+    setData(res.data);
+  };
+
   useEffect(() => {
-    if (id) {
-      const orderId = Number(id);
-      if (!Number.isNaN(orderId)) {
-        getOrderDetail(orderId).then(setData);
-      }
-    }
+    fetchOrder();
   }, [id]);
 
   if (!data) return null;
@@ -92,7 +97,7 @@ export default function OrderDetailPage() {
                 label={t(`order.${data.status}`)}
                 color={statusColor[data.status] || "default"}
               />
-              <Stack sx={{ direction: "row", justifyContent: "space-between" ,mt:2,flexWrap:"wrap"}}
+              <Stack sx={{ direction: "row", justifyContent: "space-between", mt: 2, flexWrap: "wrap" }}
                 spacing={2}
               >
                 <Button
@@ -108,7 +113,7 @@ export default function OrderDetailPage() {
                     variant="outlined"
                     onClick={handleCancel}
                   >
-                     {t("order.cancel")}
+                    {t("order.cancel")}
                   </Button>
                 )}
               </Stack>
@@ -178,6 +183,12 @@ export default function OrderDetailPage() {
           </Stack>
         </CardContent>
       </Card>
+
+
+      <PaymentCard
+        order={data}
+        onRefresh={fetchOrder}
+      />
 
       {/* 🚚 发货记录 */}
       <Card sx={{ borderRadius: 3 }}>

@@ -52,18 +52,19 @@ func CreateOrder(req CreateOrderReq) (*model.Orders, error) {
 		})
 	}
 
-	NumberGenerator := number.NewNumberGenerator(database.DB)
-	orderNo, err := NumberGenerator.Generate("SO")
+	orderNo, err := generateOrderNo()
 	if err != nil {
 		return nil, err
 	}
 
 	order := model.Orders{
-		CustomerID:  req.CustomerID,
-		OrderNo:     orderNo,
-		TotalAmount: total,
-		Status:      "pending",
-		Items:       items,
+		CustomerID:    req.CustomerID,
+		OrderNo:       orderNo,
+		TotalAmount:   total,
+		Status:        "pending",
+		PaymentStatus: "unpaid",
+		PaidAmount:    0,
+		Items:         items,
 		// 下单地址（不可变）
 		OriginName:     address.Name,
 		OriginPhone:    address.Phone,
@@ -101,6 +102,29 @@ func CreateOrder(req CreateOrderReq) (*model.Orders, error) {
 
 	return &order, nil
 
+}
+
+func generateOrderNo() (string, error) {
+	NumberGenerator := number.NewNumberGenerator(database.DB)
+	orderNo, err := NumberGenerator.Generate("SO")
+	if err != nil {
+		return "", err
+	}
+	return orderNo, nil
+}
+
+// logic of payment
+func PayOrder(order *model.Orders, amount float64) {
+
+	order.PaidAmount += amount
+
+	if order.PaidAmount <= 0 {
+		order.PaymentStatus = "unpaid"
+	} else if order.PaidAmount < order.TotalAmount {
+		order.PaymentStatus = "partial"
+	} else {
+		order.PaymentStatus = "paid"
+	}
 }
 
 func AddShipping(orderID uint, tracking string) error {

@@ -1,7 +1,6 @@
 package inventory
 
 import (
-	"backend/internal/dto"
 	"backend/internal/service"
 	"net/http"
 	"strconv"
@@ -65,31 +64,57 @@ func HandleBatchCheck(c *gin.Context) {
 
 // HandleAdjust 管理员调整库存
 func HandleAdjust(c *gin.Context) {
+
 	var req struct {
 		SKUID    uint   `json:"skuId" binding:"required"`
 		Quantity int    `json:"quantity" binding:"required"`
 		Remark   string `json:"remark"`
 	}
 
+	// 1. 参数校验
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	// 从上下文中获取操作人（假设JWT中间件设置）
+	// 2. 获取用户ID
 	userIDVal, exists := c.Get("userID")
 	if !exists {
-		dto.Fail(c, "unauthorized")
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
 		return
 	}
 
-	err := service.AdjustStock(req.SKUID, req.Quantity, req.Remark, userIDVal.(int))
+	userID, ok := userIDVal.(uint)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid user id type",
+		})
+		return
+	}
+
+	// 3. 库存调整
+	err := service.AdjustStock(
+		req.SKUID,
+		req.Quantity,
+		req.Remark,
+		userID,
+	)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "库存调整成功"})
+	// 4. 返回
+	c.JSON(http.StatusOK, gin.H{
+		"message": "库存调整成功",
+	})
 }
 
 // HandleGetLogs 获取库存日志

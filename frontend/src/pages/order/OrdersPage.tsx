@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getOrders } from "@/api/order";
 import { Order } from "@/types/order";
+import PaymentStatusChip from "@/components/order/PaymentStatusChip";
 
 const statusColor: any = {
   pending: "default",
@@ -178,12 +179,13 @@ export default function OrdersPage() {
 
                   {/* 右侧 */}
                   <Stack sx={{ alignItems: "flex-end" }} spacing={1}>
+                    
                     <Chip
                       size="small"
                       label={t(`order.${o.status}`)}
                       color={statusColor[o.status] || "default"}
                     />
-
+<PaymentStatusChip status={o.paymentStatus}></PaymentStatusChip>
                     <Stack sx={{ flexDirection: "row" }} spacing={1}>
                       <Button
                         size="small"
