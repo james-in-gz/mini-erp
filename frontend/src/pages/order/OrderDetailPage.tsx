@@ -60,11 +60,11 @@ export default function OrderDetailPage() {
 
   const fetchOrder = async () => {
 
-    const res = await getOrderDetail(
+    const data = await getOrderDetail(
       Number(id)
     );
 
-    setData(res.data);
+    setData(data);
   };
 
   useEffect(() => {
