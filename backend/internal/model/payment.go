@@ -14,22 +14,22 @@ type Payment struct {
 	PaidAt *time.Time
 }
 type PaymentRecord struct {
-	ID uint `gorm:"primaryKey"`
+	ID uint `gorm:"primaryKey" json:"id,omitempty"`
 
-	OrderID uint `gorm:"index"`
+	OrderID uint `gorm:"index" json:"order_id,omitempty"`
 
-	Amount float64 `gorm:"type:decimal(10,2)"`
+	Amount float64 `gorm:"type:decimal(10,2)" json:"amount,omitempty"`
 
-	Method string `gorm:"size:50"`
+	Method string `gorm:"size:50" json:"method,omitempty"`
 	// cash
 	// bank
 	// transfer
 	// stripe
 	// paypal
 
-	Remark string
+	Remark string `json:"remark,omitempty"`
 
-	UserID uint
+	UserID uint `json:"user_id,omitempty"`
 
-	CreatedAt time.Time
+	CreatedAt time.Time `json:"created_at,omitempty"`
 }
