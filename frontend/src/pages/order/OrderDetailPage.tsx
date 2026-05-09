@@ -74,7 +74,7 @@ export default function OrderDetailPage() {
   if (!data) return null;
 
   return (
-    <Stack sx={{ height: "100%", overflowY: "auto",mb: 2 }} spacing={2}>
+    <Box sx={{ height: "100%", overflowY: "auto",mb: 2 }} >
       {/* 🧾 订单基本信息 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
@@ -261,6 +261,6 @@ export default function OrderDetailPage() {
           setOpenAddressDialog(false);
         }}
       />
-    </Stack>
+    </Box>
   );
 }
