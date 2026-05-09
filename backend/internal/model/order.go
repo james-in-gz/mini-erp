@@ -9,9 +9,9 @@ type Order struct {
 	Customer      Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
 	UserID        uint       `json:"userID,omitempty"` // 关联 User
 	TotalAmount   float64    `json:"totalAmount,omitempty"`
-	Status        string     `gorm:"size:30" json:"status,omitempty"` // pending / partial_shipped / shipped / done
-	PaymentStatus string     `gorm:"size:30" json:"paymentStatus,omitempty"`
-	PaymentMethod string     `gorm:"size:30" json:"paymentMethod,omitempty"` // wechat / alipay / cash / pos
+	Status        string     `gorm:"size:30" json:"status"` // pending / partial_shipped / shipped / done
+	PaymentStatus string     `gorm:"size:30" json:"paymentStatus"`
+	PaymentMethod string     `gorm:"size:30" json:"paymentMethod"` // wechat / alipay / cash / pos
 	PaidAmount    float64    `gorm:"type:decimal(10,2)" json:"paidAmount,omitempty"`
 	PaidAt        *time.Time `json:"paidAt,omitempty"`
 
