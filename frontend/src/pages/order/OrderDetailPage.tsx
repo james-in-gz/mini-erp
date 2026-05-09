@@ -59,10 +59,7 @@ export default function OrderDetailPage() {
   };
 
   const fetchOrder = async () => {
-
-    const data = await getOrderDetail(
-      Number(id)
-    );
+    const data = await getOrderDetail(Number(id));
 
     setData(data);
   };
@@ -74,7 +71,7 @@ export default function OrderDetailPage() {
   if (!data) return null;
 
   return (
-    <Box sx={{ height: "100%", overflowY: "auto",mb: 2 }} >
+    <Stack sx={{ height: "100%", overflowY: "auto", mb: 2 }}>
       {/* 🧾 订单基本信息 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
@@ -97,7 +94,13 @@ export default function OrderDetailPage() {
                 label={t(`order.${data.status}`)}
                 color={statusColor[data.status] || "default"}
               />
-              <Stack sx={{ direction: "row", justifyContent: "space-between", mt: 2, flexWrap: "wrap" }}
+              <Stack
+                sx={{
+                  direction: "row",
+                  justifyContent: "space-between",
+                  mt: 2,
+                  flexWrap: "wrap",
+                }}
                 spacing={2}
               >
                 <Button
@@ -184,11 +187,7 @@ export default function OrderDetailPage() {
         </CardContent>
       </Card>
 
-
-      <PaymentCard
-        order={data}
-        onRefresh={fetchOrder}
-      />
+      <PaymentCard order={data} onRefresh={fetchOrder} />
 
       {/* 🚚 发货记录 */}
       <Card sx={{ borderRadius: 3 }}>
@@ -261,6 +260,6 @@ export default function OrderDetailPage() {
           setOpenAddressDialog(false);
         }}
       />
-    </Box>
+    </Stack>
   );
 }
