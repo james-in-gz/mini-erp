@@ -33,8 +33,8 @@ if [ "$LOCAL" != "$REMOTE" ]; then
   sudo chmod +x $REPO_DIR/deploy.sh
 
   # 重新构建并启动（不会删 volume / 数据）
-sudo docker compose build --no-cache
-sudo docker compose --env-file ../.env up -d
+  sudo docker compose build --no-cache
+  sudo docker compose --env-file ../.env up -d
 
   echo "✅ deploy success"
 else
