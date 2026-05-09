@@ -21,6 +21,7 @@ import {
   Remove as RemoveIcon,
   History as HistoryIcon,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { inventoryApi } from '@/api/inventoryApi';
 
 interface InventoryCardProps {
@@ -30,6 +31,7 @@ interface InventoryCardProps {
 }
 
 const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }) => {
+  const { t } = useTranslation();
   const [inventory, setInventory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [adjustDialog, setAdjustDialog] = useState(false);
@@ -64,7 +66,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
       loadInventory();
     } catch (error) {
       console.error('调整失败:', error);
-      alert('调整失败');
+      alert(t('inventory.adjustFailed'));
     } finally {
       setAdjusting(false);
     }
@@ -83,7 +85,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
   }
 
   const available = inventory?.availableStock ?? 0;
-  const stockStatus = available <= 0 ? '缺货' : available <= 10 ? '紧张' : '充足';
+  const stockStatus = available <= 0 ? t('inventory.status.outOfStock') : available <= 10 ? t('inventory.status.low') : t('inventory.status.sufficient');
   const statusColor = available <= 0 ? 'error' : available <= 10 ? 'warning' : 'success';
 
   return (
@@ -92,7 +94,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
         <CardContent>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
             <Typography variant="subtitle2" color="text.secondary">
-              库存信息
+              {t('inventory.info')}
             </Typography>
             <IconButton size="small" onClick={loadInventory}>
               <RefreshIcon fontSize="small" />
@@ -102,7 +104,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
           <Grid container spacing={2}>
             <Grid size={4}>
               <Typography variant="caption" color="text.secondary">
-                总库存
+                {t('inventory.totalStock')}
               </Typography>
               <Typography variant="h6">
                 {inventory?.stock || 0}
@@ -110,7 +112,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
             </Grid>
             <Grid size={4}>
               <Typography variant="caption" color="text.secondary">
-                锁定库存
+                {t('inventory.lockedStock')}
               </Typography>
               <Typography variant="h6" color="warning.main">
                 {inventory?.lockedStock || 0}
@@ -118,7 +120,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
             </Grid>
             <Grid size={4}>
               <Typography variant="caption" color="text.secondary">
-                可用库存
+                {t('inventory.availableStock')}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="h6">
@@ -141,7 +143,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
                 setAdjustDialog(true);
               }}
             >
-              入库
+              {t('inventory.inbound')}
             </Button>
             <Button
               variant="outlined"
@@ -152,7 +154,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
                 setAdjustDialog(true);
               }}
             >
-              出库
+              {t('inventory.outbound')}
             </Button>
           </Box>
         </CardContent>
@@ -160,13 +162,13 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
 
       <Dialog open={adjustDialog} onClose={() => setAdjustDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {adjustQuantity > 0 ? '入库' : '出库'} - {skuCode}
+          {adjustQuantity > 0 ? t('inventory.inbound') : t('inventory.outbound')} - {skuCode}
         </DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
             type="number"
-            label="数量"
+            label={t('inventory.quantity')}
             value={Math.abs(adjustQuantity)}
             onChange={(e) => {
               const val = parseInt(e.target.value) || 0;
@@ -176,7 +178,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
           />
           <TextField
             fullWidth
-            label="备注"
+            label={t('inventory.remark')}
             value={adjustRemark}
             onChange={(e) => setAdjustRemark(e.target.value)}
             margin="normal"
@@ -184,9 +186,9 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ skuId, skuCode, skuName }
             rows={2}
           />
           <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 2 }}>
-            <Button onClick={() => setAdjustDialog(false)}>取消</Button>
+            <Button onClick={() => setAdjustDialog(false)}>{t('common.cancel')}</Button>
             <Button variant="contained" onClick={handleAdjust} disabled={adjusting}>
-              {adjusting ? <CircularProgress size={20} /> : `确认${adjustQuantity > 0 ? '入库' : '出库'}`}
+              {adjusting ? <CircularProgress size={20} /> : `${t('common.confirm')}${adjustQuantity > 0 ? t('inventory.inbound') : t('inventory.outbound')}`}
             </Button>
           </Box>
         </DialogContent>

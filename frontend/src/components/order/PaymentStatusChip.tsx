@@ -6,35 +6,30 @@ interface Props {
 }
 
 export default function PaymentStatusChip({ status }: Props) {
+  const { t } = useTranslation();
   const map: Record<string, any> = {
     unpaid: {
-      label: "未付款",
+      label: t("payment.status.unpaid"),
       color: "default",
     },
 
     partial: {
-      label: "部分付款",
+      label: t("payment.status.partial"),
       color: "warning",
     },
 
     paid: {
-      label: "已付款",
+      label: t("payment.status.paid"),
       color: "success",
     },
 
     refunded: {
-      label: "已退款",
+      label: t("payment.status.refunded"),
       color: "error",
     },
   };
 
   const item = map[status] || map.unpaid;
 
-  return (
-    <Chip
-      label={item.label}
-      color={item.color}
-      size="small"
-    />
-  );
+  return <Chip label={item.label} color={item.color} size="small" />;
 }

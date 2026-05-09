@@ -29,6 +29,7 @@ import {
   Add as AddIcon,
   Remove as RemoveIcon,
 } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 import  { inventoryApi} from "@/api/inventoryApi";
 import { getAllSKUs, getSKUDetail } from "@/api/sku";
 import { InventoryLog } from "@/types/inventory";
@@ -47,6 +48,7 @@ interface SKUWithInventory {
 }
 
 const InventoryManagement: React.FC = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const [skus, setSkus] = useState<SKUWithInventory[]>([]);
   const [filteredSkus, setFilteredSkus] = useState<SKUWithInventory[]>([]);
@@ -153,7 +155,7 @@ const InventoryManagement: React.FC = () => {
       loadData();
     } catch (error) {
       console.error("调整库存失败:", error);
-      alert("调整失败，请重试");
+      alert(t("inventory.adjustFailed"));
     } finally {
       setAdjusting(false);
     }
@@ -220,17 +222,17 @@ const InventoryManagement: React.FC = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: 600 }}>
-          库存管理
+          {t("inventory.management")}
         </Typography>
         <Button variant="outlined" onClick={loadData} disabled={loading}>
-          刷新
+          {t("common.refresh")}
         </Button>
       </Box>
 
       {/* 搜索栏 */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <TextField
-          placeholder="搜索SKU编码或名称..."
+          placeholder={t("inventory.searchPlaceholder")}
           slotProps={{
             input: {
               startAdornment: (
@@ -255,26 +257,26 @@ const InventoryManagement: React.FC = () => {
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: theme.palette.grey[100] }}>
-                    <TableCell sx={{ fontWeight: 600 }}>SKU编码</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>SKU名称</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>规格</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{t("inventory.skuCode")}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{t("inventory.skuName")}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{t("inventory.specs")}</TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "right" }}>
-                      价格
+                      {t("inventory.price")}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                      总库存
+                      {t("inventory.totalStock")}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                      锁定库存
+                      {t("inventory.lockedStock")}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                      可用库存
+                      {t("inventory.availableStock")}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                      状态
+                      {t("inventory.status")}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>
-                      操作
+                      {t("inventory.actions")}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -282,7 +284,7 @@ const InventoryManagement: React.FC = () => {
                   {paginatedSkus.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={9} align="center" sx={{ py: 8 }}>
-                        <Typography color="text.secondary">暂无数据</Typography>
+                        <Typography color="text.secondary">{t("common.no-data")}</Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -327,10 +329,10 @@ const InventoryManagement: React.FC = () => {
                             <Chip
                               label={
                                 available <= 0
-                                  ? "缺货"
+                                  ? t("inventory.status.outOfStock")
                                   : available <= 10
-                                    ? "库存紧张"
-                                    : "充足"
+                                    ? t("inventory.status.low")
+                                    : t("inventory.status.sufficient")
                               }
                               size="small"
                               color={
@@ -351,7 +353,7 @@ const InventoryManagement: React.FC = () => {
                                 justifyContent: "center",
                               }}
                             >
-                              <Tooltip title="调整库存">
+                              <Tooltip title={t("inventory.adjustStock")}>
                                 <IconButton
                                   size="small"
                                   onClick={() =>
@@ -366,7 +368,7 @@ const InventoryManagement: React.FC = () => {
                                   <EditIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip title="查看日志">
+                              <Tooltip title={t("inventory.viewLogs")}>
                                 <IconButton
                                   size="small"
                                   onClick={() => handleViewLogs(sku.id)}
@@ -408,7 +410,7 @@ const InventoryManagement: React.FC = () => {
       >
         <DialogTitle>
           <Box>
-            <Typography variant="h6">调整库存</Typography>
+            <Typography variant="h6">{t("inventory.adjustStock")}</Typography>
             <Typography variant="body2" color="text.secondary">
               {adjustDialog.skuCode} - {adjustDialog.skuName}
             </Typography>
@@ -419,13 +421,13 @@ const InventoryManagement: React.FC = () => {
             <TextField
               fullWidth
               type="number"
-              label="调整数量"
+              label={t("inventory.adjustQuantity")}
               value={adjustQuantity}
               onChange={(e) => setAdjustQuantity(parseInt(e.target.value) || 0)}
               margin="normal"
               helperText={
                 <Typography variant="caption" color="text.secondary">
-                  正数增加库存，负数减少库存
+                  {t("inventory.adjustHint")}
                 </Typography>
               }
               slotProps={{
@@ -444,7 +446,7 @@ const InventoryManagement: React.FC = () => {
             />
             <TextField
               fullWidth
-              label="备注"
+              label={t("inventory.remark")}
               value={adjustRemark}
               onChange={(e) => setAdjustRemark(e.target.value)}
               margin="normal"
@@ -462,13 +464,13 @@ const InventoryManagement: React.FC = () => {
             pt: 0,
           }}
         >
-          <Button onClick={() => setAdjustDialog({ open: false })}>取消</Button>
+          <Button onClick={() => setAdjustDialog({ open: false })}>{t("common.cancel")}</Button>
           <Button
             variant="contained"
             onClick={handleAdjustStock}
             disabled={adjustQuantity === 0 || adjusting}
           >
-            {adjusting ? <CircularProgress size={20} /> : "确认调整"}
+            {adjusting ? <CircularProgress size={20} /> : t("inventory.confirmAdjust")}
           </Button>
         </Box>
       </Dialog>
@@ -480,7 +482,7 @@ const InventoryManagement: React.FC = () => {
         maxWidth="lg"
         fullWidth
       >
-        <DialogTitle>库存变更日志 - {logsDialog.skuCode}</DialogTitle>
+        <DialogTitle>{t("inventory.stockLogs")} - {logsDialog.skuCode}</DialogTitle>
         <DialogContent>
           {logsLoading ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
@@ -491,13 +493,13 @@ const InventoryManagement: React.FC = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: theme.palette.grey[50] }}>
-                    <TableCell>时间</TableCell>
-                    <TableCell>类型</TableCell>
-                    <TableCell align="right">变动数量</TableCell>
-                    <TableCell align="right">变动前</TableCell>
-                    <TableCell align="right">变动后</TableCell>
-                    <TableCell>备注</TableCell>
-                    <TableCell>操作人</TableCell>
+                    <TableCell>{t("inventory.log.time")}</TableCell>
+                    <TableCell>{t("inventory.log.type")}</TableCell>
+                    <TableCell align="right">{t("inventory.log.change")}</TableCell>
+                    <TableCell align="right">{t("inventory.log.before")}</TableCell>
+                    <TableCell align="right">{t("inventory.log.after")}</TableCell>
+                    <TableCell>{t("inventory.log.remark")}</TableCell>
+                    <TableCell>{t("inventory.log.operator")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -506,12 +508,12 @@ const InventoryManagement: React.FC = () => {
                       string,
                       { label: string; color: any }
                     > = {
-                      in: { label: "入库", color: "success" },
-                      out: { label: "出库", color: "error" },
-                      lock: { label: "锁定", color: "warning" },
-                      unlock: { label: "释放", color: "info" },
+                      in: { label: t("inventory.log.type.in"), color: "success" },
+                      out: { label: t("inventory.log.type.out"), color: "error" },
+                      lock: { label: t("inventory.log.type.lock"), color: "warning" },
+                      unlock: { label: t("inventory.log.type.unlock"), color: "info" },
                       adjust: {
-                        label: "调整",
+                        label: t("inventory.log.type.adjust"),
                         color: log.changeValue >= 0 ? "success" : "error",
                       },
                     };
@@ -550,7 +552,7 @@ const InventoryManagement: React.FC = () => {
                         <TableCell align="right">{log.beforeStock}</TableCell>
                         <TableCell align="right">{log.afterStock}</TableCell>
                         <TableCell>{log.remark || "-"}</TableCell>
-                        <TableCell>{log.createdBy || "系统"}</TableCell>
+                        <TableCell>{log.createdBy || t("inventory.log.system")}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -563,7 +565,7 @@ const InventoryManagement: React.FC = () => {
           {logs.length < logsTotal && !logsLoading && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <Button onClick={handleLoadMoreLogs}>
-                加载更多 ({logs.length}/{logsTotal})
+                {t("inventory.loadMore")} ({logs.length}/{logsTotal})
               </Button>
             </Box>
           )}
