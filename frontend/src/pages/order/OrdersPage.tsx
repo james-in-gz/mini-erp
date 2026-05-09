@@ -203,11 +203,15 @@ export default function OrdersPage() {
                   >
                     <Box sx={{ display: "flex", gap: 3 }}>
                       <Typography variant="body2">
-                        💰 {t("order.amount")}: ¥{o.totalAmount}
+                        {t("order.amount")}: ¥{o.totalAmount}
                       </Typography>
 
                       <Typography variant="body2">
-                        📦 商品数: {o.items?.length || 0}
+                        已付款: ¥{o.paidAmount}
+                      </Typography>
+
+                      <Typography variant="body2">
+                        未付款: ¥{o.paidAmount ? o.totalAmount - o.paidAmount : o.totalAmount}
                       </Typography>
                     </Box>
                   </Box>
