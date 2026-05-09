@@ -11,7 +11,7 @@ import (
 )
 
 func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
-	var order model.Orders
+	var order model.Order
 
 	order, err := repository.GetOrderByID(orderID)
 	if err != nil {

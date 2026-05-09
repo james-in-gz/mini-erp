@@ -21,7 +21,7 @@ type CreateOrderReq struct {
 	} `json:"items"`
 }
 
-func CreateOrder(req CreateOrderReq) (*model.Orders, error) {
+func CreateOrder(req CreateOrderReq) (*model.Order, error) {
 
 	// ⭐ 获取客户的地址信息
 	address, err := repository.GetAddressByID(req.AddressID)
@@ -57,7 +57,7 @@ func CreateOrder(req CreateOrderReq) (*model.Orders, error) {
 		return nil, err
 	}
 
-	order := model.Orders{
+	order := model.Order{
 		CustomerID:    req.CustomerID,
 		OrderNo:       orderNo,
 		TotalAmount:   total,
@@ -114,7 +114,7 @@ func generateOrderNo() (string, error) {
 }
 
 // logic of payment
-func PayOrder(order *model.Orders, amount float64) {
+func PayOrder(order *model.Order, amount float64) {
 
 	order.PaidAmount += amount
 
@@ -139,11 +139,11 @@ func AddShipping(orderID uint, tracking string) error {
 	return repository.AddShipping(&shipping)
 }
 
-func GetOrders() ([]model.Orders, error) {
+func GetOrders() ([]model.Order, error) {
 	return repository.GetOrders()
 }
 
-func updateOrderStatus(order model.Orders) {
+func updateOrderStatus(order model.Order) {
 	panic("unimplemented")
 }
 
@@ -169,7 +169,7 @@ func updateOrderStatusWithTX(tx *gorm.DB, orderID uint) error {
 		}
 	}
 
-	var order model.Orders
+	var order model.Order
 	if err := tx.First(&order, orderID).Error; err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func findOrderItem(items []model.OrderItem, id uint) *model.OrderItem {
 	return nil
 }
 
-func GetOrderByID(id uint) (model.Orders, error) {
+func GetOrderByID(id uint) (model.Order, error) {
 	return repository.GetOrderByID(id)
 }
 
@@ -210,7 +210,7 @@ func ChangeOrderAddress(orderID uint, addressID uint) error {
 
 func CancelOrder(orderID uint) error {
 	return database.DB.Transaction(func(tx *gorm.DB) error {
-		var order model.Orders
+		var order model.Order
 		if err := tx.Preload("Items").First(&order, orderID).Error; err != nil {
 			return err
 		}

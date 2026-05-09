@@ -17,7 +17,7 @@ func AutoMigrate() {
 		&model.Inventory{},
 		&model.InventoryLog{},
 
-		&model.Orders{},
+		&model.Order{},
 		&model.OrderItem{},
 
 		&model.Shipment{},

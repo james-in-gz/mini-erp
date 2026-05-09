@@ -5,12 +5,12 @@ import (
 	"backend/internal/model"
 )
 
-func CreateOrder(order *model.Orders) error {
+func CreateOrder(order *model.Order) error {
 	return database.DB.Create(order).Error
 }
 
-func GetOrders() ([]model.Orders, error) {
-	var orders []model.Orders
+func GetOrders() ([]model.Order, error) {
+	var orders []model.Order
 	err := database.DB.Preload("Customer").Preload("Items.SKU").Preload("Shipments").Find(&orders).Error
 	return orders, err
 }
@@ -19,8 +19,8 @@ func AddShipping(shipment *model.Shipment) error {
 	return database.DB.Create(shipment).Error
 }
 
-func GetOrderByID(id uint) (model.Orders, error) {
-	var order model.Orders
+func GetOrderByID(id uint) (model.Order, error) {
+	var order model.Order
 	err := database.DB.
 		Preload("Customer").
 		Preload("Items.SKU").
@@ -31,7 +31,7 @@ func GetOrderByID(id uint) (model.Orders, error) {
 }
 
 func UpdateOrderAddress(orderID uint, newAddr model.CustomerAddress) error {
-	return database.DB.Model(&model.Orders{}).Where("id = ?", orderID).Updates(map[string]interface{}{
+	return database.DB.Model(&model.Order{}).Where("id = ?", orderID).Updates(map[string]interface{}{
 		"default_name":     newAddr.Name,
 		"default_phone":    newAddr.Phone,
 		"default_province": newAddr.Province,

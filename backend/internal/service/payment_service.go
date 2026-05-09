@@ -18,7 +18,7 @@ func CreatePayment(
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 
 		// 1. 查订单
-		var order model.Orders
+		var order model.Order
 
 		if err := tx.First(&order, orderID).Error; err != nil {
 			return err

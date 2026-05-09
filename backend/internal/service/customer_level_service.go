@@ -21,7 +21,7 @@ func (s *CustomerLevelService) RefreshCustomerLevel(customerID uint) error {
 	}
 
 	// 查询最近12个月订单
-	var orders []model.Orders
+	var orders []model.Order
 
 	twelveMonthsAgo := time.Now().AddDate(-1, 0, 0)
 

@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type Orders struct {
+type Order struct {
 	ID            uint       `gorm:"primaryKey" json:"id,omitempty"`
 	OrderNo       string     `gorm:"size:100;uniqueIndex" json:"orderNo,omitempty"`
 	CustomerID    uint       `gorm:"index" json:"customerID,omitempty"`
@@ -44,6 +44,10 @@ type Orders struct {
 	Items          []OrderItem     `gorm:"foreignKey:OrderID" json:"items,omitempty"`
 	PaymentRecords []PaymentRecord `gorm:"foreignKey:OrderID" json:"paymentRecords,omitempty"`
 	Shipments      []Shipment      `gorm:"foreignKey:OrderID" json:"shipments,omitempty"`
+}
+
+func (Order) TableName() string {
+	return "orders"
 }
 
 type OrderItem struct {
