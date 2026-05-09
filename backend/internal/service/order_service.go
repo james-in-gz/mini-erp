@@ -80,12 +80,27 @@ func CreateOrder(req CreateOrderReq) (*model.Orders, error) {
 		DefaultAddress:  address.Address,
 	}
 
-	err = repository.CreateOrder(&order)
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&order).Error; err != nil {
+			return err
+		}
+
+		for _, item := range order.Items {
+			err := repository.DeductStock(item.SKUID, item.Quantity, order.ID, "订单锁定库存")
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
 	return &order, nil
+
 }
 
 func AddShipping(orderID uint, tracking string) error {
@@ -177,9 +192,8 @@ func CancelOrder(orderID uint) error {
 		}
 
 		for _, item := range order.Items {
-			if err := tx.Model(&model.Inventory{}).
-				Where("sku_id = ?", item.SKUID).
-				UpdateColumn("stock", gorm.Expr("stock + ?", item.Quantity)).Error; err != nil {
+			err := repository.ReleaseLock(item.SKUID, item.Quantity, orderID)
+			if err != nil {
 				return err
 			}
 		}

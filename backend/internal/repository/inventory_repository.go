@@ -168,7 +168,7 @@ func AdjustStock(skuID uint, quantity int, remark, operator string) error {
 			ChangeValue: quantity,
 			BeforeStock: beforeStock,
 			AfterStock:  inv.Stock,
-			RefType:     "mannual",
+			RefType:     "manual",
 			Remark:      remark,
 			CreatedBy:   operator,
 		}

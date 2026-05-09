@@ -15,7 +15,7 @@ type Inventory struct {
 type InventoryLog struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	SKUID       uint      `gorm:"column:sku_id;index" json:"skuId"`
-	Type        string    `json:"changeType"` // in, out, lock, unlock, adjust
+	Type        string    `json:"type"` // in, out, lock, unlock, adjust
 	ChangeValue int       `json:"changeValue"`
 	BeforeStock int       `json:"beforeStock"`
 	AfterStock  int       `json:"afterStock"`
