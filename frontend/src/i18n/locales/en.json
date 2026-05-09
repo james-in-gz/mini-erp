@@ -19,7 +19,8 @@
     "select_address": "Select Address",
     "confirm_button": "Confirm",
     "page_size": "Page Size",
-    "page": "Page"
+    "page": "Page",
+    "refresh": "Refresh"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -139,7 +140,16 @@
       "specName": "Spec Name",
       "specOptions": "Options (comma, semicolon, space or newline separated)",
       "addSpec": "Add Spec"
-    }
+    },
+    "products": "Products",
+    "newProduct": "New Product",
+    "name": "Name",
+    "sku": "SKU",
+    "spu": "SPU",
+    "price": "Price",
+    "stock": "Stock",
+    "create": "Create",
+    "cancel": "Cancel"
   },
   "order": {
     "orderNo": "Order No",
@@ -190,17 +200,6 @@
     "failedToUpdateStatus": "Failed to update order status",
     "search": "Search by Customer or Order No",
     "searchPlaceholder": "Search Customer / Order No",
-    "cancel":"Cancel"
-  },
-  "product": {
-    "products": "Products",
-    "newProduct": "New Product",
-    "name": "Name",
-    "sku": "SKU",
-    "spu": "SPU",
-    "price": "Price",
-    "stock": "Stock",
-    "create": "Create",
     "cancel": "Cancel"
   },
   "error": {
@@ -244,6 +243,8 @@
     "log.type.lock": "Lock",
     "log.type.unlock": "Unlock",
     "log.type.adjust": "Adjust",
-    "loadMore": "Load More"
+    "loadMore": "Load More",
+    "noMoreData": "No more data",
+    "Management": "Inventory Management"
   }
 }

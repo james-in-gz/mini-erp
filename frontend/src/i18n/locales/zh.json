@@ -17,9 +17,10 @@
     "all": "全部",
     "change_address": "修改地址",
     "select_address": "选择地址",
-    "confirm_button": "确认", 
+    "confirm_button": "确认",
     "page_size": "每页条数",
-    "page": "页"
+    "page": "页",
+    "refresh": "刷新"
   },
   "menu": {
     "dashboard": "仪表盘",
@@ -29,7 +30,7 @@
     "logout": "退出登录",
     "orders": "订单",
     "products": "产品",
-    "inventory": "库存" 
+    "inventory": "库存"
   },
   "status": {
     "new": "新客户",
@@ -139,7 +140,16 @@
       "specName": "规格名",
       "specOptions": "选项（逗号、分号、空格或换行符分隔）",
       "addSpec": "添加规格"
-    }
+    },
+    "products": "产品",
+    "newProduct": "新建产品",
+    "name": "名称",
+    "sku": "SKU",
+    "spu": "SPU",
+    "price": "价格",
+    "stock": "库存",
+    "create": "创建",
+    "cancel": "取消"
   },
   "order": {
     "orderNo": "订单号",
@@ -192,17 +202,6 @@
     "searchPlaceholder": "搜索 客户 / 订单号",
     "cancel": "取消订单"
   },
-  "product": {
-    "products": "产品",
-    "newProduct": "新建产品",
-    "name": "名称",
-    "sku": "SKU",
-    "spu": "SPU",
-    "price": "价格",
-    "stock": "库存",
-    "create": "创建",
-    "cancel": "取消"
-  },
   "error": {
     "invalid_quantity": "无效的数量",
     "insufficient_stock": "库存不足",
@@ -244,6 +243,8 @@
     "log.type.lock": "锁定",
     "log.type.unlock": "释放",
     "log.type.adjust": "调整",
-    "loadMore": "加载更多"
+    "loadMore": "加载更多",
+    "noMoreLogs": "没有更多日志了",
+     "Management": "库存管理"
   }
 }
