@@ -97,6 +97,14 @@ export default function MainLayout() {
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
+
+      <ListItemButton onClick={() => handleNavigate("/inventory")}>
+        <Inventory2Icon />
+        <ListItemText
+          primary={t("menu.inventory")}
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
     </List>
   );
 

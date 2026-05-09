@@ -1,5 +1,15 @@
 import request from "./request";
 
+export const getAllSKUs = () => {
+    return request.get("/skus").then(res => {
+        if (res.data.code === 0) {
+            return res.data.data;
+        } else {
+            throw new Error(res.data.message);
+        }``
+    });
+}
+
 export const getSKUs = (productId: number) => {
     return request.get(`products/${productId}/skus`).then(res => {
         if (res.data.code === 0) {

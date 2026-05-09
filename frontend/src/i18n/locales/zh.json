@@ -28,7 +28,8 @@
     "followups": "跟进",
     "logout": "退出登录",
     "orders": "订单",
-    "products": "产品"
+    "products": "产品",
+    "inventory": "库存" 
   },
   "status": {
     "new": "新客户",

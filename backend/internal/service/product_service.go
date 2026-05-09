@@ -5,6 +5,7 @@ import (
 	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"backend/pkg/utils"
 	"encoding/json"
 	"strings"
 
@@ -133,7 +134,7 @@ func generateSKUs(
 
 		sku := model.SKU{
 			ProductID: product.ID,
-			Code:      code,
+			Code:      utils.ToShortCode(code),
 			Specs:     string(specJSON),
 			Name:      name,
 			Price:     0,
@@ -200,7 +201,7 @@ func DeleteSKU(id int) error {
 	return repository.DeleteSKU(id)
 }
 
-func listSKUs() ([]*model.SKU, error) {
+func ListSKUs() ([]*model.SKU, error) {
 	return repository.ListSKUs()
 }
 

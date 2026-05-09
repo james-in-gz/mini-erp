@@ -31,27 +31,3 @@ type SKU struct {
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 }
-
-type Inventory struct {
-	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
-	SKUID uint `gorm:"column:sku_id;index" json:"skuid,omitempty"`
-
-	Stock          int `json:"stock,omitempty"`
-	LockedStock    int `json:"lockedStock,omitempty"`
-	AvailableStock int `json:"availableStock,omitempty"`
-
-	UpdatedAt time.Time `json:"updatedAt,omitempty"`
-}
-
-type StockLog struct {
-	ID    uint `gorm:"primaryKey" json:"id,omitempty"`
-	SKUID uint `gorm:"column:sku_id" json:"skuid,omitempty"`
-
-	Type string `json:"type,omitempty"` // IN / OUT
-	Qty  int    `json:"qty,omitempty"`
-
-	RefType string `json:"refType,omitempty"` // ORDER / MANUAL
-	RefID   uint   `json:"refID,omitempty"`
-
-	CreatedAt time.Time `json:"createdAt,omitempty"`
-}

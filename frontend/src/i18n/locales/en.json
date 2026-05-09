@@ -28,7 +28,8 @@
     "followups": "Follow-ups",
     "logout": "Logout",
     "orders": "Orders",
-    "products": "Products"
+    "products": "Products",
+    "inventory": "Inventory"
   },
   "status": {
     "new": "New",

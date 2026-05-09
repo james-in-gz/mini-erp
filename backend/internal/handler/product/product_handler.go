@@ -50,6 +50,15 @@ func CreateProduct(c *gin.Context) {
 	dto.Success(c, gin.H{"message": "ok"})
 }
 
+func GetAllSKUs(c *gin.Context) {
+	skus, err := service.ListSKUs()
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+	dto.Success(c, skus)
+}
+
 func GetSKUs(c *gin.Context) {
 	productID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

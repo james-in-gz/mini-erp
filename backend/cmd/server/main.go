@@ -5,6 +5,7 @@ import (
 	"backend/internal/handler"
 	"backend/internal/handler/auth"
 	"backend/internal/handler/customer"
+	"backend/internal/handler/inventory"
 	"backend/internal/handler/order"
 	"backend/internal/handler/product"
 	"backend/internal/handler/user"
@@ -72,11 +73,24 @@ func main() {
 		authGroup.GET("/products/:id/skus", product.GetSKUs)
 		authGroup.GET("/skus/:id", product.GetSKUDetail)
 		authGroup.PUT("/skus/:id", product.UpdateSKU)
+		authGroup.GET("/skus", product.GetAllSKUs)
 		authGroup.DELETE("/skus/:id", product.DeleteSKU)
 		authGroup.GET("/customers/:id/addresses", handler.GetAddresses)
 		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
 		authGroup.POST("/addresses/:id/default", handler.SetDefault)
 		authGroup.GET("/customers/search", customer.SearchCustomers)
+
+		inventoryGroup := authGroup.Group("/inventory")
+		{
+			// 查询
+			inventoryGroup.GET("/:skuId", inventory.HandleGetBySKU)
+			inventoryGroup.POST("/batch", inventory.HandleBatchGet)
+			inventoryGroup.POST("/batch-check", inventory.HandleBatchCheck)
+
+			// 管理
+			inventoryGroup.POST("/adjust", inventory.HandleAdjust)
+			inventoryGroup.GET("/logs/:skuId", inventory.HandleGetLogs)
+		}
 
 	}
 
