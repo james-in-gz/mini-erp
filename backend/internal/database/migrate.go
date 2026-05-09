@@ -27,6 +27,7 @@ func AutoMigrate() {
 		&model.DeliveryTask{},
 
 		&model.Payment{},
+		&model.PaymentRecord{},
 		&model.AuditLog{},
 
 		&model.CustomerAddress{},

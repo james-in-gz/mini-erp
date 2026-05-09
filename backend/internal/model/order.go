@@ -42,7 +42,7 @@ type Orders struct {
 	DefaultAddress  string `json:"defaultAddress,omitempty"`
 
 	Items          []OrderItem     `gorm:"foreignKey:OrderID" json:"items,omitempty"`
-	PaymentRecords []PaymentRecord `json:"paymentRecords,omitempty"`
+	PaymentRecords []PaymentRecord `gorm:"foreignKey:OrderID" json:"paymentRecords,omitempty"`
 	Shipments      []Shipment      `gorm:"foreignKey:OrderID" json:"shipments,omitempty"`
 }
 
