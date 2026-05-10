@@ -67,6 +67,7 @@ func main() {
 		authGroup.POST("/orders/:id/shipments", order.CreateShipment)
 		authGroup.GET("/orders/:id/shipments", order.ListShipments)
 		authGroup.POST("/orders/:id/payments", order.CreatePayment)
+		authGroup.PUT("/orders/:id/next-delivery-time", order.UpdateNextDeliveryTime)
 		authGroup.GET("/products", product.GetProducts)
 		authGroup.POST("/products", product.CreateProduct)
 		authGroup.GET("/products/:id", product.GetProductDetail)

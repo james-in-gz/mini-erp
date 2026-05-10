@@ -4,6 +4,7 @@ import (
 	"backend/internal/dto"
 	"backend/internal/service"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -113,4 +114,28 @@ func CancelOrder(c *gin.Context) {
 	}
 
 	dto.Success(c, gin.H{"message": "order cancelled"})
+}
+
+func UpdateNextDeliveryTime(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		dto.Fail(c, "invalid order id")
+		return
+	}
+
+	var req struct {
+		NextDeliveryAt *time.Time `json:"nextDeliveryAt"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	err = service.UpdateOrderNextDeliveryTime(uint(id), req.NextDeliveryAt)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "next delivery time updated"})
 }

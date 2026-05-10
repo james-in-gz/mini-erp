@@ -3,6 +3,7 @@ package repository
 import (
 	"backend/internal/database"
 	"backend/internal/model"
+	"time"
 )
 
 func CreateOrder(order *model.Order) error {
@@ -39,4 +40,11 @@ func UpdateOrderAddress(orderID uint, newAddr model.CustomerAddress) error {
 		"default_district": newAddr.District,
 		"default_address":  newAddr.Address,
 	}).Error
+}
+
+func UpdateOrderNextDeliveryTime(orderID uint, nextDeliveryAt *time.Time) error {
+	if nextDeliveryAt == nil {
+		return database.DB.Model(&model.Order{}).Where("id = ?", orderID).Update("next_delivery_at", nil).Error
+	}
+	return database.DB.Model(&model.Order{}).Where("id = ?", orderID).Update("next_delivery_at", *nextDeliveryAt).Error
 }

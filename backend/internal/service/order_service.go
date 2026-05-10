@@ -147,6 +147,10 @@ func updateOrderStatus(order model.Order) {
 	panic("unimplemented")
 }
 
+func UpdateOrderNextDeliveryTime(orderID uint, nextDeliveryAt *time.Time) error {
+	return repository.UpdateOrderNextDeliveryTime(orderID, nextDeliveryAt)
+}
+
 func updateOrderStatusWithTX(tx *gorm.DB, orderID uint) error {
 	var items []model.OrderItem
 	if err := tx.Where("order_id = ?", orderID).Find(&items).Error; err != nil {

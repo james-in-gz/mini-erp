@@ -62,3 +62,12 @@ export const cancelOrder = async (orderId: number) => {
     throw new Error(res.data.message);
   }
 };
+
+export const updateOrderNextDeliveryTime = async (orderId: number, shipTime: string | null) => {
+  const res = await request.put(`/orders/${orderId}/next-delivery-time`, { nextDeliveryAt: shipTime });
+  if (res.data.code === 0) {
+    return res.data.data;
+  } else {
+    throw new Error(res.data.message);
+  }
+};

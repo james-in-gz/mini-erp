@@ -13,6 +13,7 @@ export interface Order  {
     paymentMethod: string;
     paidAmount: number;
     createAt: Date;
+    nextDeliveryAt?: Date;
 
     items: OrderItem[];
 

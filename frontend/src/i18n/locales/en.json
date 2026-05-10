@@ -202,7 +202,9 @@
     "failedToUpdateStatus": "Failed to update order status",
     "search": "Search by Customer or Order No",
     "searchPlaceholder": "Search Customer / Order No",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "nextShipTime": "Next Delivery Time",
+    "notSet": "Not Set"
   },
   "error": {
     "invalid_quantity": "Invalid quantity",

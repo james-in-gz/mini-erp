@@ -14,11 +14,20 @@ import {
   DialogContent,
   TextField,
   DialogActions,
+  IconButton,
 } from "@mui/material";
+import { Edit as EditIcon, Event as EventIcon } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { Order, OrderItem } from "@/types/order";
-
-import { cancelOrder, getOrderDetail, updateOrderAddress } from "@/api/order";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import {
+  cancelOrder,
+  getOrderDetail,
+  updateOrderAddress,
+  updateOrderNextDeliveryTime,
+} from "@/api/order";
 import { Shipment } from "@/types/shipment";
 import OrderAddressSelectDialog from "@/components/customer/OrderAddressSelectDialog";
 import PaymentCard from "@/components/order/PaymentCard";
@@ -42,7 +51,9 @@ export default function OrderDetailPage() {
 
   const [data, setData] = useState<Order | null>(null);
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
-
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [nextDeliveryTime, setNextDeliveryTime] = useState<Dayjs | null>(null);
+  const [editTime, setEditTime] = useState<Dayjs | null>(null);
   const handleCancel = async () => {
     if (!data) return;
 
@@ -62,6 +73,9 @@ export default function OrderDetailPage() {
     const data = await getOrderDetail(Number(id));
 
     setData(data);
+    setNextDeliveryTime(
+      data.nextDeliveryAt ? dayjs(data.nextDeliveryAt) : null,
+    );
   };
 
   useEffect(() => {
@@ -75,7 +89,7 @@ export default function OrderDetailPage() {
       {/* 🧾 订单基本信息 */}
       <Card sx={{ borderRadius: 3, mb: 2 }}>
         <CardContent>
-          <Stack sx={{ direction: "row", justifyContent: "space-between" }}>
+          <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Box>
               <Typography variant="h6">
                 Order {data.orderNo ? data.orderNo : data.id}
@@ -86,6 +100,63 @@ export default function OrderDetailPage() {
               <Typography>
                 {t("order.amount")}: ¥{data.totalAmount}
               </Typography>
+
+              {/* 下次发货时间 - 可编辑版本 */}
+              <Stack
+                spacing={1}
+                sx={{ mt: 1, flexDirection: "row", alignItems: "center" }}
+              >
+                {isEditingTime ? (
+                  <>
+                    <Box sx={{ mt: 2 }}>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                          label={t("order.nextShipTime")}
+                          value={editTime}
+                          onChange={(v) => setEditTime(v)}
+                        />
+                      </LocalizationProvider>
+                    </Box>
+                    <Button
+                      size="small"
+                      onClick={async () => {
+                        await updateOrderNextDeliveryTime(
+                          data.id,
+                          editTime ? editTime.toISOString() : null,
+                        );
+                        setNextDeliveryTime(editTime);
+                        setIsEditingTime(false);
+                      }}
+                    >
+                      {t("common.save")}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => setIsEditingTime(false)}
+                    >
+                      {t("common.cancel")}
+                    </Button>
+                  </>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <EventIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                      {t("order.nextShipTime")}:
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {nextDeliveryTime
+                        ? nextDeliveryTime.format("YYYY-MM-DD HH:mm")
+                        : t("order.notSet")}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => setIsEditingTime(true)}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                )}
+              </Stack>
             </Box>
 
             <Stack sx={{ alignItems: "flex-end", spacing: 1 }}>
@@ -186,11 +257,11 @@ export default function OrderDetailPage() {
           </Stack>
         </CardContent>
       </Card>
-
-      <PaymentCard order={data} onRefresh={fetchOrder} />
-
+      <Box>
+        <PaymentCard order={data} onRefresh={fetchOrder} />
+      </Box>
       {/* 🚚 发货记录 */}
-      <Card sx={{ borderRadius: 3 }}>
+      <Card sx={{ borderRadius: 3 ,my: 2}}>
         <CardContent>
           <Typography variant="subtitle1">{t("order.shipments")}</Typography>
 
