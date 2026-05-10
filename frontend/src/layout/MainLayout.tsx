@@ -98,22 +98,6 @@ export default function MainLayout() {
         />
       </ListItemButton>
 
-      <ListItemButton onClick={() => handleNavigate("/delivery-plans")}>
-        <ReceiptLongIcon />
-        <ListItemText
-          primary={t("menu.delivery-plans")}
-          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
-        />
-      </ListItemButton>
-
-      <ListItemButton onClick={() => handleNavigate("/delivery-tasks")}>
-        <ReceiptLongIcon />
-        <ListItemText
-          primary={t("menu.delivery-tasks")}
-          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
-        />
-      </ListItemButton>
-
       <Divider sx={{ my: 1 }} />
 
       <ListItemButton onClick={() => handleNavigate("/products")}>

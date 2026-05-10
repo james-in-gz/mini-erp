@@ -19,7 +19,7 @@ import {
 import { Edit as EditIcon, Event as EventIcon } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { Order, OrderItem } from "@/types/order";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker , LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import {
@@ -110,7 +110,7 @@ export default function OrderDetailPage() {
                   <>
                     <Box sx={{ mt: 2 }}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker
+                        <DatePicker
                           label={t("order.nextShipTime")}
                           value={editTime}
                           onChange={(v) => setEditTime(v)}
@@ -145,7 +145,7 @@ export default function OrderDetailPage() {
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       {nextDeliveryTime
-                        ? nextDeliveryTime.format("YYYY-MM-DD HH:mm")
+                        ? nextDeliveryTime.format("YYYY-MM-DD")
                         : t("order.notSet")}
                     </Typography>
                     <IconButton
