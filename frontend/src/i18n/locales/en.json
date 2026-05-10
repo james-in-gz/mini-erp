@@ -30,7 +30,9 @@
     "logout": "Logout",
     "orders": "Orders",
     "products": "Products",
-    "inventory": "Inventory"
+    "inventory": "Inventory",
+    "delivery-tasks": "Delivery Tasks",
+    "delivery-plans": "Delivery Plans"
   },
   "status": {
     "new": "New",
@@ -208,6 +210,7 @@
     "exceed_available_quantity": "Exceed available quantity"
   },
   "inventory": {
+    "management": "Inventory Management",
     "title": "Inventory Management",
     "search": "Search SKU",
     "searchPlaceholder": "Enter SKU code or name",
@@ -220,6 +223,8 @@
     "availableStock": "Available Stock",
     "status": "Status",
     "actions": "Actions",
+    "stockOut": "Stock Out",
+    "stockIn": "Stock In",
     "status.outOfStock": "Out of Stock",
     "status.low": "Low Stock",
     "status.sufficient": "Sufficient",

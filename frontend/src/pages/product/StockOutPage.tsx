@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, TextField, Button, MenuItem, Stack } from "@mui/material";
 import request from "@/api/request";
+import { useNavigate } from "react-router-dom";
 
 export default function StockOutPage() {
   const [skus, setSkus] = useState<any[]>([]);
   const [form, setForm] = useState({ sku_id: "", qty: 0 });
+  const navigate = useNavigate();
 
   useEffect(() => {
     request.get("/skus").then(res => setSkus(res.data));
   }, []);
 
   const handleSubmit = async () => {
-    await request.post("/inventory/out", form);
-    alert("出库成功");
+    var res = await request.post("/inventory/out", form);
+    if(res.data.code === 0){
+      alert("出库成功");
+      navigate("/inventory");
+    }else{
+      alert("出库失败: " + res.data.message);
+    }
   };
 
   return (

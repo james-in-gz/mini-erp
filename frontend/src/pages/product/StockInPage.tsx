@@ -1,18 +1,31 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, TextField, Button, MenuItem, Stack } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  MenuItem,
+  Stack,
+} from "@mui/material";
 import request from "@/api/request";
+import { useNavigate } from "react-router-dom";
 
 export default function StockInPage() {
   const [skus, setSkus] = useState<any[]>([]);
   const [form, setForm] = useState({ sku_id: "", qty: 0 });
-
+  const navigate = useNavigate();
   useEffect(() => {
-    request.get("/skus").then(res => setSkus(res.data));
+    request.get("/skus").then((res) => setSkus(res.data?.data));
   }, []);
 
   const handleSubmit = async () => {
-    await request.post("/inventory/in", form);
-    alert("入库成功");
+    var res = await request.post("/inventory/in", form);
+    if (res.data.code === 0) {
+      alert("入库成功");
+      navigate("/inventory");
+    } else {
+      alert("入库失败: " + res.data.message);
+    }
   };
 
   return (
@@ -23,9 +36,7 @@ export default function StockInPage() {
             select
             label="SKU"
             value={form.sku_id}
-            onChange={(e) =>
-              setForm({ ...form, sku_id: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, sku_id: e.target.value })}
           >
             {skus.map((s) => (
               <MenuItem key={s.id} value={s.id}>
@@ -37,9 +48,7 @@ export default function StockInPage() {
           <TextField
             label="数量"
             type="number"
-            onChange={(e) =>
-              setForm({ ...form, qty: Number(e.target.value) })
-            }
+            onChange={(e) => setForm({ ...form, qty: Number(e.target.value) })}
           />
 
           <Button variant="contained" onClick={handleSubmit}>

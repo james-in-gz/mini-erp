@@ -30,7 +30,9 @@
     "logout": "退出登录",
     "orders": "订单",
     "products": "产品",
-    "inventory": "库存"
+    "inventory": "库存",
+    "delivery-tasks": "配送任务",
+    "delivery-plans": "配送计划"
   },
   "status": {
     "new": "新客户",
@@ -208,6 +210,7 @@
     "exceed_available_quantity": "超过可用数量"
   },
   "inventory": {
+    "management": "库存管理",
     "title": "库存管理",
     "search": "搜索SKU",
     "searchPlaceholder": "输入SKU编码或名称",
@@ -220,6 +223,8 @@
     "availableStock": "可用库存",
     "status": "状态",
     "actions": "操作",
+    "stockOut": "出库",
+    "stockIn": "入库",
     "status.outOfStock": "缺货",
     "status.low": "库存紧张",
     "status.sufficient": "充足",

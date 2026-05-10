@@ -10,6 +10,10 @@ import {
   Typography,
   Select,
   MenuItem,
+  Collapse,
+  ListItemIcon,
+  ListItem,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
@@ -58,6 +62,8 @@ export default function MainLayout() {
         />
       </ListItemButton>
 
+      <Divider sx={{ my: 1 }} />
+
       <ListItemButton onClick={() => handleNavigate("/pipeline")}>
         <InsightsIcon />
         <ListItemText
@@ -82,6 +88,8 @@ export default function MainLayout() {
         />
       </ListItemButton>
 
+      <Divider sx={{ my: 1 }} />
+
       <ListItemButton onClick={() => handleNavigate("/orders")}>
         <ReceiptLongIcon />
         <ListItemText
@@ -89,6 +97,24 @@ export default function MainLayout() {
           sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
         />
       </ListItemButton>
+
+      <ListItemButton onClick={() => handleNavigate("/delivery-plans")}>
+        <ReceiptLongIcon />
+        <ListItemText
+          primary={t("menu.delivery-plans")}
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
+
+      <ListItemButton onClick={() => handleNavigate("/delivery-tasks")}>
+        <ReceiptLongIcon />
+        <ListItemText
+          primary={t("menu.delivery-tasks")}
+          sx={{ opacity: collapsed ? 0 : 1, ml: 1 }}
+        />
+      </ListItemButton>
+
+      <Divider sx={{ my: 1 }} />
 
       <ListItemButton onClick={() => handleNavigate("/products")}>
         <Inventory2Icon />

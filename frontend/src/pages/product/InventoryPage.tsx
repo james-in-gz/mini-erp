@@ -28,9 +28,12 @@ import {
   Search as SearchIcon,
   Add as AddIcon,
   Remove as RemoveIcon,
+  ArrowUpward as ArrowUpwardIcon,  // 添加入库图标
+  ArrowDownward as ArrowDownwardIcon, // 添加出库图标
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import  { inventoryApi} from "@/api/inventoryApi";
+import { useNavigate } from "react-router-dom"; // 添加路由跳转
+import { inventoryApi } from "@/api/inventoryApi";
 import { getAllSKUs, getSKUDetail } from "@/api/sku";
 import { InventoryLog } from "@/types/inventory";
 
@@ -50,6 +53,7 @@ interface SKUWithInventory {
 const InventoryManagement: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate(); // 添加 navigate hook
   const [skus, setSkus] = useState<SKUWithInventory[]>([]);
   const [filteredSkus, setFilteredSkus] = useState<SKUWithInventory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,6 +141,16 @@ const InventoryManagement: React.FC = () => {
     );
     setFilteredSkus(filtered);
     setPage(1);
+  };
+
+  // 添加入库处理函数
+  const handleStockIn = () => {
+    navigate("/inventory/stock-in"); // 根据你的实际路由路径修改
+  };
+
+  // 添加出库处理函数
+  const handleStockOut = () => {
+    navigate("/inventory/stock-out"); // 根据你的实际路由路径修改
   };
 
   const handleAdjustStock = async () => {
@@ -229,20 +243,60 @@ const InventoryManagement: React.FC = () => {
         </Button>
       </Box>
 
-      {/* 搜索栏 */}
+      {/* 搜索栏 + 入库出库按钮 */}
       <Paper sx={{ p: 2, mb: 2 }}>
-        <TextField
-          placeholder={t("inventory.searchPlaceholder")}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          {/* 搜索框 */}
+          <TextField
+            placeholder={t("inventory.searchPlaceholder")}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            sx={{ flex: 1 }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          
+          {/* 入库按钮 */}
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<ArrowUpwardIcon />}
+            onClick={handleStockIn}
+            sx={{
+              whiteSpace: "nowrap",
+              bgcolor: theme.palette.success.main,
+              "&:hover": {
+                bgcolor: theme.palette.success.dark,
+              },
+            }}
+          >
+            {t("inventory.stockIn") || "入库"}
+          </Button>
+          
+          {/* 出库按钮 */}
+          <Button
+            variant="contained"
+            color="warning"
+            startIcon={<ArrowDownwardIcon />}
+            onClick={handleStockOut}
+            sx={{
+              whiteSpace: "nowrap",
+              bgcolor: theme.palette.warning.main,
+              "&:hover": {
+                bgcolor: theme.palette.warning.dark,
+              },
+            }}
+          >
+            {t("inventory.stockOut") || "出库"}
+          </Button>
+        </Box>
       </Paper>
 
       {/* 库存列表 */}
