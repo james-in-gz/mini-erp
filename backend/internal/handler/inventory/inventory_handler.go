@@ -141,3 +141,74 @@ func HandleGetLogs(c *gin.Context) {
 		"pageSize": pageSize,
 	})
 }
+
+func HandleAdd(c *gin.Context) {
+	// 2. 获取用户ID
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+		return
+	}
+
+	userID, ok := userIDVal.(uint)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid user id type",
+		})
+		return
+	}
+
+	var req struct {
+		SKUID    uint `json:"skuId" binding:"required"`
+		Quantity int  `json:"qty" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := service.AddStock(req.SKUID, req.Quantity, "入库", userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "入库成功"})
+}
+
+func HandleReduce(c *gin.Context) {
+	var req struct {
+		SKUID    uint `json:"skuId" binding:"required"`
+		Quantity int  `json:"qty" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 2. 获取用户ID
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+		return
+	}
+
+	userID, ok := userIDVal.(uint)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid user id type",
+		})
+		return
+	}
+
+	err := service.ReduceStock(req.SKUID, req.Quantity, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "出库成功"})
+}

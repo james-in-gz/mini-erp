@@ -96,3 +96,19 @@ func AdjustStock(skuID uint, quantity int, remark string, operatorId uint) error
 func GetLogs(skuID uint, page int, pageSize int) ([]model.InventoryLog, int64, error) {
 	return repository.GetLogs(skuID, page, pageSize)
 }
+
+func AddStock(skuID uint, quantity int, remark string, operatorId uint) error {
+	operator, err := repository.GetUserById(operatorId)
+	if err != nil {
+		return err
+	}
+	return repository.AddStock(skuID, quantity, operator.Username)
+}
+
+func ReduceStock(skuID uint, quantity int, operatorId uint) error {
+	operator, err := repository.GetUserById(operatorId)
+	if err != nil {
+		return err
+	}
+	return repository.AddStock(skuID, quantity*-1, operator.Username)
+}

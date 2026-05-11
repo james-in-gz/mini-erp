@@ -189,3 +189,36 @@ func GetLogs(skuID uint, page, pageSize int) ([]model.InventoryLog, int64, error
 
 	return logs, total, err
 }
+
+func AddStock(skuID uint, quantity int, operator string) error {
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		var inv model.Inventory
+
+		err := tx.Where("sku_id = ?", skuID).First(&inv).Error
+		if err != nil {
+			// 不存在则创建
+			return err
+		}
+
+		beforeStock := inv.Stock
+		inv.Stock += quantity
+		inv.UpdateAvailableStock()
+
+		if err := tx.Save(&inv).Error; err != nil {
+			return err
+		}
+
+		log := model.InventoryLog{
+			SKUID:       skuID,
+			Type:        "in",
+			ChangeValue: quantity,
+			BeforeStock: beforeStock,
+			AfterStock:  inv.Stock,
+			RefType:     "manual",
+			Remark:      "入库",
+			CreatedBy:   operator,
+		}
+
+		return tx.Create(&log).Error
+	})
+}

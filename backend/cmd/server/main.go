@@ -90,6 +90,8 @@ func main() {
 			inventoryGroup.POST("/batch-check", inventory.HandleBatchCheck)
 
 			// 管理
+			inventoryGroup.POST("/in", inventory.HandleAdd)
+			inventoryGroup.POST("/out", inventory.HandleReduce)
 			inventoryGroup.POST("/adjust", inventory.HandleAdjust)
 			inventoryGroup.GET("/logs/:skuId", inventory.HandleGetLogs)
 		}
