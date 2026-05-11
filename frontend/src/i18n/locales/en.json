@@ -32,7 +32,8 @@
     "products": "Products",
     "inventory": "Inventory",
     "delivery-tasks": "Delivery Tasks",
-    "delivery-plans": "Delivery Plans"
+    "delivery-plans": "Delivery Plans",
+    "warehouses":"WareHouses"
   },
   "status": {
     "new": "New",

@@ -16,3 +16,14 @@ export interface Warehouse  {
 
   address: string;
 };
+
+
+export interface CreateWarehouseDto {
+  name: string;
+  province: string;
+  city: string;
+  district: string;
+  detailAddress: string;
+}
+
+export type UpdateWarehouseDto = Partial<CreateWarehouseDto>;

@@ -28,4 +28,10 @@ request.interceptors.response.use(
   }
 );
 
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
 export default request;

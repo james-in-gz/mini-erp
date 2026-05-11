@@ -32,7 +32,8 @@
     "products": "产品",
     "inventory": "库存",
     "delivery-tasks": "配送任务",
-    "delivery-plans": "配送计划"
+    "delivery-plans": "配送计划",
+    "warehouses":"仓库"
   },
   "status": {
     "new": "新客户",
