@@ -81,6 +81,7 @@ func main() {
 		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
 		authGroup.POST("/addresses/:id/default", handler.SetDefault)
 		authGroup.GET("/customers/search", customer.SearchCustomers)
+		authGroup.GET("/warehouses", handler.GetWarehouses)
 
 		inventoryGroup := authGroup.Group("/inventory")
 		{

@@ -19,62 +19,10 @@ import {
 import Grid from "@mui/material/Grid";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
-/**
- * =========================
- * Types
- * =========================
- */
-
-type Order = {
-  id: number;
-
-  orderNo: string;
-
-  customer?: {
-    name?: string;
-  };
-
-  shippingAddress?: {
-    name?: string;
-
-    phone?: string;
-
-    province?: string;
-
-    city?: string;
-
-    district?: string;
-
-    address?: string;
-  };
-
-  items?: {
-    id: number;
-
-    skuName: string;
-
-    qty: number;
-  }[];
-};
-
-type Warehouse = {
-  id: number;
-
-  name: string;
-
-  contactName: string;
-
-  phone: string;
-
-  province: string;
-
-  city: string;
-
-  district: string;
-
-  address: string;
-};
+import { getOrderDetail } from "@/api/order";
+import { listWareHouses } from "@/api/warehouses";
+import { Order } from "@/types/order";
+import { Warehouse } from "@/types/warehouse";
 
 type ShipmentResult = {
   shipmentNo: string;
@@ -136,25 +84,19 @@ export default function OrderShipmentPage() {
    * =========================
    */
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [creating, setCreating] =
-    useState(false);
+  const [creating, setCreating] = useState(false);
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [order, setOrder] =
-    useState<Order | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
 
-  const [warehouses, setWarehouses] =
-    useState<Warehouse[]>([]);
+  const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
 
-  const [shipmentResult, setShipmentResult] =
-    useState<ShipmentResult | null>(
-      null
-    );
+  const [shipmentResult, setShipmentResult] = useState<ShipmentResult | null>(
+    null,
+  );
 
   const [form, setForm] = useState({
     warehouseID: 0,
@@ -181,12 +123,12 @@ export default function OrderShipmentPage() {
   const fetchOrder = async () => {
     try {
       setLoading(true);
-
-      const res = await axios.get(
-        `/orders/${id}`
-      );
-
-      setOrder(res.data);
+      if(id === undefined) {
+        throw new Error("订单ID不存在");
+      }
+      const data = await getOrderDetail(parseInt(id));
+    
+      setOrder(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -200,30 +142,19 @@ export default function OrderShipmentPage() {
    * =========================
    */
 
-  const fetchWarehouses =
-    async () => {
-      try {
-        const res =
-          await axios.get(
-            "/warehouses"
-          );
+  const fetchWarehouses = async () => {
+      const data = await listWareHouses();
 
-        setWarehouses(res.data);
+      setWarehouses(data);
 
-        if (
-          res.data.length > 0 &&
-          !form.warehouseID
-        ) {
-          setForm((prev) => ({
-            ...prev,
-            warehouseID:
-              res.data[0].id,
-          }));
-        }
-      } catch (err) {
-        console.error(err);
+      if (data.length > 0 && !form.warehouseID) {
+        setForm((prev) => ({
+          ...prev,
+          warehouseID: data[0].id,
+        }));
       }
-    };
+
+  };
 
   /**
    * =========================
@@ -243,16 +174,9 @@ export default function OrderShipmentPage() {
    * =========================
    */
 
-  const selectedWarehouse =
-    useMemo(() => {
-      return warehouses.find(
-        (w) =>
-          w.id === form.warehouseID
-      );
-    }, [
-      warehouses,
-      form.warehouseID,
-    ]);
+  const selectedWarehouse = useMemo(() => {
+    return warehouses.find((w) => w.id === form.warehouseID);
+  }, [warehouses, form.warehouseID]);
 
   /**
    * =========================
@@ -260,10 +184,7 @@ export default function OrderShipmentPage() {
    * =========================
    */
 
-  const handleChange = (
-    key: string,
-    value: any
-  ) => {
+  const handleChange = (key: string, value: any) => {
     setForm((prev) => ({
       ...prev,
       [key]: value,
@@ -276,55 +197,43 @@ export default function OrderShipmentPage() {
    * =========================
    */
 
-  const handleCreateShipment =
-    async () => {
-      try {
-        setCreating(true);
+  const handleCreateShipment = async () => {
+    try {
+      setCreating(true);
 
-        const payload = {
-          orderID: order?.id,
+      const payload = {
+        orderID: order?.id,
 
-          warehouseID:
-            form.warehouseID,
+        warehouseID: form.warehouseID,
 
-          carrier: form.carrier,
+        carrier: form.carrier,
 
-          serviceType:
-            form.serviceType,
+        serviceType: form.serviceType,
 
-          paymentType:
-            form.paymentType,
+        paymentType: form.paymentType,
 
-          weight: form.weight,
+        weight: form.weight,
 
-          parcelCount:
-            form.parcelCount,
+        parcelCount: form.parcelCount,
 
-          remark: form.remark,
-        };
+        remark: form.remark,
+      };
 
-        const res =
-          await axios.post(
-            "/shipments",
-            payload
-          );
+      const res = await axios.post("/shipments", payload);
 
-        setShipmentResult(res.data);
+      setShipmentResult(res.data);
 
-        setOpen(false);
+      setOpen(false);
 
-        alert("创建成功");
-      } catch (err: any) {
-        console.error(err);
+      alert("创建成功");
+    } catch (err: any) {
+      console.error(err);
 
-        alert(
-          err?.response?.data
-            ?.error || "创建失败"
-        );
-      } finally {
-        setCreating(false);
-      }
-    };
+      alert(err?.response?.data?.error || "创建失败");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   /**
    * =========================
@@ -352,8 +261,7 @@ export default function OrderShipmentPage() {
       {/* Header */}
       {/* ========================= */}
 
-      <Typography sx={{mb:3,fontVariant: "h4", fontWeight: 700}}>
-      
+      <Typography sx={{ mb: 3, fontVariant: "h4", fontWeight: 700 }}>
         Order Shipment
       </Typography>
 
@@ -369,32 +277,22 @@ export default function OrderShipmentPage() {
       >
         <CardContent>
           <Stack spacing={2}>
-            <Typography variant="h6">
-              订单信息
-            </Typography>
+            <Typography variant="h6">订单信息</Typography>
 
             <Divider />
 
-            <Grid
-              container
-              spacing={2}
-            >
+            <Grid container spacing={2}>
               <Grid
                 size={{
                   xs: 12,
                   md: 4,
                 }}
               >
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                >
+                <Typography variant="body2" color="text.secondary">
                   订单号
                 </Typography>
 
-                <Typography>
-                  {order.orderNo}
-                </Typography>
+                <Typography>{order.orderNo}</Typography>
               </Grid>
 
               <Grid
@@ -403,62 +301,37 @@ export default function OrderShipmentPage() {
                   md: 4,
                 }}
               >
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                >
+                <Typography variant="body2" color="text.secondary">
                   客户
                 </Typography>
 
-                <Typography>
-                  {
-                    order.customer
-                      ?.name
-                  }
-                </Typography>
+                <Typography>{order.customer?.name}</Typography>
               </Grid>
             </Grid>
 
             <Divider />
 
-            <Typography variant="subtitle1">
-              商品
-            </Typography>
+            <Typography variant="subtitle1">商品</Typography>
 
             <Stack spacing={1}>
-              {order.items?.map(
-                (item) => (
-                  <Box
-                    key={item.id}
-                    sx={{
-                      display:
-                        "flex",
-                      justifyContent:
-                        "space-between",
-                    }}
-                  >
-                    <Typography>
-                      {
-                        item.skuName
-                      }
-                    </Typography>
+              {order.items?.map((item) => (
+                <Box
+                  key={item.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography>{item.skuName}</Typography>
 
-                    <Typography>
-                      x{item.qty}
-                    </Typography>
-                  </Box>
-                )
-              )}
+                  <Typography>x{item.quantity}</Typography>
+                </Box>
+              ))}
             </Stack>
 
             <Divider />
 
-            <Button
-              variant="contained"
-              onClick={() =>
-                setOpen(true)
-              }
-            >
+            <Button variant="contained" onClick={() => setOpen(true)}>
               创建 Shipment
             </Button>
           </Stack>
@@ -478,34 +351,22 @@ export default function OrderShipmentPage() {
         >
           <CardContent>
             <Stack spacing={2}>
-              <Typography variant="h6">
-                Shipment
-              </Typography>
+              <Typography variant="h6">Shipment</Typography>
 
               <Divider />
 
-              <Grid
-                container
-                spacing={2}
-              >
+              <Grid container spacing={2}>
                 <Grid
                   size={{
                     xs: 12,
                     md: 4,
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Shipment No
                   </Typography>
 
-                  <Typography>
-                    {
-                      shipmentResult.shipmentNo
-                    }
-                  </Typography>
+                  <Typography>{shipmentResult.shipmentNo}</Typography>
                 </Grid>
 
                 <Grid
@@ -514,18 +375,11 @@ export default function OrderShipmentPage() {
                     md: 4,
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Waybill No
                   </Typography>
 
-                  <Typography>
-                    {
-                      shipmentResult.waybillNo
-                    }
-                  </Typography>
+                  <Typography>{shipmentResult.waybillNo}</Typography>
                 </Grid>
 
                 <Grid
@@ -534,42 +388,28 @@ export default function OrderShipmentPage() {
                     md: 4,
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Status
                   </Typography>
 
-                  <Chip
-                    label="已创建"
-                    color="success"
-                    size="small"
-                  />
+                  <Chip label="已创建" color="success" size="small" />
                 </Grid>
               </Grid>
 
               <Divider />
 
-              <Stack sx={{ flexDirection: "row", gap: 2,flexWrap:"wrap" }} spacing={2}>
-
-                
-
-              
+              <Stack
+                sx={{ flexDirection: "row", gap: 2, flexWrap: "wrap" }}
+                spacing={2}
+              >
                 <Button
                   variant="outlined"
-                  onClick={() =>
-                    window.open(
-                      shipmentResult.labelURL
-                    )
-                  }
+                  onClick={() => window.open(shipmentResult.labelURL)}
                 >
                   打印面单
                 </Button>
 
-                <Button variant="outlined">
-                  查看物流轨迹
-                </Button>
+                <Button variant="outlined">查看物流轨迹</Button>
               </Stack>
             </Stack>
           </CardContent>
@@ -582,21 +422,14 @@ export default function OrderShipmentPage() {
 
       <Dialog
         open={open}
-        onClose={() =>
-          setOpen(false)
-        }
+        onClose={() => setOpen(false)}
         maxWidth="lg"
         fullWidth
       >
-        <DialogTitle>
-          创建 Shipment
-        </DialogTitle>
+        <DialogTitle>创建 Shipment</DialogTitle>
 
         <DialogContent dividers>
-          <Grid
-            container
-            spacing={3}
-          >
+          <Grid container spacing={3}>
             {/* ========================= */}
             {/* 收件信息 */}
             {/* ========================= */}
@@ -608,85 +441,40 @@ export default function OrderShipmentPage() {
               }}
             >
               <Stack spacing={2}>
-                <Typography variant="h6">
-                  收件信息
-                </Typography>
+                <Typography variant="h6">收件信息</Typography>
 
                 <Divider />
 
                 <Box>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     收件人
                   </Typography>
 
-                  <Typography>
-                    {
-                      order
-                        .shippingAddress
-                        ?.name
-                    }
-                  </Typography>
+                  <Typography>{order.customer?.name}</Typography>
                 </Box>
 
                 <Box>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     联系电话
                   </Typography>
 
-                  <Typography>
-                    {
-                      order
-                        .shippingAddress
-                        ?.phone
-                    }
-                  </Typography>
+                  <Typography>{order.defaultPhone}</Typography>
                 </Box>
 
                 <Box>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     收件地址
                   </Typography>
 
                   <Typography>
-                    {
-                      order
-                        .shippingAddress
-                        ?.province
-                    }
-                    {" "}
-                    {
-                      order
-                        .shippingAddress
-                        ?.city
-                    }
-                    {" "}
-                    {
-                      order
-                        .shippingAddress
-                        ?.district
-                    }
-                    {" "}
-                    {
-                      order
-                        .shippingAddress
-                        ?.address
-                    }
+                    {order.defaultProvince}{" "}
+                    {order.defaultCity}{" "}
+                    {order.defaultDistrict}{" "}
+                    {order.defaultAddress}
                   </Typography>
                 </Box>
 
-                <Chip
-                  label="来自订单"
-                  size="small"
-                />
+                <Chip label="来自订单" size="small" />
               </Stack>
             </Grid>
 
@@ -701,104 +489,52 @@ export default function OrderShipmentPage() {
               }}
             >
               <Stack spacing={2}>
-                <Typography variant="h6">
-                  发货仓库
-                </Typography>
+                <Typography variant="h6">发货仓库</Typography>
 
                 <Divider />
 
                 <TextField
                   select
                   label="仓库"
-                  value={
-                    form.warehouseID
-                  }
+                  value={form.warehouseID}
                   onChange={(e) =>
-                    handleChange(
-                      "warehouseID",
-                      Number(
-                        e.target.value
-                      )
-                    )
+                    handleChange("warehouseID", Number(e.target.value))
                   }
                   fullWidth
                 >
-                  {warehouses.map(
-                    (
-                      warehouse
-                    ) => (
-                      <MenuItem
-                        key={
-                          warehouse.id
-                        }
-                        value={
-                          warehouse.id
-                        }
-                      >
-                        {
-                          warehouse.name
-                        }
-                      </MenuItem>
-                    )
-                  )}
+                  {warehouses.map((warehouse) => (
+                    <MenuItem key={warehouse.id} value={warehouse.id}>
+                      {warehouse.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
 
                 {selectedWarehouse && (
                   <>
                     <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                      >
+                      <Typography variant="body2" color="text.secondary">
                         发件人
                       </Typography>
 
-                      <Typography>
-                        {
-                          selectedWarehouse.contactName
-                        }
-                      </Typography>
+                      <Typography>{selectedWarehouse.contactName}</Typography>
                     </Box>
 
                     <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                      >
+                      <Typography variant="body2" color="text.secondary">
                         联系电话
                       </Typography>
 
-                      <Typography>
-                        {
-                          selectedWarehouse.phone
-                        }
-                      </Typography>
+                      <Typography>{selectedWarehouse.phone}</Typography>
                     </Box>
 
                     <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                      >
+                      <Typography variant="body2" color="text.secondary">
                         发货地址
                       </Typography>
 
                       <Typography>
-                        {
-                          selectedWarehouse.province
-                        }
-                        {" "}
-                        {
-                          selectedWarehouse.city
-                        }
-                        {" "}
-                        {
-                          selectedWarehouse.district
-                        }
-                        {" "}
-                        {
-                          selectedWarehouse.address
-                        }
+                        {selectedWarehouse.province} {selectedWarehouse.city}{" "}
+                        {selectedWarehouse.district} {selectedWarehouse.address}
                       </Typography>
                     </Box>
                   </>
@@ -817,74 +553,36 @@ export default function OrderShipmentPage() {
               }}
             >
               <Stack spacing={2}>
-                <Typography variant="h6">
-                  物流配置
-                </Typography>
+                <Typography variant="h6">物流配置</Typography>
 
                 <Divider />
 
                 <TextField
                   select
                   label="物流产品"
-                  value={
-                    form.serviceType
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      "serviceType",
-                      e.target.value
-                    )
-                  }
+                  value={form.serviceType}
+                  onChange={(e) => handleChange("serviceType", e.target.value)}
                   fullWidth
                 >
-                  {serviceTypes.map(
-                    (item) => (
-                      <MenuItem
-                        key={
-                          item.value
-                        }
-                        value={
-                          item.value
-                        }
-                      >
-                        {
-                          item.label
-                        }
-                      </MenuItem>
-                    )
-                  )}
+                  {serviceTypes.map((item) => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
 
                 <TextField
                   select
                   label="付款方式"
-                  value={
-                    form.paymentType
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      "paymentType",
-                      e.target.value
-                    )
-                  }
+                  value={form.paymentType}
+                  onChange={(e) => handleChange("paymentType", e.target.value)}
                   fullWidth
                 >
-                  {paymentTypes.map(
-                    (item) => (
-                      <MenuItem
-                        key={
-                          item.value
-                        }
-                        value={
-                          item.value
-                        }
-                      >
-                        {
-                          item.label
-                        }
-                      </MenuItem>
-                    )
-                  )}
+                  {paymentTypes.map((item) => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
 
                 <TextField
@@ -892,12 +590,7 @@ export default function OrderShipmentPage() {
                   type="number"
                   value={form.weight}
                   onChange={(e) =>
-                    handleChange(
-                      "weight",
-                      Number(
-                        e.target.value
-                      )
-                    )
+                    handleChange("weight", Number(e.target.value))
                   }
                   fullWidth
                 />
@@ -905,16 +598,9 @@ export default function OrderShipmentPage() {
                 <TextField
                   label="包裹数量"
                   type="number"
-                  value={
-                    form.parcelCount
-                  }
+                  value={form.parcelCount}
                   onChange={(e) =>
-                    handleChange(
-                      "parcelCount",
-                      Number(
-                        e.target.value
-                      )
-                    )
+                    handleChange("parcelCount", Number(e.target.value))
                   }
                   fullWidth
                 />
@@ -922,12 +608,7 @@ export default function OrderShipmentPage() {
                 <TextField
                   label="备注"
                   value={form.remark}
-                  onChange={(e) =>
-                    handleChange(
-                      "remark",
-                      e.target.value
-                    )
-                  }
+                  onChange={(e) => handleChange("remark", e.target.value)}
                   fullWidth
                   multiline
                   rows={4}
@@ -938,27 +619,17 @@ export default function OrderShipmentPage() {
         </DialogContent>
 
         <DialogActions>
-          <Button
-            onClick={() =>
-              setOpen(false)
-            }
-          >
-            取消
-          </Button>
+          <Button onClick={() => setOpen(false)}>取消</Button>
 
           <Button
             variant="contained"
             disabled={creating}
-            onClick={
-              handleCreateShipment
-            }
+            onClick={handleCreateShipment}
           >
-            {creating
-              ? "创建中..."
-              : "创建运单"}
+            {creating ? "创建中..." : "创建运单"}
           </Button>
         </DialogActions>
       </Dialog>
     </Box>
   );
-};
+}

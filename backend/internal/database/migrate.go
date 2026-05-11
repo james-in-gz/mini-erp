@@ -23,13 +23,12 @@ func AutoMigrate() {
 		&model.Shipment{},
 		&model.ShipmentItem{},
 
-		&model.Subscription{},
-		&model.DeliveryTask{},
-
 		&model.Payment{},
 		&model.PaymentRecord{},
 		&model.AuditLog{},
 
 		&model.CustomerAddress{},
+
+		&model.Warehouse{},
 	)
 }
