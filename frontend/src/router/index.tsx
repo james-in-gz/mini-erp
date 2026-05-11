@@ -18,7 +18,7 @@ import StockInPage from "@/pages/product/StockInPage";
 import InventoryPage from "@/pages/product/InventoryPage";
 import SKUPage from "@/pages/product/SKUPage";
 import ProductDetailPage from "@/pages/product/ProductDetailPage";
-import WarehousePage from "@/pages/WareHousePage";
+import WarehousePage from "@/pages/WarehousePage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = getToken();
