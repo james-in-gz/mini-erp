@@ -1,6 +1,7 @@
 package sfexpress
 
 import (
+	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/repository"
 	"bytes"
@@ -10,14 +11,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
 
 // ========== 配置 ==========
+var SFClientCode = os.Getenv("CLIENT_CODE") // 顺丰顾客编码
+var SFCheckWord = os.Getenv("CHECK_WORD")   // 顺丰校验码
+
 const (
-	SFClientCode = "YOUR_CLIENT_CODE" // 顺丰顾客编码
-	SFCheckWord  = "YOUR_CHECK_WORD"  // 顺丰校验码
 	SFSandboxURL = "https://sfapi-sbox.sf-express.com/std/service"
 	SFProdURL    = "https://sfapi.sf-express.com/std/service"
 )
@@ -49,14 +52,6 @@ type CargoItem struct {
 	Name   string  `json:"name"`   // 货物名称
 	Count  int     `json:"count"`  // 数量
 	Weight float64 `json:"weight"` // 单个重量(kg)
-}
-
-// 顺丰响应（JSON格式）
-type SFOrderResponse struct {
-	Success   bool   `json:"success"`
-	Result    string `json:"result"`    // 响应码
-	MsgData   string `json:"msgData"`   // 错误信息
-	WaybillNo string `json:"waybillNo"` // 运单号
 }
 
 // 你的发货参数（从接口接收）
@@ -118,13 +113,13 @@ func sendSFRequest(serviceCode string, msgData string, isSandbox bool) (string, 
 func buildSFOrderJSON(params ShipmentParams, order model.Order) (string, error) {
 	// 付款方式映射
 	payMethod := 1 // 默认寄方付
-	if params.PaymentType == "collect" {
+	if params.PaymentType == "RECEIVER" {
 		payMethod = 2 // 收方付
 	}
 
 	// 快递类型映射
 	expressType := "1" // 默认标准快递
-	if params.ServiceType == "express" {
+	if params.ServiceType == "EXPRESS" {
 		expressType = "2" // 顺丰特快
 	}
 
@@ -180,7 +175,7 @@ func getOrderInfo(orderId uint) (model.Order, error) {
 }
 
 // 6. 解析顺丰响应
-func parseSFResponse(respBody string) (*SFOrderResponse, error) {
+func parseSFResponse(respBody string) (*dto.ExpressResponse, error) {
 	var rawResp struct {
 		ApiResultCode string `json:"apiResultCode"`
 		ApiErrorMsg   string `json:"apiErrorMsg"`
@@ -197,7 +192,7 @@ func parseSFResponse(respBody string) (*SFOrderResponse, error) {
 		return nil, fmt.Errorf("解析响应失败: %v", err)
 	}
 
-	result := &SFOrderResponse{
+	result := &dto.ExpressResponse{
 		Success:   rawResp.ApiResultCode == "A1000",
 		Result:    rawResp.ApiResultCode,
 		MsgData:   rawResp.ApiErrorMsg,
@@ -208,7 +203,7 @@ func parseSFResponse(respBody string) (*SFOrderResponse, error) {
 }
 
 // 7. 主函数：自动发货
-func AutoShip(params ShipmentParams) (*SFOrderResponse, error) {
+func AutoShip(params ShipmentParams) (*dto.ExpressResponse, error) {
 	// Step 1: 根据orderId获取订单信息（收件人地址等）
 	orderInfo, err := getOrderInfo(params.OrderId)
 	if err != nil {

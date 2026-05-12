@@ -60,11 +60,11 @@ func CreateShipmentByExpress(c *gin.Context) {
 		return
 	}
 
-	err = service.CreateShipmentByExpress(uint(orderID), req)
+	respnose, err := service.CreateShipmentByExpress(uint(orderID), req)
 	if err != nil {
 		dto.Fail(c, err.Error())
 		return
 	}
 
-	dto.Success(c, gin.H{"message": "shipment by express created"})
+	dto.Success(c, respnose)
 }

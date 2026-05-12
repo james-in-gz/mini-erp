@@ -5,6 +5,7 @@ import (
 	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"backend/sfexpress"
 	"errors"
 	"time"
 
@@ -110,6 +111,16 @@ func ListShipments(orderID uint) ([]model.Shipment, error) {
 	return repository.ListShipments(orderID)
 }
 
-func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) error {
-	return nil
+func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) (*dto.ExpressResponse, error) {
+
+	return sfexpress.AutoShip(sfexpress.ShipmentParams{
+		OrderId:     orderID,
+		WarehouseId: req.WarehouseId,
+		Carrier:     req.Carrier,
+		ServiceType: req.ServiceType,
+		PaymentType: req.PaymentType,
+		Weight:      req.Weight,
+		ParcelCount: req.ParcelCount,
+		Remark:      req.Remark,
+	})
 }

@@ -27,3 +27,10 @@ type CreateShipmentByExpressReq struct {
 	ParcelCount int    `json:"parcelCount"`
 	Remark      string `json:"remark"`
 }
+
+type ExpressResponse struct {
+	Success   bool   `json:"success"`
+	Result    string `json:"result"`    // 响应码
+	MsgData   string `json:"msgData"`   // 错误信息
+	WaybillNo string `json:"waybillNo"` // 运单号
+}
