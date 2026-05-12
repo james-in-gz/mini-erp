@@ -233,7 +233,7 @@ const WarehousePage: React.FC = () => {
             fullWidth
             margin="normal"
             value={formData.contactName}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
             required
           />
           <TextField
@@ -241,7 +241,7 @@ const WarehousePage: React.FC = () => {
             fullWidth
             margin="normal"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
           />
           <AddressFields formData={formData} setFormData={setFormData} />
