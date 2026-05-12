@@ -20,10 +20,12 @@ export interface Warehouse  {
 
 export interface CreateWarehouseDto {
   name: string;
+  contactName: string;
+  phone: string;
   province: string;
   city: string;
   district: string;
-  detailAddress: string;
+  address: string;
 }
 
 export type UpdateWarehouseDto = Partial<CreateWarehouseDto>;

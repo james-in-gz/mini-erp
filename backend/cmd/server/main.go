@@ -83,7 +83,7 @@ func main() {
 		authGroup.GET("/customers/search", customer.SearchCustomers)
 		authGroup.GET("/warehouses", handler.ListWarehouses)
 
-		WareHouseGroup := authGroup.Group("/api/warehouses")
+		WareHouseGroup := authGroup.Group("/warehouses")
 		{
 			WareHouseGroup.GET("", handler.ListWarehouses)
 			WareHouseGroup.POST("", handler.CreateWarehouse)

@@ -56,8 +56,8 @@ const AddressFields: React.FC<{
       label="Detail Address"
       fullWidth
       margin="normal"
-      value={formData.detailAddress}
-      onChange={(e) => setFormData({ ...formData, detailAddress: e.target.value })}
+      value={formData.address}
+      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
       required
     />
   </>
@@ -69,10 +69,12 @@ const WarehousePage: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<CreateWarehouseDto>({
     name: '',
+    contactName: '',
+    phone: '',
     province: '',
     city: '',
     district: '',
-    detailAddress: '',
+    address: '',
   });
   const [error, setError] = useState<string>('');
 
@@ -93,19 +95,23 @@ const WarehousePage: React.FC = () => {
       setEditingId(warehouse.id);
       setFormData({
         name: warehouse.name,
+        contactName: warehouse.contactName,
+        phone: warehouse.phone,
         province: warehouse.province,
         city: warehouse.city,
         district: warehouse.district,
-        detailAddress: warehouse.address,
+        address: warehouse.address,
       });
     } else {
       setEditingId(null);
       setFormData({
         name: '',
+        contactName:"",
+        phone: '',
         province: '',
         city: '',
         district: '',
-        detailAddress: '',
+        address: '',
       });
     }
     setOpenDialog(true);
@@ -219,6 +225,22 @@ const WarehousePage: React.FC = () => {
             fullWidth
             margin="normal"
             value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+          <TextField
+            label="Contact Name"
+            fullWidth
+            margin="normal"
+            value={formData.contactName}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+          <TextField
+            label="contact number"
+            fullWidth
+            margin="normal"
+            value={formData.phone}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
