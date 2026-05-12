@@ -16,3 +16,10 @@ type CreateShipmentReq struct {
 		Quantity    int  `json:"quantity"`
 	} `json:"items"`
 }
+
+type CreateShipmentByExpressReq struct {
+	OrderId     uint   `json:"orderId"`
+	WarehouseId uint   `json:"warehouseId"`
+	ServiceType string `json:"serviceType"`
+	PaymentType string `json:"paymentType"`
+}

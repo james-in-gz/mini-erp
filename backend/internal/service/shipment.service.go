@@ -109,3 +109,7 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 func ListShipments(orderID uint) ([]model.Shipment, error) {
 	return repository.ListShipments(orderID)
 }
+
+func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) error {
+	return nil
+}

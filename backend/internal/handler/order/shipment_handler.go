@@ -44,4 +44,27 @@ func ListShipments(c *gin.Context) {
 	}
 
 	dto.Success(c, data)
+
+}
+
+func CreateShipmentByExpress(c *gin.Context) {
+	orderID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || orderID <= 0 {
+		dto.Fail(c, "invalid order id")
+		return
+	}
+
+	var req dto.CreateShipmentByExpressReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	err = service.CreateShipmentByExpress(uint(orderID), req)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, gin.H{"message": "shipment by express created"})
 }
