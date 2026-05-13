@@ -31,6 +31,7 @@ import {
 import { Shipment } from "@/types/shipment";
 import OrderAddressSelectDialog from "@/components/customer/OrderAddressSelectDialog";
 import PaymentCard from "@/components/order/PaymentCard";
+import PrintLabelButton from "@/components/shipment/PrintLabelButton";
 
 const statusColor: Record<
   string,
@@ -261,59 +262,67 @@ export default function OrderDetailPage() {
         <PaymentCard order={data} onRefresh={fetchOrder} />
       </Box>
       {/* 🚚 发货记录 */}
-      <Card sx={{ borderRadius: 3 ,my: 2}}>
-        <CardContent>
-          <Typography variant="subtitle1">{t("order.shipments")}</Typography>
+      <Card sx={{ borderRadius: 3, my: 2 }}>
+  <CardContent>
+    <Typography variant="subtitle1">{t("order.shipments")}</Typography>
 
-          <Stack spacing={1} sx={{ mt: 2 }}>
-            {data.shipments?.map((s: Shipment) => (
-              <Card key={s.id} variant="outlined">
-                <CardContent>
-                  <Stack spacing={1}>
-                    <Stack
-                      sx={{ direction: "row", justifyContent: "space-between" }}
-                    >
-                      <Box>
-                        <Typography>
-                          {s.carrier} - {s.trackingNumber}
-                        </Typography>
+    <Stack spacing={1} sx={{ mt: 2 }}>
+      {data.shipments?.map((s: Shipment) => (
+        <Card key={s.id} variant="outlined">
+          <CardContent>
+            <Stack spacing={1}>
+              {/* 第一行：左侧信息 + 右侧按钮 */}
+              <Stack sx={{flexDirection: "row", justifyContent: "space-between",alignItems:"flex-start"}}
+          
 
-                        {/* 👇 时间 */}
-                        <Typography variant="caption" color="text.secondary">
-                          {s.shippedAt
-                            ? new Date(s.shippedAt).toLocaleString()
-                            : "-"}
-                        </Typography>
-                      </Box>
+              >
+                {/* 左侧信息 */}
+                <Box>
+                  <Typography>
+                    {s.carrier} - {s.trackingNumber}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {s.shippedAt ? new Date(s.shippedAt).toLocaleString() : "-"}
+                  </Typography>
+                </Box>
 
-                      <Chip size="small" label={s.status} color="info" />
-                    </Stack>
+                {/* 右侧：状态 + 打印按钮 */}
+                <Stack sx={{flexDirection:"row",alignItems:"center"}} spacing={1} >
+                  <Chip size="small" label={s.status} color="info" />
+                 
+                </Stack>
+              </Stack>
 
-                    {/* 地址快照 */}
-                    <Typography variant="body2" color="text.secondary">
-                      {s.receiverName} / {s.receiverPhone}
-                    </Typography>
+              {/* 地址快照 */}
+              <Typography variant="body2" color="text.secondary">
+                {s.receiverName} / {s.receiverPhone}
+              </Typography>
 
-                    <Typography variant="body2">
-                      {s.receiverProvince} {s.receiverCity} {s.receiverDistrict}{" "}
-                      {s.receiverAddress}
-                    </Typography>
+              <Typography variant="body2">
+                {s.receiverProvince} {s.receiverCity} {s.receiverDistrict}{" "}
+                {s.receiverAddress}
+              </Typography>
 
-                    {/* 商品 */}
-                    <Stack spacing={1} sx={{ mt: 1 }}>
-                      {(s.shipmentItems || []).map((si: any) => (
-                        <Typography key={si.id} variant="body2">
-                          {`SKU ${si.sku}`} x {si.quantity}
-                        </Typography>
-                      ))}
-                    </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-        </CardContent>
-      </Card>
+              {/* 商品 */}
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                {(s.shipmentItems || []).map((si: any) => (
+                  <Typography key={si.id} variant="body2">
+                    {`SKU ${si.sku}`} x {si.quantity}
+                  </Typography>
+                ))}
+              </Stack>
+
+              {/* 打印按钮 - 居中 */}
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+                <PrintLabelButton waybillNo={s.trackingNumber} />
+              </Box>
+            </Stack>
+          </CardContent>
+        </Card>
+      ))}
+    </Stack>
+  </CardContent>
+</Card>
 
       <OrderAddressSelectDialog
         open={openAddressDialog}

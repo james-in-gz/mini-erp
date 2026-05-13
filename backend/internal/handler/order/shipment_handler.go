@@ -68,3 +68,20 @@ func CreateShipmentByExpress(c *gin.Context) {
 
 	dto.Success(c, respnose)
 }
+
+func GetExpressLabel(c *gin.Context) {
+	waybillNo := c.Query("waybillNo")
+
+	if waybillNo == "" {
+		dto.Fail(c, "waybillNo is required")
+		return
+	}
+
+	res, err := service.GetExpressLabel(waybillNo)
+	if err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	dto.Success(c, res)
+}

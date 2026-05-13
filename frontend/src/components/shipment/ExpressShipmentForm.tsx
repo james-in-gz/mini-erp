@@ -23,6 +23,8 @@ import { getOrderDetail } from "@/api/order";
 import { listWareHouses } from "@/api/warehouses";
 import { Order } from "@/types/order";
 import { Warehouse } from "@/types/warehouse";
+import request from "@/api/request";
+import { useTranslation } from "react-i18next";
 
 type ShipmentResult = {
   shipmentNo: string;
@@ -75,18 +77,18 @@ const paymentTypes = [
  * =========================
  */
 interface ExpressShipmentFormProps {
-    orderId: number;
-    }
+  orderId: number;
+}
 
-export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProps) {
-
-
+export default function ExpressShipmentForm({
+  orderId,
+}: ExpressShipmentFormProps) {
   /**
    * =========================
    * States
    * =========================
    */
-
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const [creating, setCreating] = useState(false);
@@ -100,9 +102,10 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
   const [shipmentResult, setShipmentResult] = useState<ShipmentResult | null>(
     null,
   );
+  const [items, setItems] = useState<any[]>([]);
 
   const [form, setForm] = useState({
-    warehouseID: 0,
+    warehouseId: 0,
 
     carrier: "SF",
 
@@ -126,12 +129,22 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
   const fetchOrder = async () => {
     try {
       setLoading(true);
-      if(orderId === undefined) {
+      if (orderId === undefined) {
         throw new Error("订单ID不存在");
       }
-      const data = await getOrderDetail(parseInt(orderId.toString()));
-    
-      setOrder(data);
+      const orderData = await getOrderDetail(parseInt(orderId.toString()));
+
+      setItems(
+        orderData.items.map((i: any) => ({
+          orderItemId: i.id,
+          quantity: i.quantity - (i.shippedQuantity || 0), // 只能发未发货的数量
+          name: i.skuName,
+          orderedQuantity: i.quantity,
+          shippedQuantity: i.shippedQuantity || 0,
+        })),
+      );
+
+      setOrder(orderData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -146,17 +159,16 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
    */
 
   const fetchWarehouses = async () => {
-      const data = await listWareHouses();
+    const data = await listWareHouses();
 
-      setWarehouses(data);
+    setWarehouses(data);
 
-      if (data.length > 0 && !form.warehouseID) {
-        setForm((prev) => ({
-          ...prev,
-          warehouseID: data[0].id,
-        }));
-      }
-
+    if (data.length > 0 && !form.warehouseId) {
+      setForm((prev) => ({
+        ...prev,
+        warehouseId: data[0].id,
+      }));
+    }
   };
 
   /**
@@ -178,8 +190,8 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
    */
 
   const selectedWarehouse = useMemo(() => {
-    return warehouses.find((w) => w.id === form.warehouseID);
-  }, [warehouses, form.warehouseID]);
+    return warehouses.find((w) => w.id === form.warehouseId);
+  }, [warehouses, form.warehouseId]);
 
   /**
    * =========================
@@ -205,9 +217,9 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
       setCreating(true);
 
       const payload = {
-        orderID: order?.id,
+        orderId: order?.id,
 
-        warehouseID: form.warehouseID,
+        warehouseId: form.warehouseId,
 
         carrier: form.carrier,
 
@@ -220,11 +232,27 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
         parcelCount: form.parcelCount,
 
         remark: form.remark,
+        items: items.filter((i) => i.quantity > 0),
       };
 
-      const res = await axios.post("/shipments", payload);
+      if (payload.items.length === 0) {
+        alert(t("order.fillShipQuantity"));
+        return;
+      }
 
-      setShipmentResult(res.data);
+      const res = await request.post(
+        `/orders/${orderId}/shipments/express`,
+        payload,
+      );
+
+      const data = res.data?.data;
+
+      if (!data?.success) {
+        alert(data?.message || "发货失败");
+        return;
+      }
+
+      setShipmentResult(data);
 
       setOpen(false);
 
@@ -317,19 +345,37 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
             <Typography variant="subtitle1">商品</Typography>
 
             <Stack spacing={1}>
-              {order.items?.map((item) => (
-                <Box
-                  key={item.id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography>{item.skuName}</Typography>
+{/* 商品发货 */}
+          <Typography>{t("order.shipProducts")}</Typography>
 
-                  <Typography>x{item.quantity}</Typography>
-                </Box>
-              ))}
+          {items.map((i) => (
+            <TextField
+              key={i.orderItemId}
+              label={`${i.name}（已发 ${i.shippedQuantity}/${i.orderedQuantity}，剩余 ${
+                i.orderedQuantity - i.shippedQuantity
+              }）`}
+              type="number"
+              value={i.quantity}
+              slotProps={{
+                htmlInput: {
+                  min: 0,
+                  max: i.orderedQuantity - i.shippedQuantity,
+                },
+              }}
+              disabled={i.shippedQuantity >= i.orderedQuantity} // 已全部发货的商品不能再修改数量了
+              onChange={(e) => {
+                const val = Number(e.target.value);
+
+                setItems((prev) =>
+                  prev.map((p) =>
+                    p.orderItemId === i.orderItemId
+                      ? { ...p, quantity: val }
+                      : p,
+                  ),
+                );
+              }}
+            />
+          ))}
             </Stack>
 
             <Divider />
@@ -470,10 +516,8 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
                   </Typography>
 
                   <Typography>
-                    {order.defaultProvince}{" "}
-                    {order.defaultCity}{" "}
-                    {order.defaultDistrict}{" "}
-                    {order.defaultAddress}
+                    {order.defaultProvince} {order.defaultCity}{" "}
+                    {order.defaultDistrict} {order.defaultAddress}
                   </Typography>
                 </Box>
 
@@ -499,9 +543,9 @@ export default function ExpressShipmentForm({ orderId }: ExpressShipmentFormProp
                 <TextField
                   select
                   label="仓库"
-                  value={form.warehouseID}
+                  value={form.warehouseId}
                   onChange={(e) =>
-                    handleChange("warehouseID", Number(e.target.value))
+                    handleChange("warehouseId", Number(e.target.value))
                   }
                   fullWidth
                 >

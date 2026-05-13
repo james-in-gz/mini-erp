@@ -32,7 +32,7 @@ export default function PaymentCard({ order, onRefresh }: Props) {
     <Card sx={{ borderRadius: 3 }}>
       <CardContent>
         <Stack
-          sx={{ mb: 2, justifyContent: "space-between", direction: "row" }}
+          sx={{ mb: 2, justifyContent: "space-between", flexDirection: "row" }}
         >
           <Typography variant="h6">{t("payment.card.title")}</Typography>
 
@@ -50,7 +50,7 @@ export default function PaymentCard({ order, onRefresh }: Props) {
             {t("payment.card.paidAmount")}： ￥{order.paidAmount}
           </Typography>
 
-          <Stack sx={{ direction: "row", alignItems: "center" }} spacing={1}>
+          <Stack sx={{ flexDirection: "row", alignItems: "center" }} spacing={1}>
             <Typography>{t("payment.card.paymentStatus")}：</Typography>
 
             <PaymentStatusChip status={order.paymentStatus} />
