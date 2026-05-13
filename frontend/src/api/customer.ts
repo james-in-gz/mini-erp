@@ -28,7 +28,7 @@ export interface CustomerListResponse {
 
 export const getCustomers = async (page = 1, pageSize = 10, searchText?: string) => {
   const res = await request.get(
-    `/customers?page=${page}&page_size=${pageSize}${searchText ? `&search=${searchText}` : ''}`
+    `/customers?page=${page}&page_size=${pageSize}${searchText ? `&keyword=${searchText}` : ''}`
   );
   if (res.data.code === 0) {
     return res.data.data;

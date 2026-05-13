@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -33,30 +33,41 @@ export default function CustomerListPage() {
   const [page, setPage] = useState(0); // MUI starts from 0
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState("");
-  const fetchData = debounce(async () => {
-    setLoading(true);
 
-    const data = await getCustomers(page + 1, rowsPerPage, searchText);
+  const fetchData = useMemo(
+    () =>
+      debounce(async (page: number, rows: number, search: string) => {
+        setLoading(true);
 
-    setCustomers(data.list);
-    setTotal(data.total);
-    setLoading(false);
-  }, 300);
+        const data = await getCustomers(page + 1, rows, search);
+
+        setCustomers(data.list);
+        setTotal(data.total);
+
+        setLoading(false);
+      }, 300),
+    [],
+  );
+
   useEffect(() => {
+    fetchData(page, rowsPerPage, searchText);
 
-      setPage(0); // reset page when searching
-      fetchData();
-  }, [searchText]);
-  
-  useEffect(() => {
-    fetchData();
-  }, [page, rowsPerPage]);
+    return () => {
+      fetchData.clear();
+    };
+  }, [page, rowsPerPage, searchText]);
 
   const handleRowClick = (id: number) => {
     navigate(`/customers/${id}`);
   };
 
-  if (loading) return <CircularProgress />;
+  {
+    loading && (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
 
   return (
     <Container sx={{ mt: 4 }}>
@@ -90,7 +101,12 @@ export default function CustomerListPage() {
           fullWidth
         />
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: "auto",
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -121,10 +137,31 @@ export default function CustomerListPage() {
           count={total}
           page={page}
           rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[10, 20, 50]}
           onPageChange={(_, newPage) => setPage(newPage)}
           onRowsPerPageChange={(e) => {
             setRowsPerPage(parseInt(e.target.value, 10));
             setPage(0);
+          }}
+          sx={{
+            ".MuiTablePagination-toolbar": {
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: 1,
+              px: 1,
+            },
+
+            ".MuiTablePagination-selectLabel": {
+              display: { xs: "none", sm: "block" },
+            },
+
+            ".MuiTablePagination-input": {
+              display: { xs: "none", sm: "flex" },
+            },
+
+            ".MuiTablePagination-displayedRows": {
+              margin: 0,
+            },
           }}
         />
       </TableContainer>

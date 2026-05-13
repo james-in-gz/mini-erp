@@ -76,7 +76,7 @@ export default function CustomerAddressManager({ customerId }: any) {
               </Stack>
 
               <Radio
-                checked={a.is_default}
+                checked={a.isDefault}
                 onChange={() => handleDefault(a.id)}
               />
             </Stack>

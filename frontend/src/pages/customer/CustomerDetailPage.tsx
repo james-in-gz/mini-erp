@@ -26,28 +26,60 @@ export default function CustomerDetailPage() {
     fetchData();
   }, [id]);
 
-  const handleAddNote = async (content: string, nextFollowUpAt: string | null) => {
+  const handleAddNote = async (
+    content: string,
+    nextFollowUpAt: string | null,
+  ) => {
     if (!id) return;
-    await addCustomerNote(Number(id), { content: content, nextFollowUpAt: nextFollowUpAt });
+    await addCustomerNote(Number(id), {
+      content: content,
+      nextFollowUpAt: nextFollowUpAt,
+    });
     fetchData(); // refresh
   };
 
   if (loading || !data) return <CircularProgress />;
 
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-      <Box>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "1fr",
+          lg: "2fr 1fr",
+        },
+        gap: 2,
+        alignItems: "start",
+        mb:10
+      }}
+    >
+      {/* LEFT */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
         <CustomerInfo customer={data.customer} onUpdated={fetchData} />
-      </Box>
-      <Box>
-        <CustomerAddressManager customerId={data.customer.id} />
-      </Box>
-      <Box>
-        <FollowUpPanel data={data} onSubmit={handleAddNote} />
+
+        <NotesTimeline notes={data.notes} />
       </Box>
 
-      <Box sx={{ gridColumn: { xs: '1 / -1', md: '1 / -1' } }}>
-        <NotesTimeline notes={data.notes} />
+      {/* RIGHT */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          position: { lg: "sticky" },
+          top: { lg: 16 },
+          alignSelf: "start",
+        }}
+      >
+        <CustomerAddressManager customerId={data.customer.id} />
+
+        <FollowUpPanel data={data} onSubmit={handleAddNote} />
       </Box>
     </Box>
   );
