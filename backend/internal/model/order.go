@@ -9,8 +9,8 @@ type Order struct {
 	Customer      Customer   `gorm:"foreignKey:CustomerID;references:ID" json:"customer,omitempty"`
 	UserID        uint       `json:"userID,omitempty"` // 关联 User
 	TotalAmount   float64    `json:"totalAmount,omitempty"`
-	Status        string     `gorm:"size:30" json:"status"` // pending / partial_shipped / shipped / done
-	PaymentStatus string     `gorm:"size:30" json:"paymentStatus"`
+	Status        string     `gorm:"size:30" json:"status"`        // pending / partial_shipped / shipped / done
+	PaymentStatus string     `gorm:"size:30" json:"paymentStatus"` // unpaid / paid / partial / refunded
 	PaymentMethod string     `gorm:"size:30" json:"paymentMethod"` // wechat / alipay / cash / pos
 	PaidAmount    float64    `gorm:"type:decimal(10,2)" json:"paidAmount,omitempty"`
 	PaidAt        *time.Time `json:"paidAt,omitempty"`
@@ -54,7 +54,7 @@ type OrderItem struct {
 	ID      uint `gorm:"primaryKey" json:"id,omitempty"`
 	OrderID uint `gorm:"index" json:"orderID,omitempty"`
 
-	SKUID uint `gorm:"index" json:"skuid,omitempty"`
+	SKUID uint `gorm:"column:sku_id;index" json:"skuid,omitempty"`
 	SKU   SKU  `gorm:"foreignKey:SKUID;references:ID" json:"sku,omitempty"`
 
 	SKUCode string `json:"skuCode,omitempty"`
