@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -12,9 +12,11 @@ import {
   MenuItem,
   InputAdornment,
   Pagination,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "use-debounce";
 
 import { getOrders } from "@/api/order";
 import { Order } from "@/types/order";
@@ -29,42 +31,75 @@ const statusColor: any = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const nav = useNavigate();
   const { t } = useTranslation();
 
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [total, setTotal] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // 防抖搜索
+  const [debouncedSearch] = useDebounce(searchText, 500);
+
+  // =========================
+  // 获取订单
+  // =========================
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+
+      const res = await getOrders({
+        page,
+        pageSize,
+        search: debouncedSearch,
+        status: statusFilter,
+      });
+
+      /**
+       * 后端返回格式:
+       * {
+       *   data: [],
+       *   total: 100,
+       *   page: 1,
+       *   pageSize: 10
+       * }
+       */
+
+      setOrders(res.data || []);
+      setTotal(res.total || 0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =========================
+  // 自动请求
+  // =========================
   useEffect(() => {
-    getOrders().then(setOrders);
-  }, []);
+    fetchOrders();
+  }, [page, pageSize, debouncedSearch, statusFilter]);
 
-  const filteredOrders = useMemo(() => {
-    const normalized = searchText.trim().toLowerCase();
-    return orders.filter((o) => {
-      const customerName = o.customer?.name?.toLowerCase() || "";
-      const orderNo = (o.orderNo || String(o.id)).toLowerCase();
-      const matchesText =
-        !normalized ||
-        customerName.includes(normalized) ||
-        orderNo.includes(normalized);
-      const matchesStatus = !statusFilter || o.status === statusFilter;
-      return matchesText && matchesStatus;
-    });
-  }, [orders, searchText, statusFilter]);
-
-  const pagedOrders = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filteredOrders.slice(start, start + pageSize);
-  }, [filteredOrders, page, pageSize]);
-
+  // =========================
+  // 搜索 / 筛选时回第一页
+  // =========================
   useEffect(() => {
     setPage(1);
-  }, [searchText, statusFilter]);
+  }, [debouncedSearch, statusFilter]);
+
   return (
     <Box>
+      {/* ========================= */}
+      {/* HEADER */}
+      {/* ========================= */}
       <Box
         sx={{
           display: "flex",
@@ -74,13 +109,21 @@ export default function OrdersPage() {
           gap: 2,
         }}
       >
-        <Typography variant="h5">{t("order.orders")}</Typography>
+        <Typography variant="h5">
+          {t("order.orders")}
+        </Typography>
 
-        <Button variant="contained" onClick={() => nav("/orders/create")}>
+        <Button
+          variant="contained"
+          onClick={() => nav("/orders/create")}
+        >
           + {t("order.create")}
         </Button>
       </Box>
 
+      {/* ========================= */}
+      {/* FILTER */}
+      {/* ========================= */}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
@@ -121,7 +164,9 @@ export default function OrdersPage() {
             width: { xs: "100%", sm: 180 },
           }}
         >
-          <MenuItem value="">{t("common.all", "All")}</MenuItem>
+          <MenuItem value="">
+            {t("common.all", "All")}
+          </MenuItem>
 
           {Object.keys(statusColor).map((status) => (
             <MenuItem key={status} value={status}>
@@ -131,161 +176,241 @@ export default function OrdersPage() {
         </TextField>
       </Stack>
 
-      {/* ✅ 用 CSS Grid 替代 MUI Grid */}
-      <Box
-        sx={{
-          display: "grid",
-          gap: 2,
-        }}
-      >
-        {pagedOrders.map((o) => {
-          const products = o.items || [];
-          const productSummary = products.length
-            ? `${products
-              .slice(0, 2)
-              .map(
-                (item) =>
-                  `${item.skuName || item.sku || "Product"} x${item.quantity}`,
-              )
-              .join(
-                ", ",
-              )}${products.length > 2 ? ` +${products.length - 2}...` : ""}`
-            : "N/A";
+      {/* ========================= */}
+      {/* LOADING */}
+      {/* ========================= */}
+      {loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            py: 6,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
 
-          return (
-            <Card key={o.id} sx={{ borderRadius: 3 }}>
-              <CardContent>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+      {/* ========================= */}
+      {/* EMPTY */}
+      {/* ========================= */}
+      {!loading && orders.length === 0 && (
+        <Card sx={{ borderRadius: 3 }}>
+          <CardContent>
+            <Typography color="text.secondary">
+              {t("common.no_data", "No Data")}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
 
-                  {/* ========== 1. HEADER ========== */}
+      {/* ========================= */}
+      {/* ORDER LIST */}
+      {/* ========================= */}
+      {!loading && orders.length > 0 && (
+        <Box
+          sx={{
+            display: "grid",
+            gap: 2,
+          }}
+        >
+          {orders.map((o) => {
+            return (
+              <Card
+                key={o.id}
+                sx={{ borderRadius: 3 }}
+              >
+                <CardContent>
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
+                      flexDirection: "column",
+                      gap: 1.5,
                     }}
                   >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        {o.customer?.name || o.defaultName || "N/A"}
-                      </Typography>
-
-                      <Typography variant="body2" color="text.secondary">
-                        {t("order.orderNo")}: {o.orderNo || o.id}
-                      </Typography>
-                    </Box>
-
+                    {/* ========================= */}
+                    {/* HEADER */}
+                    {/* ========================= */}
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-end",
-                        gap: 0.5,
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
                       }}
                     >
-                      <Chip
-                        size="small"
-                        label={t(`order.${o.status}`)}
-                        color={statusColor[o.status] || "default"}
-                      />
+                      <Box>
+                        <Typography variant="subtitle1">
+                          {o.customer?.name ||
+                            o.defaultName ||
+                            "N/A"}
+                        </Typography>
 
-                      <PaymentStatusChip status={o.paymentStatus} />
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {t("order.orderNo")}:{" "}
+                          {o.orderNo || o.id}
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-end",
+                          gap: 0.5,
+                        }}
+                      >
+                        <Chip
+                          size="small"
+                          label={t(`order.${o.status}`)}
+                          color={
+                            statusColor[o.status] || "default"
+                          }
+                        />
+
+                        <PaymentStatusChip
+                          status={o.paymentStatus}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
 
-                  {/* ========== 2. FINANCE ========== */}
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      borderRadius: 2,
-                      backgroundColor: "rgba(0,0,0,0.03)",
-                    }}
-                  >
-                    <Box sx={{ display: "flex", gap: 3 }}>
-                      <Typography variant="body2">
-                        {t("order.amount")}: ¥{o.totalAmount}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        已付款: ¥{o.paidAmount}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        未付款: ¥{o.paidAmount ? o.totalAmount - o.paidAmount : o.totalAmount}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* ========== 3. PRODUCTS ========== */}
-                  <Typography variant="body2" color="text.secondary">
-                    {t("order.products")}:{" "}
-                    {o.items?.length
-                      ? o.items
-                        .slice(0, 2)
-                        .map(
-                          (item) =>
-                            `${item.skuName || item.sku} ×${item.quantity}`
-                        )
-                        .join(", ")
-                      : "N/A"}
-                    {o.items?.length > 2 && ` +${o.items.length - 2}`}
-                  </Typography>
-
-                  {/* ========== 4. ACTIONS ========== */}
-                  <Box sx={{ display: "flex", gap: 1 }}>
-                    <Button size="small" onClick={() => nav(`/orders/${o.id}`)}>
-                      {t("order.detail")}
-                    </Button>
-
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => nav(`/orders/${o.id}/ship`)}
+                    {/* ========================= */}
+                    {/* FINANCE */}
+                    {/* ========================= */}
+                    <Box
+                      sx={{
+                        p: 1.5,
+                        borderRadius: 2,
+                        backgroundColor:
+                          "rgba(0,0,0,0.03)",
+                      }}
                     >
-                      {t("order.ship")}
-                    </Button>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 3,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {t("order.amount")}: ¥
+                          {o.totalAmount}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          已付款: ¥{o.paidAmount}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          未付款: ¥
+                          {o.paidAmount
+                            ? o.totalAmount -
+                              o.paidAmount
+                            : o.totalAmount}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {/* ========================= */}
+                    {/* PRODUCTS */}
+                    {/* ========================= */}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      {t("order.products")}:{" "}
+                      {o.items?.length
+                        ? o.items
+                            .slice(0, 2)
+                            .map(
+                              (item) =>
+                                `${item.skuName || item.sku} ×${item.quantity}`
+                            )
+                            .join(", ")
+                        : "N/A"}
+
+                      {o.items?.length > 2 &&
+                        ` +${o.items.length - 2}`}
+                    </Typography>
+
+                    {/* ========================= */}
+                    {/* ACTIONS */}
+                    {/* ========================= */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                      }}
+                    >
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          nav(`/orders/${o.id}`)
+                        }
+                      >
+                        {t("order.detail")}
+                      </Button>
+
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() =>
+                          nav(`/orders/${o.id}/ship`)
+                        }
+                      >
+                        {t("order.ship")}
+                      </Button>
+                    </Box>
                   </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
 
-                </Box>
-              </CardContent>
-            </Card>
-          );
-        })}
-
-        <Stack
-          spacing={2}
-          sx={{
-            mt: 3,
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", sm: "row" },
-          }}
-        >
-          <TextField
-            select
-            size="small"
-            label={t("common.page_size")}
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
+          {/* ========================= */}
+          {/* PAGINATION */}
+          {/* ========================= */}
+          <Stack
+            spacing={2}
+            sx={{
+              mt: 3,
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexDirection: {
+                xs: "column",
+                sm: "row",
+              },
             }}
-            sx={{ width: 140 }}
           >
-            {[5, 10, 20, 50].map((size) => (
-              <MenuItem key={size} value={size}>
-                {size} / {t("common.page")}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Pagination
-            count={Math.ceil(filteredOrders.length / pageSize)}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            color="primary"
-          />
-        </Stack>
-      </Box>
+            <TextField
+              select
+              size="small"
+              label={t("common.page_size")}
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+              sx={{ width: 140 }}
+            >
+              {[5, 10, 20, 50].map((size) => (
+                <MenuItem key={size} value={size}>
+                  {size} / {t("common.page")}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Pagination
+              count={Math.ceil(total / pageSize)}
+              page={page}
+              onChange={(_, value) => setPage(value)}
+              color="primary"
+            />
+          </Stack>
+        </Box>
+      )}
     </Box>
   );
 }

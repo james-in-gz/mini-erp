@@ -1,12 +1,22 @@
 import request from "./request";
 
-export const getOrders = async () => {
-  const res = await request.get("/orders");
+interface GetOrdersParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+}
+
+export const getOrders = async (params: GetOrdersParams) => {
+  const res = await request.get("/orders", {
+    params,
+  });
+
   if (res.data.code === 0) {
     return res.data.data;
-  } else {
-    throw new Error(res.data.message);
   }
+
+  throw new Error(res.data.message);
 };
 
 export const createShipment = async (orderId: number, shipmentData: any) => {

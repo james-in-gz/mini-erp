@@ -2,25 +2,80 @@ package repository
 
 import (
 	"backend/internal/database"
+	"backend/internal/dto"
 	"backend/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func CreateOrder(order *model.Order) error {
 	return database.DB.Create(order).Error
 }
 
-func GetOrders() ([]model.Order, error) {
-	var orders []model.Order
+func GetOrders(
+	q dto.OrderQuery,
+) ([]model.Order, int64, error) {
 
-	err := database.DB.
-		Preload("Customer").
-		Preload("Items.SKU").
+	var orders []model.Order
+	var total int64
+
+	db := database.DB.Model(&model.Order{})
+
+	// =========================
+	// 搜索
+	// =========================
+	if q.Search != "" {
+
+		search := "%" + q.Search + "%"
+
+		db = db.Joins("LEFT JOIN customers ON customers.id = orders.customer_id").
+			Where(`
+				orders.order_no LIKE ?
+				OR customers.name LIKE ?
+			`,
+				search,
+				search,
+			)
+	}
+
+	// =========================
+	// 状态筛选
+	// =========================
+	if q.Status != "" {
+		db = db.Where("orders.status = ?", q.Status)
+	}
+
+	// =========================
+	// 总数
+	// =========================
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// =========================
+	// 查询数据
+	// =========================
+	err := db.
+		Preload("Customer", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "name")
+		}).
+		Preload("Items", func(db *gorm.DB) *gorm.DB {
+			return db.Select(
+				"id",
+				"order_id",
+				"sku_id",
+				"sku_name",
+				"quantity",
+			)
+		}).
 		Preload("Shipments").
-		Order("id DESC").
+		Order("orders.id DESC").
+		Limit(q.PageSize).
+		Offset((q.Page - 1) * q.PageSize).
 		Find(&orders).Error
 
-	return orders, err
+	return orders, total, err
 }
 
 func AddShipping(shipment *model.Shipment) error {

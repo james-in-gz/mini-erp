@@ -40,7 +40,10 @@ func DeductStock(skuID uint, quantity int, orderID uint, remark string) error {
 		var inv model.Inventory
 
 		// 行锁
-		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
+		if database.DB.Dialector.Name() != "sqlite" {
+			tx = tx.Clauses(clause.Locking{Strength: "UPDATE"})
+		}
+		if err := tx.Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
 			return err
 		}
 
@@ -81,7 +84,11 @@ func ConfirmDeduct(skuID uint, quantity int, orderID uint) error {
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		var inv model.Inventory
 
-		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
+		// 行锁
+		if database.DB.Dialector.Name() != "sqlite" {
+			tx = tx.Clauses(clause.Locking{Strength: "UPDATE"})
+		}
+		if err := tx.Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
 			return err
 		}
 
@@ -113,7 +120,11 @@ func ReleaseLock(skuID uint, quantity int, orderID uint) error {
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		var inv model.Inventory
 
-		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
+		// 行锁
+		if database.DB.Dialector.Name() != "sqlite" {
+			tx = tx.Clauses(clause.Locking{Strength: "UPDATE"})
+		}
+		if err := tx.Where("sku_id = ?", skuID).First(&inv).Error; err != nil {
 			return err
 		}
 

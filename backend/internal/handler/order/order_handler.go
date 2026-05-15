@@ -27,12 +27,35 @@ func CreateOrder(c *gin.Context) {
 }
 
 func GetOrders(c *gin.Context) {
-	orders, err := service.GetOrders()
+	var q dto.OrderQuery
+
+	if err := c.ShouldBindQuery(&q); err != nil {
+		dto.Fail(c, err.Error())
+		return
+	}
+
+	// 默认值
+	if q.Page <= 0 {
+		q.Page = 1
+	}
+
+	if q.PageSize <= 0 {
+		q.PageSize = 10
+	}
+
+	data, total, err := service.GetOrders(q)
+
 	if err != nil {
 		dto.Fail(c, err.Error())
 		return
 	}
-	dto.Success(c, orders)
+
+	dto.Success(c, gin.H{
+		"data":     data,
+		"total":    total,
+		"page":     q.Page,
+		"pageSize": q.PageSize,
+	})
 }
 
 func AddShipping(c *gin.Context) {

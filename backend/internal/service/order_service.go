@@ -2,6 +2,7 @@ package service
 
 import (
 	"backend/internal/database"
+	"backend/internal/dto"
 	"backend/internal/model"
 	"backend/internal/number"
 	"backend/internal/repository"
@@ -139,8 +140,11 @@ func AddShipping(orderID uint, tracking string) error {
 	return repository.AddShipping(&shipping)
 }
 
-func GetOrders() ([]model.Order, error) {
-	return repository.GetOrders()
+func GetOrders(
+	q dto.OrderQuery,
+) ([]model.Order, int64, error) {
+
+	return repository.GetOrders(q)
 }
 
 func updateOrderStatus(order model.Order) {

@@ -17,3 +17,10 @@ type CreatePaymentRequest struct {
 
 	Remark string `json:"remark"`
 }
+
+type OrderQuery struct {
+	Page     int    `form:"page"`
+	PageSize int    `form:"pageSize"`
+	Search   string `form:"search"`
+	Status   string `form:"status"`
+}
