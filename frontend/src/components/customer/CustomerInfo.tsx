@@ -17,8 +17,8 @@ import { useState } from "react";
 import { updateCustomerBaseInfo } from "@/api/customer";
 import { useTranslation } from "react-i18next";
 
-const SOURCE_OPTIONS = ["公众号A", "抖音广告", "转介绍"];
-const ENTRY_OPTIONS = ["销售A微信1", "销售A微信2", "客服号"];
+const SOURCE_OPTIONS = ["公众号", "抖音广告", "转介绍","其他"];
+const ENTRY_OPTIONS = ["一号店", "二号店", "三号店","四号店","五号店"];
 
 const STATUS_COLORS: Record<string, any> = {
   new: "default",

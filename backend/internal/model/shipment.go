@@ -14,8 +14,9 @@ type Shipment struct {
 	Status     string `json:"status,omitempty"`
 
 	// 🚚 物流
-	TrackingNumber string `json:"trackingNumber,omitempty"`
-	Carrier        string `json:"carrier,omitempty"`
+	TrackingNumber string  `json:"trackingNumber,omitempty"`
+	ShippingFee    float64 `json:"shippingFee,omitempty"`
+	Carrier        string  `json:"carrier,omitempty"`
 
 	// 📍 ⭐ 地址快照（关键）
 	ReceiverName     string `json:"receiverName,omitempty"`
