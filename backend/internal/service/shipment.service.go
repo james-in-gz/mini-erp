@@ -160,8 +160,9 @@ func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) (
 			Carrier:        req.Carrier,
 			TrackingNumber: sfResp.WaybillNo,
 
-			Status:    "shipped",
-			ShippedAt: &now,
+			Status:      "shipped",
+			ShippedAt:   &now,
+			WarehouseID: req.WarehouseId,
 		}
 
 		if err := tx.Create(&shipment).Error; err != nil {
