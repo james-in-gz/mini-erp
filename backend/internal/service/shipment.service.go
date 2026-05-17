@@ -133,7 +133,7 @@ func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) (
 
 			Status:      "shipped",
 			ShippedAt:   &now,
-			WarehouseID: req.WarehouseId,
+			WarehouseID: &req.WarehouseId,
 		}
 
 		if err := tx.Create(&shipment).Error; err != nil {

@@ -5,7 +5,7 @@ import "time"
 type Shipment struct {
 	ID uint `gorm:"primaryKey" json:"id,omitempty"`
 
-	WarehouseID uint      `json:"warehouseID,omitempty"`
+	WarehouseID *uint     `gorm:"default:null" json:"warehouseID,omitempty"`
 	Warehouse   Warehouse `gorm:"foreignKey:WarehouseID;references:ID" json:"warehouse,omitempty"`
 	OrderID     uint      `json:"orderID,omitempty"`
 	Order       Order     `gorm:"foreignKey:OrderID;references:ID" json:"order,omitempty"`
