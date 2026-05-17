@@ -7,6 +7,7 @@ import (
 	"backend/internal/repository"
 	"backend/sfexpress"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -64,38 +65,8 @@ func CreateShipment(orderID uint, req dto.CreateShipmentReq) error {
 		}
 
 		// 2️⃣ 处理每个商品
-		for _, item := range req.Items {
-
-			var orderItem model.OrderItem
-			if err := tx.Where("id = ? AND order_id = ?", item.OrderItemID, orderID).First(&orderItem).Error; err != nil {
-			}
-
-			// ❗校验数量
-			if item.Quantity <= 0 {
-				return errors.New("invalid_quantity")
-			}
-
-			if orderItem.ShippedQuantity+item.Quantity > orderItem.Quantity {
-				return errors.New("exceed_available_quantity")
-			}
-
-			// 3️⃣ 创建发货商品
-			shipmentItem := model.ShipmentItem{
-				ShipmentID:  shipment.ID,
-				OrderItemID: orderItem.ID,
-				SKU:         orderItem.SKUCode,
-				Quantity:    item.Quantity,
-			}
-
-			if err := tx.Create(&shipmentItem).Error; err != nil {
-				return err
-			}
-
-			// 4️⃣ 更新已发数量
-			orderItem.ShippedQuantity += item.Quantity
-			if err := tx.Save(&orderItem).Error; err != nil {
-				return err
-			}
+		if err := createShipmentItems(tx, orderID, shipment.ID, req.Items); err != nil {
+			return err
 		}
 
 		// 5️⃣ 更新订单状态 ⭐关键
@@ -169,42 +140,10 @@ func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) (
 			return err
 		}
 
-		// 2️⃣ 处理每个商品
-		for _, item := range req.Items {
-
-			var orderItem model.OrderItem
-			if err := tx.Where("id = ? AND order_id = ?", item.OrderItemID, orderID).First(&orderItem).Error; err != nil {
-			}
-
-			// ❗校验数量
-			if item.Quantity <= 0 {
-				return errors.New("invalid_quantity")
-			}
-
-			if orderItem.ShippedQuantity+item.Quantity > orderItem.Quantity {
-				return errors.New("exceed_available_quantity")
-			}
-
-			// 3️⃣ 创建发货商品
-			shipmentItem := model.ShipmentItem{
-				ShipmentID:  shipment.ID,
-				OrderItemID: orderItem.ID,
-				SKU:         orderItem.SKUCode,
-				Quantity:    item.Quantity,
-			}
-
-			if err := tx.Create(&shipmentItem).Error; err != nil {
-				return err
-			}
-
-			// 4️⃣ 更新已发数量
-			orderItem.ShippedQuantity += item.Quantity
-			if err := tx.Save(&orderItem).Error; err != nil {
-				return err
-			}
+		if err := createShipmentItems(tx, orderID, shipment.ID, req.Items); err != nil {
+			return err
 		}
 
-		// 更新订单状态
 		return updateOrderStatusWithTX(tx, order.ID)
 	})
 
@@ -214,7 +153,45 @@ func CreateShipmentByExpress(orderID uint, req dto.CreateShipmentByExpressReq) (
 
 	return sfResp, nil
 }
+func GetExpressLabel(waybillNo string) (*sfexpress.SFPrintFile, error) {
+	resp, err := sfexpress.GetWaybillLabel(waybillNo)
+	if err != nil {
+		return nil, fmt.Errorf("获取顺丰面单失败: %w", err)
+	}
+	return resp, nil
+}
 
-func GetExpressLabel(waybillNo string) (*dto.LabelResponse, error) {
-	return sfexpress.GetWaybillLabel(waybillNo)
+func createShipmentItems(tx *gorm.DB, orderID, shipmentID uint, items []dto.ShipmentItemReq) error {
+	for _, item := range items {
+		var orderItem model.OrderItem
+		if err := tx.Where("id = ? AND order_id = ?", item.OrderItemID, orderID).First(&orderItem).Error; err != nil {
+			return err
+		}
+
+		if item.Quantity <= 0 {
+			return errors.New("invalid_quantity")
+		}
+
+		if orderItem.ShippedQuantity+item.Quantity > orderItem.Quantity {
+			return errors.New("exceed_available_quantity")
+		}
+
+		shipmentItem := model.ShipmentItem{
+			ShipmentID:  shipmentID,
+			OrderItemID: orderItem.ID,
+			SKU:         orderItem.SKUCode,
+			Quantity:    item.Quantity,
+		}
+
+		if err := tx.Create(&shipmentItem).Error; err != nil {
+			return err
+		}
+
+		orderItem.ShippedQuantity += item.Quantity
+		if err := tx.Save(&orderItem).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

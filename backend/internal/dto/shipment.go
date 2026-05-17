@@ -11,25 +11,19 @@ type CreateShipmentReq struct {
 	ReceiverDistrict string `json:"receiverDistrict"`
 	ReceiverAddress  string `json:"receiverAddress"`
 
-	Items []struct {
-		OrderItemID uint `json:"orderItemId"`
-		Quantity    int  `json:"quantity"`
-	} `json:"items"`
+	Items []ShipmentItemReq `json:"items"`
 }
 
 type CreateShipmentByExpressReq struct {
-	OrderId     uint   `json:"orderId"`
-	WarehouseId uint   `json:"warehouseId"`
-	Carrier     string `json:"carrier"`
-	ServiceType string `json:"serviceType"`
-	PaymentType string `json:"paymentType"`
-	Weight      int    `json:"weight"`
-	ParcelCount int    `json:"parcelCount"`
-	Remark      string `json:"remark"`
-	Items       []struct {
-		OrderItemID uint `json:"orderItemId"`
-		Quantity    int  `json:"quantity"`
-	} `json:"items"`
+	OrderId     uint              `json:"orderId"`
+	WarehouseId uint              `json:"warehouseId"`
+	Carrier     string            `json:"carrier"`
+	ServiceType string            `json:"serviceType"`
+	PaymentType string            `json:"paymentType"`
+	Weight      int               `json:"weight"`
+	ParcelCount int               `json:"parcelCount"`
+	Remark      string            `json:"remark"`
+	Items       []ShipmentItemReq `json:"items"`
 }
 
 type ExpressResponse struct {
@@ -40,15 +34,7 @@ type ExpressResponse struct {
 	RequestID string `json:"requestId,omitempty"`
 }
 
-type LabelResponse struct {
-	Success   bool   `json:"success"`
-	ErrorCode string `json:"errorCode"`
-	Message   string `json:"errorMsg"`
-	WaybillNo string `json:"waybillNo"`
-
-	LabelData []struct {
-		Code string `json:"code"`
-		Url  string `json:"url"`
-		Data string `json:"data"`
-	} `json:"labelData"`
+type ShipmentItemReq struct {
+	OrderItemID uint `json:"orderItemId"`
+	Quantity    int  `json:"quantity"`
 }

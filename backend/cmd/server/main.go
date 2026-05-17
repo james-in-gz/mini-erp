@@ -66,15 +66,11 @@ func main() {
 		authGroup.POST("/orders/:id/shipping", order.AddShipping)
 		authGroup.POST("/orders/:id/shipments", order.CreateShipment)
 		authGroup.POST("/orders/:id/shipments/express", order.CreateShipmentByExpress)
-		authGroup.GET("/shipments/express/label", order.GetExpressLabel)
+
 		authGroup.GET("/orders/:id/shipments", order.ListShipments)
 		authGroup.POST("/orders/:id/payments", order.CreatePayment)
 		authGroup.PUT("/orders/:id/next-delivery-time", order.UpdateNextDeliveryTime)
-		authGroup.GET("/products", product.GetProducts)
-		authGroup.POST("/products", product.CreateProduct)
-		authGroup.GET("/products/:id", product.GetProductDetail)
-		authGroup.POST("/products/:id/skus/generate", product.GenerateSKUs)
-		authGroup.GET("/products/:id/skus", product.GetSKUs)
+
 		authGroup.GET("/skus/:id", product.GetSKUDetail)
 		authGroup.PUT("/skus/:id", product.UpdateSKU)
 		authGroup.GET("/skus", product.GetAllSKUs)
@@ -83,6 +79,15 @@ func main() {
 		authGroup.POST("/customers/:id/addresses", handler.CreateAddress)
 		authGroup.POST("/addresses/:id/default", handler.SetDefault)
 		authGroup.GET("/customers/search", customer.SearchCustomers)
+
+		productGroup := authGroup.Group("/products")
+		{
+			productGroup.GET("", product.GetProducts)
+			productGroup.POST("", product.CreateProduct)
+			productGroup.GET("/:id", product.GetProductDetail)
+			productGroup.POST("/:id/skus/generate", product.GenerateSKUs)
+			productGroup.GET("/:id/skus", product.GetSKUs)
+		}
 
 		WareHouseGroup := authGroup.Group("/warehouses")
 		{
@@ -106,6 +111,11 @@ func main() {
 			inventoryGroup.GET("/logs/:skuId", inventory.HandleGetLogs)
 		}
 
+		shipmentGroup := authGroup.Group("/shipments")
+		{
+			shipmentGroup.GET("/label/pdf/:waybillNo", order.ProxyWaybillLabelPDF)
+			shipmentGroup.GET("/express/label", order.GetExpressLabel)
+		}
 	}
 
 	r.Run(":8080")

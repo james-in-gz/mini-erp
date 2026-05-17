@@ -74,6 +74,52 @@ type ShipmentParams struct {
 	Remark      string `json:"remark"`
 }
 
+type Document struct {
+	MasterWaybillNo string `json:"masterWaybillNo"`
+	BranchWaybillNo string `json:"branchWaybillNo,omitempty"`
+	Seq             string `json:"seq,omitempty"`
+	Sum             string `json:"sum,omitempty"`
+	Remark          string `json:"remark,omitempty"`
+}
+
+// ================= 响应参数结构体 (对应文档 2.4 & 2.5) =================
+
+// SFApiResponse 顺丰统一外层响应
+type SFApiResponse struct {
+	ApiResultCode string `json:"apiResultCode"`
+	ApiErrorMsg   string `json:"apiErrorMsg"`
+	ApiResponseID string `json:"apiResponseID"`
+	ApiResultData string `json:"apiResultData"` // 这是一个 JSON 字符串，需要二次解析！
+}
+
+// SFBusinessResult 对应 apiResultData 解析后的结构
+type SFBusinessResult struct {
+	Success      bool       `json:"success"`
+	ErrorCode    string     `json:"errorCode"`
+	ErrorMessage string     `json:"errorMessage"` // 修正：与顺丰文档保持一致
+	RequestID    string     `json:"requestId"`
+	Obj          SFLabelObj `json:"obj"` // 顺丰2.0同步返回的核心数据都在 obj 里
+}
+
+// SFLabelObj 对应文档 2.5 的 obj
+type SFLabelObj struct {
+	ClientCode   string        `json:"clientCode"`
+	TemplateCode string        `json:"templateCode"`
+	FileType     string        `json:"fileType"`
+	Files        []SFPrintFile `json:"files"` // 顺丰面单文件集合
+}
+
+// SFPrintFile 对应文档 2.5 的 PrintFile
+type SFPrintFile struct {
+	Url       string `json:"url"`       // PDF 下载地址
+	Token     string `json:"token"`     // 下载凭证，需放在请求头 X-Auth-token
+	WaybillNo string `json:"waybillNo"` // 运单号
+	SeqNo     int    `json:"seqNo"`     // 面单序号
+	AreaNo    int    `json:"areaNo"`    // 联编号
+	PageNo    int    `json:"pageNo"`    // 页号
+	PageCount int    `json:"pageCount"` // 页数
+}
+
 // ================= HTTP Client =================
 
 var sfClient = &http.Client{
@@ -417,72 +463,61 @@ func AutoShip(
 	return sfResp, nil
 }
 
-func GetWaybillLabel(waybillNo string) (*dto.LabelResponse, error) {
-
-	// 顺丰查询接口
-	serviceCode := "EXP_RECE_SEARCH_ORDER_RESP"
-
-	// msgData 必须是 JSON 字符串
-	req := map[string]any{
-		"waybillNo": waybillNo,
+func GetWaybillLabel(waybillNo string) (*SFPrintFile, error) {
+	// 1. 构造请求参数
+	reqData := struct {
+		TemplateCode string     `json:"templateCode"`
+		Version      string     `json:"version"`
+		FileType     string     `json:"fileType"`
+		Sync         bool       `json:"sync"`
+		Documents    []Document `json:"documents"`
+	}{
+		TemplateCode: fmt.Sprintf("fm_76130_standard_%s", SFClientCode), // 根据实际模板调整
+		Version:      "2.0",
+		FileType:     "pdf",
+		Sync:         true,
+		Documents: []Document{
+			{
+				MasterWaybillNo: waybillNo,
+			},
+		},
 	}
 
-	jsonBytes, err := json.Marshal(req)
+	jsonBytes, err := json.Marshal(reqData)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := sendSFRequest(
-		serviceCode,
-		string(jsonBytes),
-		isSandbox, // sandbox
-	)
-
+	// 2. 发送请求
+	respBody, err := sendSFRequest("COM_RECE_CLOUD_PRINT_WAYBILLS", string(jsonBytes), isSandbox)
 	if err != nil {
 		return nil, err
 	}
 
-	// 顺丰返回结构（面单通常在 base64 或 pdf 字段）
-	var raw struct {
-		ApiResultCode string `json:"apiResultCode"`
-		ApiResultData string `json:"apiResultData"`
-		ApiErrorMsg   string `json:"apiErrorMsg"`
+	// 3. 解析第一层
+	var apiResp SFApiResponse
+	err = json.Unmarshal([]byte(respBody), &apiResp)
+	if err != nil {
+		return nil, fmt.Errorf("解析顺丰响应失败: %v", err)
+	}
+	if apiResp.ApiResultCode != "A1000" {
+		return nil, fmt.Errorf("平台错误: %s", apiResp.ApiErrorMsg)
 	}
 
-	if err := json.Unmarshal([]byte(resp), &raw); err != nil {
-		return nil, err
+	// 4. 解析第二层业务数据
+	var bizResult SFBusinessResult
+	err = json.Unmarshal([]byte(apiResp.ApiResultData), &bizResult)
+	if err != nil {
+		return nil, fmt.Errorf("解析业务数据失败: %v", err)
+	}
+	if !bizResult.Success {
+		return nil, fmt.Errorf("业务错误: [%s] %s", bizResult.ErrorCode, bizResult.ErrorMessage)
 	}
 
-	var data struct {
-		Success   bool   `json:"success"`
-		ErrorCode string `json:"errorCode"`
-		Message   string `json:"errorMsg"`
-		MsgData   struct {
-			WaybillNo string `json:"waybillNo"`
-
-			// ⭐ 重点：面单数据（顺丰一般是这个字段）
-			MailNo      string `json:"mailNo"`
-			WaybillCode string `json:"waybillCode"`
-
-			// PDF / ZPL / image base64（不同账号返回不同）
-			Documents []struct {
-				Code string `json:"code"`
-				Url  string `json:"url"`
-				Data string `json:"data"`
-			} `json:"documents"`
-		} `json:"msgData"`
+	// 5. 校验面单文件
+	if len(bizResult.Obj.Files) == 0 {
+		return nil, fmt.Errorf("未返回面单文件")
 	}
 
-	if raw.ApiResultData != "" {
-		_ = json.Unmarshal([]byte(raw.ApiResultData), &data)
-	}
-
-	return &dto.LabelResponse{
-		Success:   data.Success,
-		ErrorCode: data.ErrorCode,
-		Message:   data.Message,
-		WaybillNo: waybillNo,
-		// 常见：PDF base64 或 URL
-		LabelData: data.MsgData.Documents,
-	}, nil
+	return &bizResult.Obj.Files[0], nil
 }

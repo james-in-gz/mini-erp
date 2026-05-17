@@ -3,6 +3,8 @@ package order
 import (
 	"backend/internal/dto"
 	"backend/internal/service"
+	"io"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -70,18 +72,47 @@ func CreateShipmentByExpress(c *gin.Context) {
 }
 
 func GetExpressLabel(c *gin.Context) {
+
 	waybillNo := c.Query("waybillNo")
-
 	if waybillNo == "" {
-		dto.Fail(c, "waybillNo is required")
+		dto.Fail(c, "invalid waybillNo")
 		return
 	}
 
-	res, err := service.GetExpressLabel(waybillNo)
+	resp, err := service.GetExpressLabel(waybillNo)
 	if err != nil {
-		dto.Fail(c, err.Error())
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
 
-	dto.Success(c, res)
+	dto.Success(c, resp)
+}
+
+func ProxyWaybillLabelPDF(c *gin.Context) {
+	waybillNo := c.Query("waybillNo")
+	if waybillNo == "" {
+		dto.Fail(c, "invalid waybillNo")
+		return
+	}
+
+	// 1. 调用顺丰接口拿到 url 和 token
+	labelResp, _ := service.GetExpressLabel(waybillNo)
+	pdfUrl := labelResp.Url
+	pdfToken := labelResp.Token
+
+	// 2. 后端发起请求下载 PDF 字节流
+	req, _ := http.NewRequest("GET", pdfUrl, nil)
+	req.Header.Set("X-Auth-token", pdfToken)
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+
+	// 3. 设置响应头，告诉前端这是 PDF 流
+	c.Header("Content-Type", "application/pdf")
+	// 可选：如果希望前端下载而不是预览，加上下面这行
+	// c.Header("Content-Disposition", "attachment; filename=waybill.pdf")
+
+	// 4. 把顺丰返回的流直接透传给前端
+	io.Copy(c.Writer, resp.Body)
 }
