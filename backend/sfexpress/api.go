@@ -309,7 +309,7 @@ func getSenderInfo(warehouseId uint) *ContactInfo {
 	}
 
 	return &ContactInfo{
-		Contact:  warehouse.Name,
+		Contact:  warehouse.ContactName,
 		Mobile:   warehouse.Phone,
 		Province: warehouse.Province,
 		City:     warehouse.City,
