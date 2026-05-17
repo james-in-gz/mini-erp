@@ -34,7 +34,7 @@ func GetOwnerStats() ([]dto.OwnerStat, error) {
 	err := database.DB.Table("customers c").
 		Select("u.username, count(*) as count").
 		Joins("left join users u on u.id = c.owner_id").
-		Group("u.name").
+		Group("u.username").
 		Scan(&result).Error
 
 	return result, err

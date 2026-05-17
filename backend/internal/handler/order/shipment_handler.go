@@ -91,7 +91,7 @@ func GetExpressLabel(c *gin.Context) {
 }
 
 func ProxyWaybillLabelPDF(c *gin.Context) {
-	waybillNo := c.Query("waybillNo")
+	waybillNo := c.Param("waybillNo")
 	if waybillNo == "" {
 		dto.Fail(c, "invalid waybillNo")
 		return
